@@ -29,6 +29,14 @@ class DrpController {
     fun login(@RequestParam(value = "username") username: String, response: HttpServletResponse, model: Model): String {
         val cookie = Cookie("username", username)
         response.addCookie(cookie)
-        return "login"
+        return "redirect"
+    }
+
+    @RequestMapping("/logout")
+    fun logout(response: HttpServletResponse, model: Model): String {
+        val cookie = Cookie("username", null)
+        cookie.maxAge = 0
+        response.addCookie(cookie)
+        return "redirect"
     }
 }

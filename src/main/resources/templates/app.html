@@ -4,20 +4,21 @@
   <title>Tutor Me</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <link rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 </head>
 <body>
+<nav class="navbar navbar-light bg-light justify-content-between">
+  <a class="navbar-brand">Tutor Me</a>
+  <form class="form-inline" action="/logout" th:if="${username != null}">
+    <button class="btn my-2 my-sm-0" type="submit">Logout</button>
+  </form>
+</nav>
 <div class="container-fluid" th:if="${username == null}">
   <form action="/login" method="post">
-    <div class="input-group">
+    <div class="input-group mb-3">
       <input type="text" class="form-control" name="username" placeholder="Username">
-      <div class="input-group-btn">
-        <button class="btn btn-default" type="submit">
-          <i class="glyphicon glyphicon-circle-arrow-right"></i>
-        </button>
-      </div>
+      <button class="btn btn-outline-secondary" type="submit">Login</button>
     </div>
   </form>
 </div>
@@ -45,6 +46,6 @@
     </div>
   </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
