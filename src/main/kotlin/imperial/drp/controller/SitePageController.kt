@@ -22,7 +22,7 @@ class SitePageController {
     }
     @RequestMapping("/textChat")
     fun textChatPage() : String {
-        return "textChat"
+        return "textChat2"
     }
 
 

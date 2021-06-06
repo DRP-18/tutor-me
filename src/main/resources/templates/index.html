@@ -1,78 +1,49 @@
 <!DOCTYPE html>
 <html  xmlns:th="http://thymeleaf.org">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <title>Websockets Chat App</title>
-    <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
-    <script type="text/javascript" src="https://momentjs.com/downloads/moment.min.js"></script>
-
-    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-16x16.png">
-
+  <!-- Site made with Mobirise Website Builder v5.3.5, https://mobirise.com -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Mobirise v5.3.5, mobirise.com">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <link rel="shortcut icon" href="/assets/images/logo5.png" type="image/x-icon">
+  <meta name="description" content="">
+  
+  
+  <title>Home</title>
+  <link rel="stylesheet" href="/assets/tether/tether.min.css">
+  <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="/assets/theme/css/style.css">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Jost:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Jost:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"></noscript>
+  <link rel="preload" as="style" href="/assets/mobirise/css/mbr-additional.css"><link rel="stylesheet" href="/assets/mobirise/css/mbr-additional.css" type="text/css">
+  
+  
+  
+  
 </head>
 <body>
+  
+  <section class="header1 cid-s48MCQYojq mbr-fullscreen" id="header1-f">
 
-<div class="container-fluid h-100">
+    
 
-    <div id="status" class="login">
+    
 
-    </div>
-
-    <div id="login">
-        <div class="main row justify-content-center h-100">
-            <form id="login-form" name="login-form">
-                <div class="input-group">
-                    <input id="username" type="text" class="form-control all-input" autocomplete="off" placeholder="Username" />
-                    <div class="input-group-append">
-                        <button class="fas fa-location-arrow" type="submit"></button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="chat-page" class="hide main">
-        <div class="row justify-content-center h-100">
-
-            <div class="col-md-8 col-xl-6">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex bd-highlight">
-                            <div class="chat-summary">
-                                <span>Web Sockets with Spring Boot Chat</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card-body">
-
-                        <div id="chat">
-
-                        </div>
-
-                    </div>
-
-                    <form id="message-controls" name="message-controls" class="card-footer">
-                        <div class="input-group">
-                            <textarea id="message" class="form-control all-input" placeholder="Type your message..."></textarea>
-                            <div class="input-group-append">
-                                <button class="fas fa-location-arrow" type="submit"></button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+    <div class="align-center container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <h1 class="mbr-section-title mbr-fonts-style mb-3 display-1"><strong>DRP 18 - Online Tutoring Platform</strong></h1>
+                
+                <p class="mbr-text mbr-fonts-style display-7">Welcome to our tutoring platform.</p>
+                <div class="mbr-section-btn mt-3"><a class="btn btn-white display-4" href="/videoCall">Video Chat</a> <a class="btn btn-white display-4" href="/voiceCall">Voice Chat</a> <a class="btn btn-white display-4" href="/textChat">Message</a></div>
             </div>
         </div>
     </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script src="/js/script.js"></script>
-
+</section><section style="background-color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; color:#aaa; font-size:12px; padding: 0; align-items: center; display: flex;"><a href="https://mobirise.site/c" style="flex: 1 1; height: 3rem; padding-left: 1rem;"></a><p style="flex: 0 0 auto; margin:0; padding-right:1rem;">Made with Mobirise <a href="https://mobirise.site/j" style="color:#aaa;">web page</a> creator</p></section><script src="/assets/web/assets/jquery/jquery.min.js"></script>  <script src="/assets/popper/popper.min.js"></script>  <script src="/assets/tether/tether.min.js"></script>  <script src="/assets/bootstrap/js/bootstrap.min.js"></script>  <script src="/assets/smoothscroll/smooth-scroll.js"></script>  <script src="/assets/theme/js/script.js"></script>
+  
+  
 </body>
 </html>
