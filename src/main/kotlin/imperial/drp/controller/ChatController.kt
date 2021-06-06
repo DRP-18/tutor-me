@@ -11,13 +11,13 @@ import org.springframework.stereotype.Controller
 class ChatController {
 
     @MessageMapping("/chat.send")
-    @SendTo("/topic/public")
+    @SendTo("/topic/chat")
     fun sendMessage(@Payload chatMessage: ChatMessage) :ChatMessage {
         return chatMessage
     }
 
     @MessageMapping("/chat.newUser")
-    @SendTo("/topic/public")
+    @SendTo("/topic/chat")
     fun newUser(@Payload chatMessage: ChatMessage, headerAccessor: SimpMessageHeaderAccessor): ChatMessage {
         headerAccessor.sessionAttributes?.put("username", chatMessage.sender)
         return chatMessage

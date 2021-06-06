@@ -22,7 +22,7 @@ const connect = (event) => {
 }
 
 const onConnected = () => {
-    stompClient.subscribe('/topic/public', onMessageReceived)
+    stompClient.subscribe('/topic/chat', onMessageReceived)
     console.log(JSON.stringify({sender: username, type: 'CONNECT'}))
     stompClient.send("/app/chat.newUser",
         {},
