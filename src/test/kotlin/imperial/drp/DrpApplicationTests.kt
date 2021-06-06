@@ -7,9 +7,4 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class DrpApplicationTests {
 
-    @Test
-    fun contextLoads() {
-        fail { "fail" }
-    }
-
 }
