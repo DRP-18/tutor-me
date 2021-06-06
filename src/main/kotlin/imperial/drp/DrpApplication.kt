@@ -5,6 +5,7 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import java.util.*
 
 @SpringBootApplication
 class DrpApplication {
@@ -15,14 +16,54 @@ class DrpApplication {
         return CommandLineRunner {
             repository.deleteAll()
             // save a few customers
-            repository.save(Homework("Jayme", "Mika", "Maths question 1", "31/5/2021"))
-            repository.save(Homework("Jayme", "Mika", "Maths question 2", "31/5/2021"))
-            repository.save(Homework("Jayme", "Mika", "Maths question 3", "31/5/2021"))
-            repository.save(Homework("Jayme", "Mika", "Maths question 4", "1/6/2021"))
-            repository.save(Homework("Jayme", "Mika", "Maths question 5", "1/6/2021"))
-            repository.save(Homework("Jayme", "Henry", "English question 1", "1/6/2021"))
-
-            var homeworks = repository.findByTutee("Henry")
+            repository.save(
+                Homework(
+                    GregorianCalendar(2021, 5, 1),
+                    "Jayme",
+                    "Mika",
+                    "Maths question 1"
+                )
+            )
+            repository.save(
+                Homework(
+                    GregorianCalendar(2021, 5, 1),
+                    "Jayme",
+                    "Mika",
+                    "Maths question 2"
+                )
+            )
+            repository.save(
+                Homework(
+                    GregorianCalendar(2021, 5, 1),
+                    "Jayme",
+                    "Mika",
+                    "Maths question 3"
+                )
+            )
+            repository.save(
+                Homework(
+                    GregorianCalendar(2021, 5, 2),
+                    "Jayme",
+                    "Mika",
+                    "Maths question 4"
+                )
+            )
+            repository.save(
+                Homework(
+                    GregorianCalendar(2021, 5, 2),
+                    "Jayme",
+                    "Mika",
+                    "Maths question 5"
+                )
+            )
+            repository.save(
+                Homework(
+                    GregorianCalendar(2021, 5, 2),
+                    "Jayme",
+                    "Henry",
+                    "English question 1"
+                )
+            )
         }
     }
 }
