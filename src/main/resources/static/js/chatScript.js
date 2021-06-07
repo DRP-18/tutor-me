@@ -5,8 +5,6 @@ let username
 
 const connect = (event) => {
     username = document.querySelector('#username').value.trim()
-    console.log("Got here")
-
     if (username) {
         const login = document.querySelector('#login')
         login.classList.add('hide')
