@@ -6,12 +6,12 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-class Person(
-    var name: String? = null
+open class Person(
+    open var name: String? = null
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long? = null
+    open val id: Long? = null
 
     override fun toString(): String {
         return "$name"

@@ -4,6 +4,8 @@ import imperial.drp.dao.PersonRepository
 import imperial.drp.dao.TaskRepository
 import imperial.drp.entity.Person
 import imperial.drp.entity.Task
+import imperial.drp.entity.Tutee
+import imperial.drp.entity.Tutor
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -24,12 +26,12 @@ class DrpApplication {
             personRepository.deleteAll()
             taskRepository.deleteAll()
 
-            var jayme = Person("Jayme")
-            personRepository.save(jayme)
-            var mika = Person("Mika")
+            var mika = Tutee("Mika")
             personRepository.save(mika)
-            var henry = Person("Henry")
+            var henry = Tutee("Henry")
             personRepository.save(henry)
+            var jayme = Tutor("Jayme", listOf(mika, henry))
+            personRepository.save(jayme)
 
             var start1 = GregorianCalendar(2021, 5, 7)
             var end1 = GregorianCalendar(2021, 5, 11)
