@@ -8,10 +8,7 @@ import imperial.drp.entity.Tutor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.CookieValue
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 
@@ -41,7 +38,6 @@ class DrpController {
                             }
                             tuteeTasksMap[it.tutee!!]!!.add(it)
                         }
-
                         model.addAttribute("tuteeTasksMap", tuteeTasksMap)
                         return "tutorHome"
                     }
@@ -68,6 +64,44 @@ class DrpController {
             val userId = matchingUsers[0].id
             val cookie = Cookie("user_id", userId.toString())
             response.addCookie(cookie)
+        }
+        return "redirect"
+    }
+
+    @GetMapping("/signup")
+    fun signupGet(
+        response: HttpServletResponse,
+        model: Model
+    ): String {
+        return "signup"
+    }
+
+    @PostMapping("/signup")
+    fun signupPost(
+        @RequestParam(value = "username") username: String,
+        @RequestParam(value = "userType", required = false) userType: String?,
+        response: HttpServletResponse,
+        model: Model
+    ): String {
+        if (userType != null) {
+            var matchingUsers = personRepository!!.findByName(username)
+            if (matchingUsers.isEmpty()) {
+                val user = when (userType) {
+                    "tutor" -> {
+                        Tutor(username, emptyList())
+                    }
+                    "tutee" -> {
+                        Tutee(username)
+                    }
+                    else -> {
+                        throw IllegalArgumentException("unknown user type")
+                    }
+                }
+                personRepository.save(user)
+                val userId = user.id
+                val cookie = Cookie("user_id", userId.toString())
+                response.addCookie(cookie)
+            }
         }
         return "redirect"
     }
