@@ -16,22 +16,29 @@ import javax.servlet.http.HttpServletResponse
 class DrpController {
     @Autowired
     private val taskRepository: TaskRepository? = null
+
     @Autowired
     private val personRepository: PersonRepository? = null
 
     @RequestMapping("/app")
     fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
         if (userId != null) {
-            var username = personRepository!!.findById(userId).get().name!!
-            model.addAttribute("username", username)
-            val tasks = taskRepository!!.findByTutee(personRepository!!.findByName(username)[0])
-            model.addAttribute("tasks", tasks)
+            personRepository!!.findById(userId).ifPresent {
+                model.addAttribute("username", it.name)
+                val tasks =
+                    taskRepository!!.findByTutee(personRepository!!.findByName(it.name!!)[0])
+                model.addAttribute("tasks", tasks)
+            }
         }
         return "app"
     }
 
     @PostMapping("/login")
-    fun login(@RequestParam(value = "username") username: String, response: HttpServletResponse, model: Model): String {
+    fun login(
+        @RequestParam(value = "username") username: String,
+        response: HttpServletResponse,
+        model: Model
+    ): String {
         var matchingUsers = personRepository!!.findByName(username)
         if (matchingUsers.isNotEmpty()) {
             var userId = matchingUsers[0].id

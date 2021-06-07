@@ -31,10 +31,15 @@ class DrpApplication {
             var henry = Person("Henry")
             personRepository.save(henry)
 
-            // save a few customers
+            var start1 = GregorianCalendar(2021, 5, 7)
+            var end1 = GregorianCalendar(2021, 5, 11)
+            var start2 = GregorianCalendar(2021, 5, 14)
+            var end2 = GregorianCalendar(2021, 5, 18)
+
             taskRepository.save(
                 Task(
-                    GregorianCalendar(2021, 5, 1),
+                    start1,
+                    end1,
                     jayme,
                     mika,
                     "Maths question 1"
@@ -42,7 +47,8 @@ class DrpApplication {
             )
             taskRepository.save(
                 Task(
-                    GregorianCalendar(2021, 5, 1),
+                    start1,
+                    end1,
                     jayme,
                     mika,
                     "Maths question 2"
@@ -50,7 +56,8 @@ class DrpApplication {
             )
             taskRepository.save(
                 Task(
-                    GregorianCalendar(2021, 5, 1),
+                    start1,
+                    end1,
                     jayme,
                     mika,
                     "Maths question 3"
@@ -58,7 +65,8 @@ class DrpApplication {
             )
             taskRepository.save(
                 Task(
-                    GregorianCalendar(2021, 5, 2),
+                    start2,
+                    end2,
                     jayme,
                     mika,
                     "Maths question 4"
@@ -66,7 +74,8 @@ class DrpApplication {
             )
             taskRepository.save(
                 Task(
-                    GregorianCalendar(2021, 5, 2),
+                    start2,
+                    end2,
                     jayme,
                     mika,
                     "Maths question 5"
@@ -74,7 +83,8 @@ class DrpApplication {
             )
             taskRepository.save(
                 Task(
-                    GregorianCalendar(2021, 5, 2),
+                    start2,
+                    end2,
                     jayme,
                     henry,
                     "English question 1"

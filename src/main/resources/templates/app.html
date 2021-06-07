@@ -25,11 +25,12 @@
 <div class="container-fluid" th:if="${username != null}">
   <h1 th:text="'Welcome, ' + ${username} + '!'"/>
   <div class="row">
-    <div class="col-xs-12 col-md-6">
+    <div class="col-xs-12 col-md-12">
       <table class="table">
         <thead>
         <tr>
-          <th scope="col">DUE</th>
+          <th scope="col">START</th>
+          <th scope="col">END</th>
           <th scope="col">TUTOR</th>
           <th scope="col">TUTEE</th>
           <th scope="col">CONTENT</th>
@@ -37,7 +38,8 @@
         </thead>
         <tbody>
         <tr th:each="task : ${tasks}">
-          <td th:text="${task.due.time}"></td>
+          <td th:text="${task.startTime.time}"></td>
+          <td th:text="${task.endTime.time}"></td>
           <td th:text="${task.tutor}"></td>
           <td th:text="${task.content}"></td>
         </tr>
