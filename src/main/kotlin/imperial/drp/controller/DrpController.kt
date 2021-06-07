@@ -32,10 +32,10 @@ class DrpController {
                         val tasks =
                             taskRepository!!.findByTutor(personRepository!!.findByName(user.name!!)[0])
                         val tuteeTasksMap = HashMap<Tutee, MutableList<Task>>()
+                        user.tutees!!.forEach {
+                            tuteeTasksMap[it] = ArrayList()
+                        }
                         tasks.forEach {
-                            if (!tuteeTasksMap.containsKey(it.tutee)) {
-                                tuteeTasksMap[it.tutee!!] = ArrayList()
-                            }
                             tuteeTasksMap[it.tutee!!]!!.add(it)
                         }
                         model.addAttribute("tuteeTasksMap", tuteeTasksMap)
@@ -111,6 +111,49 @@ class DrpController {
         val cookie = Cookie("user_id", null)
         cookie.maxAge = 0
         response.addCookie(cookie)
+        return "redirect"
+    }
+
+    @PostMapping("/addtutee")
+    fun addtutee(
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "tutee_name") tuteeName: String,
+        response: HttpServletResponse,
+        model: Model
+    ): String {
+        personRepository!!.findById(userId).ifPresent {
+            if (it is Tutor) {
+                var matchingPersons = personRepository!!.findByName(tuteeName)
+                if (matchingPersons.isNotEmpty()) {
+                    val person = matchingPersons[0]
+                    if (person is Tutee) {
+                        var newTutees = ArrayList<Tutee>(it.tutees)
+                        newTutees.add(person)
+                        it.tutees = newTutees
+                        personRepository.save(it)
+                    }
+                }
+            }
+        }
+        return "redirect"
+    }
+
+    @PostMapping("/deletetask")
+    fun deletetask(
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "task_id") taskId: Long,
+        response: HttpServletResponse,
+        model: Model
+    ): String {
+        personRepository!!.findById(userId).ifPresent { person ->
+            if (person is Tutor) {
+                taskRepository!!.findById(taskId).ifPresent {
+                    if (it.tutor == person) {
+                        taskRepository.delete(it)
+                    }
+                }
+            }
+        }
         return "redirect"
     }
 }
