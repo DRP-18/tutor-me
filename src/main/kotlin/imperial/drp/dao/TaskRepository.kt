@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface TaskRepository : CrudRepository<Task, Long> {
     fun findByTutee(tutee: Person): List<Task>
+    fun findByTutor(tutor: Person): List<Task>
 }

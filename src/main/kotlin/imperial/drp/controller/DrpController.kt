@@ -2,6 +2,9 @@ package imperial.drp.controller
 
 import imperial.drp.dao.TaskRepository
 import imperial.drp.dao.PersonRepository
+import imperial.drp.entity.Task
+import imperial.drp.entity.Tutee
+import imperial.drp.entity.Tutor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -23,14 +26,35 @@ class DrpController {
     @RequestMapping("/app")
     fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
         if (userId != null) {
-            personRepository!!.findById(userId).ifPresent {
-                model.addAttribute("username", it.name)
-                val tasks =
-                    taskRepository!!.findByTutee(personRepository!!.findByName(it.name!!)[0])
-                model.addAttribute("tasks", tasks)
+            var userOpt = personRepository!!.findById(userId)
+            if (userOpt.isPresent) {
+                var user = userOpt.get()
+                model.addAttribute("username", user.name!!)
+                when (user) {
+                    is Tutor -> {
+                        val tasks =
+                            taskRepository!!.findByTutor(personRepository!!.findByName(user.name!!)[0])
+                        val tuteeTasksMap = HashMap<Tutee, MutableList<Task>>()
+                        tasks.forEach {
+                            if (!tuteeTasksMap.containsKey(it.tutee)) {
+                                tuteeTasksMap[it.tutee!!] = ArrayList()
+                            }
+                            tuteeTasksMap[it.tutee!!]!!.add(it)
+                        }
+
+                        model.addAttribute("tuteeTasksMap", tuteeTasksMap)
+                        return "tutorHome"
+                    }
+                    is Tutee -> {
+                        val tasks =
+                            taskRepository!!.findByTutee(personRepository!!.findByName(user.name!!)[0])
+                        model.addAttribute("tasks", tasks)
+                        return "tuteeHome"
+                    }
+                }
             }
         }
-        return "app"
+        return "login"
     }
 
     @PostMapping("/login")
@@ -41,7 +65,7 @@ class DrpController {
     ): String {
         var matchingUsers = personRepository!!.findByName(username)
         if (matchingUsers.isNotEmpty()) {
-            var userId = matchingUsers[0].id
+            val userId = matchingUsers[0].id
             val cookie = Cookie("user_id", userId.toString())
             response.addCookie(cookie)
         }

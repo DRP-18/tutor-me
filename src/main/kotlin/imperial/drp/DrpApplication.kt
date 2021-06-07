@@ -26,17 +26,17 @@ class DrpApplication {
             personRepository.deleteAll()
             taskRepository.deleteAll()
 
-            var mika = Tutee("Mika")
+            val mika = Tutee("Mika")
             personRepository.save(mika)
-            var henry = Tutee("Henry")
+            val henry = Tutee("Henry")
             personRepository.save(henry)
-            var jayme = Tutor("Jayme", listOf(mika, henry))
+            val jayme = Tutor("Jayme", listOf(mika, henry))
             personRepository.save(jayme)
 
-            var start1 = GregorianCalendar(2021, 5, 7)
-            var end1 = GregorianCalendar(2021, 5, 11)
-            var start2 = GregorianCalendar(2021, 5, 14)
-            var end2 = GregorianCalendar(2021, 5, 18)
+            val start1 = GregorianCalendar(2021, 5, 7)
+            val end1 = GregorianCalendar(2021, 5, 11)
+            val start2 = GregorianCalendar(2021, 5, 14)
+            val end2 = GregorianCalendar(2021, 5, 18)
 
             taskRepository.save(
                 Task(
