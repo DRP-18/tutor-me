@@ -40,6 +40,12 @@
               </form>
             </td>
           </tr>
+          <form action="/addtask" method="post">
+            <td><input type="text" class="form-control" name="start_time" placeholder="Start Time"></td>
+            <td><input type="text" class="form-control" name="end_time" placeholder="End Time"></td>
+            <td><input type="text" class="form-control" name="content" placeholder="Content"></td>
+            <td><button class="btn btn-primary" type="submit" name="tutee_id" th:value="${tuteeTasks.key.id}">Add</button></td>
+          </form>
           </tbody>
         </table>
       </div>

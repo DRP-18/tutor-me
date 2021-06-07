@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 @Controller
 class DrpController {
@@ -138,6 +142,34 @@ class DrpController {
         return "redirect"
     }
 
+    @PostMapping("/addtask")
+    fun addtask(
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "start_time") startTime: String,
+        @RequestParam(value = "end_time") endTime: String,
+        @RequestParam(value = "content") content: String,
+        @RequestParam(value = "tutee_id") tuteeId: Long,
+        response: HttpServletResponse,
+        model: Model
+    ): String {
+        personRepository!!.findById(userId).ifPresent { person ->
+            if (person is Tutor) {
+                var tutee = personRepository!!.findById(tuteeId).get()
+                if (tutee is Tutee) {
+                    var sdf = SimpleDateFormat("yyyyMMddHHmmss")
+
+                    var startCalendar = GregorianCalendar()
+                    startCalendar.time = sdf.parse(startTime)
+
+                    var endCalendar = GregorianCalendar()
+                    endCalendar.time = sdf.parse(endTime)
+
+                    taskRepository!!.save(Task(startCalendar, endCalendar, person, tutee, content))
+                }
+            }
+        }
+        return "redirect"
+    }
     @PostMapping("/deletetask")
     fun deletetask(
         @CookieValue(value = "user_id") userId: Long,
