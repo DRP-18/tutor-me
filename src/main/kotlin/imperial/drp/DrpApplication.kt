@@ -1,5 +1,9 @@
 package imperial.drp
 
+import imperial.drp.dao.PersonRepository
+import imperial.drp.dao.TaskRepository
+import imperial.drp.entity.Person
+import imperial.drp.entity.Task
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -12,55 +16,67 @@ class DrpApplication {
     private val log = LoggerFactory.getLogger(DrpApplication::class.java)
 
     @Bean
-    fun initialize(repository: HomeworkRepository): CommandLineRunner? {
+    fun initialize(
+        personRepository: PersonRepository,
+        taskRepository: TaskRepository
+    ): CommandLineRunner? {
         return CommandLineRunner {
-            repository.deleteAll()
+            personRepository.deleteAll()
+            taskRepository.deleteAll()
+
+            var jayme = Person("Jayme")
+            personRepository.save(jayme)
+            var mika = Person("Mika")
+            personRepository.save(mika)
+            var henry = Person("Henry")
+            personRepository.save(henry)
+
             // save a few customers
-            repository.save(
-                Homework(
+            taskRepository.save(
+                Task(
                     GregorianCalendar(2021, 5, 1),
-                    "Jayme",
-                    "Mika",
+                    jayme,
+                    mika,
                     "Maths question 1"
                 )
             )
-            repository.save(
-                Homework(
+            taskRepository.save(
+                Task(
                     GregorianCalendar(2021, 5, 1),
-                    "Jayme",
-                    "Mika",
+                    jayme,
+                    mika,
                     "Maths question 2"
                 )
             )
-            repository.save(
-                Homework(
+            taskRepository.save(
+                Task(
                     GregorianCalendar(2021, 5, 1),
-                    "Jayme",
-                    "Mika",
+                    jayme,
+                    mika,
                     "Maths question 3"
                 )
             )
-            repository.save(
-                Homework(
+            taskRepository.save(
+                Task(
                     GregorianCalendar(2021, 5, 2),
-                    "Jayme",
-                    "Mika",
+                    jayme,
+                    mika,
                     "Maths question 4"
                 )
             )
-            repository.save(
-                Homework(
+            taskRepository.save(
+                Task(
                     GregorianCalendar(2021, 5, 2),
-                    "Jayme",
-                    "Mika",
+                    jayme,
+                    mika,
                     "Maths question 5"
                 )
             )
-            repository.save(
-                Homework(
+            taskRepository.save(
+                Task(
                     GregorianCalendar(2021, 5, 2),
-                    "Jayme",
-                    "Henry",
+                    jayme,
+                    henry,
                     "English question 1"
                 )
             )

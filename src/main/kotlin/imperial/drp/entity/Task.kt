@@ -1,13 +1,13 @@
-package imperial.drp
+package imperial.drp.entity
 
 import java.util.*
 import javax.persistence.*
 
 @Entity
-class Homework(
+class Task(
     @field:Column(columnDefinition = "TIMESTAMP WITH TIME ZONE") var due: Calendar? = null,
-    var tutor: String? = null,
-    var tutee: String? = null,
+    @field:ManyToOne var tutor: Person? = null,
+    @field:ManyToOne var tutee: Person? = null,
     var content: String? = null
 ) {
     @Id

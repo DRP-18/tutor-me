@@ -1,5 +1,7 @@
-package imperial.drp
+package imperial.drp.controller
 
+import imperial.drp.dao.TaskRepository
+import imperial.drp.dao.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -13,28 +15,35 @@ import javax.servlet.http.HttpServletResponse
 @Controller
 class DrpController {
     @Autowired
-    private val homeworkRepository: HomeworkRepository? = null
+    private val taskRepository: TaskRepository? = null
+    @Autowired
+    private val personRepository: PersonRepository? = null
 
     @RequestMapping("/app")
-    fun app(@CookieValue(value = "username", required = false) username: String?, model: Model): String {
-        model.addAttribute("username", username)
-        if (username != null) {
-            val homeworks = homeworkRepository!!.findByTutee(username)
-            model.addAttribute("homeworks", homeworks)
+    fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
+        if (userId != null) {
+            var username = personRepository!!.findById(userId).get().name!!
+            model.addAttribute("username", username)
+            val tasks = taskRepository!!.findByTutee(personRepository!!.findByName(username)[0])
+            model.addAttribute("tasks", tasks)
         }
         return "app"
     }
 
     @PostMapping("/login")
     fun login(@RequestParam(value = "username") username: String, response: HttpServletResponse, model: Model): String {
-        val cookie = Cookie("username", username)
-        response.addCookie(cookie)
+        var matchingUsers = personRepository!!.findByName(username)
+        if (matchingUsers.isNotEmpty()) {
+            var userId = matchingUsers[0].id
+            val cookie = Cookie("user_id", userId.toString())
+            response.addCookie(cookie)
+        }
         return "redirect"
     }
 
     @RequestMapping("/logout")
     fun logout(response: HttpServletResponse, model: Model): String {
-        val cookie = Cookie("username", null)
+        val cookie = Cookie("user_id", null)
         cookie.maxAge = 0
         response.addCookie(cookie)
         return "redirect"

@@ -36,10 +36,10 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="homework : ${homeworks}">
-          <td th:text="${homework.due.time}"></td>
-          <td th:text="${homework.tutor}"></td>
-          <td th:text="${homework.content}"></td>
+        <tr th:each="task : ${tasks}">
+          <td th:text="${task.due.time}"></td>
+          <td th:text="${task.tutor}"></td>
+          <td th:text="${task.content}"></td>
         </tr>
         </tbody>
       </table>
