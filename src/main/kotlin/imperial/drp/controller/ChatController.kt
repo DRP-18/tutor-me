@@ -34,19 +34,12 @@ class ChatController {
 
     @MessageMapping("/chat.existingUser")
     fun existingUser(@Payload chatMessage: ChatMessage){
-        print(chatMessage.sender)
         val id = chatMessage.sender.toLong()
-        print(id)
         var userOptional = personRepository!!.findById(id)
-        print(userOptional)
         var user = ""
         if (userOptional.isPresent) {
             user = userOptional.get().name!!
-
-//            headerAccessor.sessionAttributes?.put("username", user.name)
-
         }
-
         sender.convertAndSend("/topic/chat-${chatMessage.sender}", ChatMessage(chatMessage.type, chatMessage.content, user, chatMessage.time))
     }
 }

@@ -28,10 +28,7 @@ const onConnected = () => {
     const ID = cookieData[1]
     stompClient.send("/app/chat.existingUser", {}, JSON.stringify({sender: ID, type: 'CONNECT'}))
     stompClient.subscribe('/topic/chat-' + ID, saveUsername)
-    console.log("Krishan good")
-    console.log(ID)
-
-  
+      
     const status = document.querySelector('#status')
     status.className = 'hide'
 }
