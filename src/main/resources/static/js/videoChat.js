@@ -1,4 +1,6 @@
-// import Peer from "simple-peer";
+import Peer from "simple-peer";
+import SockJS from "sockjs-client"
+import Stomp from "webstomp-client"
 
 let stompClient
 const userID = getCookie("user_id")

@@ -28,18 +28,21 @@ class WebrtcController {
 
     @MessageMapping("/video.callUser")
     fun callUser(@Payload message: CallingMessage) {
-        println("call User message: ${message.callee}, ${message.caller}, ${message.signal}")
-        val calleeID = personRepository?.findByName(message.callee)?.get(0)?.id
-        println("Callee ID: ${calleeID}")
+        println("User message: ${message.callee}, ${message.caller}")
+//        val calleeID = personRepository?.findByName(message.callee)?.get(0)?.id
+//        println("Callee ID: ${calleeID}")
+        val calleeID = message.callee
         sender.convertAndSend("/topic/video/$calleeID/incomingCall", message)
     }
 
 
     @MessageMapping("/video.acceptCall")
     fun acceptCall(@Payload message: CallingMessage){
-        println("accept Call message: ${message.callee}, ${message.caller}, ${message.signal}")
-        val callerID = personRepository?.findByName(message.caller)?.get(0)?.id
-        print("Caller ID: ${callerID}}}")
+        println("accept Call message: ${message.callee}, ${message.caller}")
+//        val callerID = personRepository?.findByName(message.caller)?.get(0)?.id
+//        print("Caller ID: ${callerID}}}")
+        val callerID = message.caller
+
         sender.convertAndSend("/topic/video/$callerID/callAccepted", message)
     }
 
