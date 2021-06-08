@@ -1,9 +1,13 @@
-'use strict'
+// import Peer from "simple-peer";
 
 let stompClient
-const userID = getCookie("userid")
+const userID = getCookie("user_id")
 console.log("This is the userID: ", userID)
 let stream
+let recievingCall = false
+let callAccepted = false
+let caller = ""
+let callerSignal
 let userVideo, partnerVideo, socket = {}
 
 function getCookie(name) {
@@ -23,28 +27,28 @@ const connect = (event) => {
             userVideo.current.srcObject = st
         }
     })
-
-    // const userID = stompClient.id
-    // if (!users[userID]) {
-    //     users[userID] = userID;
-    // }
     stompClient.connect({}, onConnected, onError)
 }
 
 const onConnected = () => {
-    stompClient.subscribe('/topic/video', onMessageReceived)
-    stompClient.subscribe('/topic/video', onMessageReceived)
-    stompClient.subscribe('/topic/video', onMessageReceived)
-
-    stompClient.send("/app/video.getID",{}, {})
+    stompClient.subscribe('/topic/video/' + userID + '/incomingCall', incomingCall)
+    stompClient.subscribe('/topic/video/' + userID + '/callAccepted', onCallAccepted)
+    // stompClient.subscribe('/topic/video/' + userID + '/', onMessageReceived)
 }
 
 const onError = () => {
     console.log("Error with socket connection!")
 }
 
-const onMessageReceived = (payload) => {
+const incomingCall = (payload) => {
     const message = JSON.parse(payload.body);
+    console.log(message)
+    recievingCall = true
+    caller = message.caller
+    callerSignal = message.signal
+}
+
+const onCallAccepted = (payload) => {
     console.log(message)
 }
 
