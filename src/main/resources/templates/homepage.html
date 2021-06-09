@@ -120,8 +120,8 @@
 
       <script>
         window.onload = function () {
-            const id = getCookie("user_id");
-            if (id === "") {
+          const id = getCookie("user_id");
+          if (id === "") {
             document.getElementById('loginModel').style.display = 'block'
           }
         }
@@ -173,61 +173,146 @@
         <h1 th:text="'Welcome, ' + ${username} + '!'"/>
 
         <a href="/logout">
-            <button>Logout</button>
+          <button>Logout</button>
         </a>
-        <div class="container-fluid">
+
+        <!-- Tutor homepage -->
+
+        <div class="container-fluid" th:if="${userType}=='tutor'">
           <div class="row">
-            <div class="col-md-4">
-              <div class="service-item first-item">
-                <div class="icon"></div>
-                <h4>Web Design</h4>
-                <p>Credit goes to
-                  <a rel="nofollow" href="https://www.pexels.com">Pexels</a>
-                  and
-                  <a rel="nofollow" href="https://www.rawpixel.com">Raw Pixel</a>
-                  for images used in
-                  this template. Thank you.</p>
+            <div class="col-xs-12 col-md-12">
+              <div th:each="tuteeTasks : ${tuteeTasksMap}">
+                <h2 th:text="${tuteeTasks.key} + ' (Tutee)'"/>
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th scope="col">START</th>
+                    <th scope="col">END</th>
+                    <th scope="col">CONTENT</th>
+                    <th scope="col">ACTION</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr th:each="task : ${tuteeTasks.value}">
+                    <td th:text="${task.startTime.time}"></td>
+                    <td th:text="${task.endTime.time}"></td>
+                    <td th:text="${task.content}"></td>
+                    <td>
+                      <form action="/deletetask" method="post">
+                        <button class="btn btn-danger" type="submit" name="task_id"
+                                th:value="${task.id}">Delete
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  <form action="/addtask" method="post">
+                    <td><input type="datetime-local" class="form-control" name="start_time"
+                               placeholder="e.g., 2018-06-12T19:30"></td>
+                    <td><input type="datetime-local" class="form-control" name="end_time"
+                               placeholder="e.g., 2018-06-12T19:30"></td>
+                    <td><input type="text" class="form-control" name="content"
+                               placeholder="Content"></td>
+                    <td>
+                      <button class="btn btn-primary" type="submit" name="tutee_id"
+                              th:value="${tuteeTasks.key.id}">Add
+                      </button>
+                    </td>
+                  </form>
+                  </tbody>
+                </table>
               </div>
-            </div>
-            <div class="col-md-4">
-              <div class="service-item second-item">
-                <div class="icon"></div>
-                <h4>Bootstrap 4</h4>
-                <p>Proin aliquam facilisis ante interdum. Sed nulla feugiat tempus aliquam.</p>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="service-item third-item">
-                <div class="icon"></div>
-                <h4>HTML CSS</h4>
-                <p>Proin aliquam facilisis ante interdum. Sed nulla feugiat tempus aliquam.</p>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="service-item fourth-item">
-                <div class="icon"></div>
-                <h4>Download Free</h4>
-                <p>We have many free to use CSS web templates on our site for you.</p>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="service-item fivth-item">
-                <div class="icon"></div>
-                <h4>Get in touch</h4>
-                <p>You can get the fastest response from
-                  <a rel="nofollow" href="https://www.facebook.com/templatemo">templatemo</a>
-                  facebook page.</p>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="service-item sixth-item">
-                <div class="icon"></div>
-                <h4>Spread a word</h4>
-                <p>Please tell your friends about our website. This is very helpful.</p>
-              </div>
+              <form action="/addtutee" method="post">
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" name="tutee_name"
+                         placeholder="Tutee Name">
+                  <button class="btn btn-primary" type="submit">Add</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
+
+
+        <!-- Tutee homepage -->
+
+        <div class="container-fluid" th:if="${userType}=='tutee'">
+          <div class="row">
+            <div class="col-xs-12 col-md-12">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th scope="col">START</th>
+                  <th scope="col">END</th>
+                  <th scope="col">TUTOR</th>
+                  <th scope="col">CONTENT</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="task : ${tasks}">
+                  <td th:text="${task.startTime.time}"></td>
+                  <td th:text="${task.endTime.time}"></td>
+                  <td th:text="${task.tutor}"></td>
+                  <td th:text="${task.content}"></td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+<!--        <div class="container-fluid">-->
+<!--          <div class="row">-->
+<!--            <div class="col-md-4">-->
+<!--              <div class="service-item first-item">-->
+<!--                <div class="icon"></div>-->
+<!--                <h4>Web Design</h4>-->
+<!--                <p>Credit goes to-->
+<!--                  <a rel="nofollow" href="https://www.pexels.com">Pexels</a>-->
+<!--                  and-->
+<!--                  <a rel="nofollow" href="https://www.rawpixel.com">Raw Pixel</a>-->
+<!--                  for images used in-->
+<!--                  this template. Thank you.</p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="col-md-4">-->
+<!--              <div class="service-item second-item">-->
+<!--                <div class="icon"></div>-->
+<!--                <h4>Bootstrap 4</h4>-->
+<!--                <p>Proin aliquam facilisis ante interdum. Sed nulla feugiat tempus aliquam.</p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="col-md-4">-->
+<!--              <div class="service-item third-item">-->
+<!--                <div class="icon"></div>-->
+<!--                <h4>HTML CSS</h4>-->
+<!--                <p>Proin aliquam facilisis ante interdum. Sed nulla feugiat tempus aliquam.</p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="col-md-4">-->
+<!--              <div class="service-item fourth-item">-->
+<!--                <div class="icon"></div>-->
+<!--                <h4>Download Free</h4>-->
+<!--                <p>We have many free to use CSS web templates on our site for you.</p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="col-md-4">-->
+<!--              <div class="service-item fivth-item">-->
+<!--                <div class="icon"></div>-->
+<!--                <h4>Get in touch</h4>-->
+<!--                <p>You can get the fastest response from-->
+<!--                  <a rel="nofollow" href="https://www.facebook.com/templatemo">templatemo</a>-->
+<!--                  facebook page.</p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="col-md-4">-->
+<!--              <div class="service-item sixth-item">-->
+<!--                <div class="icon"></div>-->
+<!--                <h4>Spread a word</h4>-->
+<!--                <p>Please tell your friends about our website. This is very helpful.</p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
       </section>
 
       <!-- Top Image -->
