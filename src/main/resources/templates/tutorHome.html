@@ -26,6 +26,7 @@
             <th scope="col">START</th>
             <th scope="col">END</th>
             <th scope="col">CONTENT</th>
+            <th scope="col">ACTION</th>
           </tr>
           </thead>
           <tbody>
@@ -33,10 +34,27 @@
             <td th:text="${task.startTime.time}"></td>
             <td th:text="${task.endTime.time}"></td>
             <td th:text="${task.content}"></td>
+            <td>
+              <form action="/deletetask" method="post">
+                  <button class="btn btn-danger" type="submit" name="task_id" th:value="${task.id}">Delete</button>
+              </form>
+            </td>
           </tr>
+          <form action="/addtask" method="post">
+            <td><input type="datetime-local" class="form-control" name="start_time" placeholder="e.g., 2018-06-12T19:30"></td>
+            <td><input type="datetime-local" class="form-control" name="end_time" placeholder="e.g., 2018-06-12T19:30"></td>
+            <td><input type="text" class="form-control" name="content" placeholder="Content"></td>
+            <td><button class="btn btn-primary" type="submit" name="tutee_id" th:value="${tuteeTasks.key.id}">Add</button></td>
+          </form>
           </tbody>
         </table>
       </div>
+      <form action="/addtutee" method="post">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="tutee_name" placeholder="Tutee Name">
+          <button class="btn btn-primary" type="submit">Add</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

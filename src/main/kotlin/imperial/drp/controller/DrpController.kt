@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 @Controller
 class DrpController {
@@ -30,12 +34,12 @@ class DrpController {
                 when (user) {
                     is Tutor -> {
                         val tasks =
-                            taskRepository!!.findByTutor(personRepository!!.findByName(user.name!!)[0])
-                        val tuteeTasksMap = HashMap<Tutee, MutableList<Task>>()
+                            taskRepository!!.findByTutorOrderByStartTimeAsc(personRepository!!.findByName(user.name!!)[0])
+                        val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
+                        user.tutees!!.forEach {
+                            tuteeTasksMap[it] = ArrayList()
+                        }
                         tasks.forEach {
-                            if (!tuteeTasksMap.containsKey(it.tutee)) {
-                                tuteeTasksMap[it.tutee!!] = ArrayList()
-                            }
                             tuteeTasksMap[it.tutee!!]!!.add(it)
                         }
                         model.addAttribute("tuteeTasksMap", tuteeTasksMap)
@@ -43,7 +47,7 @@ class DrpController {
                     }
                     is Tutee -> {
                         val tasks =
-                            taskRepository!!.findByTutee(personRepository!!.findByName(user.name!!)[0])
+                            taskRepository!!.findByTuteeOrderByStartTimeAsc(personRepository!!.findByName(user.name!!)[0])
                         model.addAttribute("tasks", tasks)
                         return "tuteeHome"
                     }
@@ -111,6 +115,77 @@ class DrpController {
         val cookie = Cookie("user_id", null)
         cookie.maxAge = 0
         response.addCookie(cookie)
+        return "redirect"
+    }
+
+    @PostMapping("/addtutee")
+    fun addtutee(
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "tutee_name") tuteeName: String,
+        response: HttpServletResponse,
+        model: Model
+    ): String {
+        personRepository!!.findById(userId).ifPresent {
+            if (it is Tutor) {
+                var matchingPersons = personRepository!!.findByName(tuteeName)
+                if (matchingPersons.isNotEmpty()) {
+                    val person = matchingPersons[0]
+                    if (person is Tutee) {
+                        var newTutees = ArrayList<Tutee>(it.tutees)
+                        newTutees.add(person)
+                        it.tutees = newTutees
+                        personRepository.save(it)
+                    }
+                }
+            }
+        }
+        return "redirect"
+    }
+
+    @PostMapping("/addtask")
+    fun addtask(
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "start_time") startTime: String,
+        @RequestParam(value = "end_time") endTime: String,
+        @RequestParam(value = "content") content: String,
+        @RequestParam(value = "tutee_id") tuteeId: Long,
+        response: HttpServletResponse,
+        model: Model
+    ): String {
+        personRepository!!.findById(userId).ifPresent { person ->
+            if (person is Tutor) {
+                var tutee = personRepository!!.findById(tuteeId).get()
+                if (tutee is Tutee) {
+                    var sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm")
+
+                    var startCalendar = GregorianCalendar()
+                    startCalendar.time = sdf.parse(startTime)
+
+                    var endCalendar = GregorianCalendar()
+                    endCalendar.time = sdf.parse(endTime)
+
+                    taskRepository!!.save(Task(startCalendar, endCalendar, person, tutee, content))
+                }
+            }
+        }
+        return "redirect"
+    }
+    @PostMapping("/deletetask")
+    fun deletetask(
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "task_id") taskId: Long,
+        response: HttpServletResponse,
+        model: Model
+    ): String {
+        personRepository!!.findById(userId).ifPresent { person ->
+            if (person is Tutor) {
+                taskRepository!!.findById(taskId).ifPresent {
+                    if (it.tutor == person) {
+                        taskRepository.delete(it)
+                    }
+                }
+            }
+        }
         return "redirect"
     }
 }
