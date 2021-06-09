@@ -25,14 +25,19 @@
           <th scope="col">END</th>
           <th scope="col">TUTOR</th>
           <th scope="col">CONTENT</th>
+          <th scope="col">ACTIONS</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="task : ${tasks}">
-          <td th:text="${task.startTime.time}"></td>
-          <td th:text="${task.endTime.time}"></td>
+          <td th:text="${task.startTime.time}"
+              th:class="${nowTime.time.after(task.startTime.time)} ? 'text-danger' : ''"></td>
+          <td th:text="${task.endTime.time}"
+              th:class="${nowTime.time.after(task.endTime.time)} ? 'text-danger' : ''"></td>
           <td th:text="${task.tutor}"></td>
           <td th:text="${task.content}"></td>
+          <td><a class="btn btn-primary" href="/signup" role="button"
+                 th:href="'https://appr.tc/r/' + ${123456789 + task.id}">Video</a></td>
         </tr>
         </tbody>
       </table>
