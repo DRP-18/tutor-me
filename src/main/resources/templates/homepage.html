@@ -170,14 +170,16 @@
 
       <!-- Services -->
       <section class="services">
-        <h1 th:text="'Welcome, ' + ${username} + '!'"/>
+        <h1 th:text="'Welcome, ' + ${username} + '!'" style="text-align: center"/>
 
         <a href="/logout">
           <button>Logout</button>
         </a>
+      </section>
 
+      <section>
         <!-- Tutor homepage -->
-
+        <p></p>
         <div class="container-fluid" th:if="${userType}=='tutor'">
           <div class="row">
             <div class="col-xs-12 col-md-12">
@@ -316,80 +318,80 @@
       </section>
 
       <!-- Top Image -->
-      <section class="top-image">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-12">
-              <img src="/images/top-image.jpg" alt="">
-              <div class="down-content">
-                <h4>Ante Interdum Chambray</h4>
-                <p>Lorem ipsum dolor amet raclette chambray bitters, hammock celiac slow-carb
-                  flexitarian four dollar toast food truck health goth. Air plant brunch food truck
-                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch
-                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray
-                  typewriter put a bird on it brooklyn forage.</p>
-                <div class="primary-button">
-                  <a href="#">Read More</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+<!--      <section class="top-image">-->
+<!--        <div class="container-fluid">-->
+<!--          <div class="row">-->
+<!--            <div class="col-md-12">-->
+<!--              <img src="/images/top-image.jpg" alt="">-->
+<!--              <div class="down-content">-->
+<!--                <h4>Ante Interdum Chambray</h4>-->
+<!--                <p>Lorem ipsum dolor amet raclette chambray bitters, hammock celiac slow-carb-->
+<!--                  flexitarian four dollar toast food truck health goth. Air plant brunch food truck-->
+<!--                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch-->
+<!--                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray-->
+<!--                  typewriter put a bird on it brooklyn forage.</p>-->
+<!--                <div class="primary-button">-->
+<!--                  <a href="#">Read More</a>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </section>-->
 
       <!-- Left Image -->
-      <section class="left-image">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-6">
-              <img src="/images/left-image.jpg" alt="">
-            </div>
-            <div class="col-md-6">
-              <div class="right-content">
-                <h4>Ante Interdum Raclette</h4>
-                <p>Lorem ipsum dolor amet raclette chambray bitters, hammock celiac slow-carb
-                  flexitarian four dollar toast food truck health goth. Air plant brunch food truck
-                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch
-                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray
-                  typewriter put a bird on it brooklyn forage.<br><br>Air plant brunch food truck
-                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch
-                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray
-                  typewriter put bird brooklyn</p>
-                <div class="primary-button">
-                  <a href="#">Read More</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+<!--      <section class="left-image">-->
+<!--        <div class="container-fluid">-->
+<!--          <div class="row">-->
+<!--            <div class="col-md-6">-->
+<!--              <img src="/images/left-image.jpg" alt="">-->
+<!--            </div>-->
+<!--            <div class="col-md-6">-->
+<!--              <div class="right-content">-->
+<!--                <h4>Ante Interdum Raclette</h4>-->
+<!--                <p>Lorem ipsum dolor amet raclette chambray bitters, hammock celiac slow-carb-->
+<!--                  flexitarian four dollar toast food truck health goth. Air plant brunch food truck-->
+<!--                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch-->
+<!--                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray-->
+<!--                  typewriter put a bird on it brooklyn forage.<br><br>Air plant brunch food truck-->
+<!--                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch-->
+<!--                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray-->
+<!--                  typewriter put bird brooklyn</p>-->
+<!--                <div class="primary-button">-->
+<!--                  <a href="#">Read More</a>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </section>-->
 
       <!-- Right Image -->
-      <section class="right-image">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="left-content">
-                <h4>Ante Interdum Raclette</h4>
-                <p>Lorem ipsum dolor amet raclette chambray bitters, hammock celiac slow-carb
-                  flexitarian four dollar toast food truck health goth. Air plant brunch food truck
-                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch
-                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray
-                  typewriter put a bird on it brooklyn forage.<br><br>Air plant brunch food truck
-                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch
-                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray
-                  typewriter put bird brooklyn</p>
-                <div class="primary-button">
-                  <a href="#">Read More</a>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <img src="/images/right-image.jpg" alt="">
-            </div>
-          </div>
-        </div>
-      </section>
+<!--      <section class="right-image">-->
+<!--        <div class="container-fluid">-->
+<!--          <div class="row">-->
+<!--            <div class="col-md-6">-->
+<!--              <div class="left-content">-->
+<!--                <h4>Ante Interdum Raclette</h4>-->
+<!--                <p>Lorem ipsum dolor amet raclette chambray bitters, hammock celiac slow-carb-->
+<!--                  flexitarian four dollar toast food truck health goth. Air plant brunch food truck-->
+<!--                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch-->
+<!--                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray-->
+<!--                  typewriter put a bird on it brooklyn forage.<br><br>Air plant brunch food truck-->
+<!--                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch-->
+<!--                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray-->
+<!--                  typewriter put bird brooklyn</p>-->
+<!--                <div class="primary-button">-->
+<!--                  <a href="#">Read More</a>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="col-md-6">-->
+<!--              <img src="/images/right-image.jpg" alt="">-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </section>-->
 
     </div>
   </div>
@@ -422,25 +424,25 @@
           <li>
             <a href="/calendar">Calendar</a>
           </li>
-          <li>
-            <span class="opener">Dropdown One</span>
-            <ul>
-              <li><a href="#">First Sub Menu</a></li>
-              <li><a href="#">Second Sub Menu</a></li>
-              <li><a href="#">Third Sub Menu</a></li>
-            </ul>
-          </li>
-          <li>
-            <span class="opener">Dropdown Two</span>
-            <ul>
-              <li><a href="#">Sub Menu #1</a></li>
-              <li><a href="#">Sub Menu #2</a></li>
-              <li><a href="#">Sub Menu #3</a></li>
-            </ul>
-          </li>
-          <li>
-            <a href="https://www.google.com">External Link</a>
-          </li>
+<!--          <li>-->
+<!--            <span class="opener">Dropdown One</span>-->
+<!--            <ul>-->
+<!--              <li><a href="#">First Sub Menu</a></li>-->
+<!--              <li><a href="#">Second Sub Menu</a></li>-->
+<!--              <li><a href="#">Third Sub Menu</a></li>-->
+<!--            </ul>-->
+<!--          </li>-->
+<!--          <li>-->
+<!--            <span class="opener">Dropdown Two</span>-->
+<!--            <ul>-->
+<!--              <li><a href="#">Sub Menu #1</a></li>-->
+<!--              <li><a href="#">Sub Menu #2</a></li>-->
+<!--              <li><a href="#">Sub Menu #3</a></li>-->
+<!--            </ul>-->
+<!--          </li>-->
+<!--          <li>-->
+<!--            <a href="https://www.google.com">External Link</a>-->
+<!--          </li>-->
         </ul>
       </nav>
 
