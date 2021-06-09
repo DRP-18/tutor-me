@@ -2,6 +2,7 @@ package imperial.drp.controller
 
 import imperial.drp.dao.TaskRepository
 import imperial.drp.dao.PersonRepository
+import imperial.drp.entity.Person
 import imperial.drp.entity.Task
 import imperial.drp.entity.Tutee
 import imperial.drp.entity.Tutor
@@ -24,7 +25,7 @@ class DrpController {
     @Autowired
     private val personRepository: PersonRepository? = null
 
-    @RequestMapping("/app")
+    @RequestMapping("/")
     fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
         if (userId != null) {
             var userOpt = personRepository!!.findById(userId)
@@ -32,10 +33,11 @@ class DrpController {
                 var user = userOpt.get()
                 model.addAttribute("username", user.name!!)
                 model.addAttribute("nowTime", Calendar.getInstance())
+                model.addAttribute("userType", getUserType(user))
                 when (user) {
                     is Tutor -> {
                         val tasks =
-                            taskRepository!!.findByTutorOrderByStartTimeAsc(personRepository!!.findByName(user.name!!)[0])
+                                taskRepository!!.findByTutorOrderByStartTimeAsc(personRepository!!.findByName(user.name!!)[0])
                         val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
                         user.tutees!!.forEach {
                             tuteeTasksMap[it] = ArrayList()
@@ -44,18 +46,31 @@ class DrpController {
                             tuteeTasksMap[it.tutee!!]!!.add(it)
                         }
                         model.addAttribute("tuteeTasksMap", tuteeTasksMap)
-                        return "tutorHome"
                     }
                     is Tutee -> {
                         val tasks =
-                            taskRepository!!.findByTuteeOrderByStartTimeAsc(personRepository!!.findByName(user.name!!)[0])
+                                taskRepository!!.findByTuteeOrderByStartTimeAsc(personRepository!!.findByName(user.name!!)[0])
                         model.addAttribute("tasks", tasks)
-                        return "tuteeHome"
                     }
                 }
             }
         }
-        return "login"
+        return "homepage"
+    }
+
+    fun getUserType(person: Person): String {
+        return (
+                when (person) {
+                    is Tutor -> {
+                        "tutor"
+                    }
+                    is Tutee -> {
+                        "tutee"
+                    }
+                    else -> {
+                        "tutor"
+                    }
+                })
     }
 
     @PostMapping("/login")
@@ -69,24 +84,26 @@ class DrpController {
             val userId = matchingUsers[0].id
             val cookie = Cookie("user_id", userId.toString())
             response.addCookie(cookie)
+            val userType = getUserType(matchingUsers[0])
+            response.addCookie(Cookie("user_type", userType))
         }
         return "redirect"
     }
 
-    @GetMapping("/signup")
-    fun signupGet(
-        response: HttpServletResponse,
-        model: Model
-    ): String {
-        return "signup"
-    }
+//    @GetMapping("/signup")
+//    fun signupGet(
+//        response: HttpServletResponse,
+//        model: Model
+//    ): String {
+//        return "signup"
+//    }
 
     @PostMapping("/signup")
     fun signupPost(
-        @RequestParam(value = "username") username: String,
-        @RequestParam(value = "userType", required = false) userType: String?,
-        response: HttpServletResponse,
-        model: Model
+            @RequestParam(value = "username") username: String,
+            @RequestParam(value = "userType", required = false) userType: String?,
+            response: HttpServletResponse,
+            model: Model
     ): String {
         if (userType != null) {
             var matchingUsers = personRepository!!.findByName(username)
@@ -105,7 +122,9 @@ class DrpController {
                 personRepository.save(user)
                 val userId = user.id
                 val cookie = Cookie("user_id", userId.toString())
+                val typeCookie = Cookie("user_type", userType)
                 response.addCookie(cookie)
+                response.addCookie(typeCookie)
             }
         }
         return "redirect"
@@ -116,15 +135,18 @@ class DrpController {
         val cookie = Cookie("user_id", null)
         cookie.maxAge = 0
         response.addCookie(cookie)
+        val cookie2 = Cookie("user_type", null)
+        cookie2.maxAge = 0
+        response.addCookie(cookie2)
         return "redirect"
     }
 
     @PostMapping("/addtutee")
     fun addtutee(
-        @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "tutee_name") tuteeName: String,
-        response: HttpServletResponse,
-        model: Model
+            @CookieValue(value = "user_id") userId: Long,
+            @RequestParam(value = "tutee_name") tuteeName: String,
+            response: HttpServletResponse,
+            model: Model
     ): String {
         personRepository!!.findById(userId).ifPresent {
             if (it is Tutor) {
@@ -145,13 +167,13 @@ class DrpController {
 
     @PostMapping("/addtask")
     fun addtask(
-        @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "start_time") startTime: String,
-        @RequestParam(value = "end_time") endTime: String,
-        @RequestParam(value = "content") content: String,
-        @RequestParam(value = "tutee_id") tuteeId: Long,
-        response: HttpServletResponse,
-        model: Model
+            @CookieValue(value = "user_id") userId: Long,
+            @RequestParam(value = "start_time") startTime: String,
+            @RequestParam(value = "end_time") endTime: String,
+            @RequestParam(value = "content") content: String,
+            @RequestParam(value = "tutee_id") tuteeId: Long,
+            response: HttpServletResponse,
+            model: Model
     ): String {
         personRepository!!.findById(userId).ifPresent { person ->
             if (person is Tutor) {
@@ -175,10 +197,10 @@ class DrpController {
     }
     @PostMapping("/deletetask")
     fun deletetask(
-        @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "task_id") taskId: Long,
-        response: HttpServletResponse,
-        model: Model
+            @CookieValue(value = "user_id") userId: Long,
+            @RequestParam(value = "task_id") taskId: Long,
+            response: HttpServletResponse,
+            model: Model
     ): String {
         personRepository!!.findById(userId).ifPresent { person ->
             if (person is Tutor) {

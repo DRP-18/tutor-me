@@ -13,6 +13,7 @@ class WebSocketMessageConfig : WebSocketMessageBrokerConfigurer {
     @Override
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry.addEndpoint("/textChat-chat").withSockJS()
+        registry.addEndpoint("/videoCall-video").withSockJS()
     }
 
     @Override
