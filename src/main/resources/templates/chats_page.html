@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
 
-    <title>Ramayana - Simple HTML Page</title>
+    <title>Tutor-Me</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -20,6 +20,17 @@
     <link rel="stylesheet" href="/css/templatemo-style.css">
     <link rel="stylesheet" href="/css/owl.css">
 
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+    <script type="text/javascript" src="https://momentjs.com/downloads/moment.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/js/chatScript.js"></script>
   </head>
 
 <body class="is-preload">
@@ -34,7 +45,7 @@
             <!-- Header -->
             <header id="header">
               <div class="logo">
-                <a href="/homepage">Tutor-Me</a>
+                <a href="/">Tutor-Me</a>
               </div>
             </header>
 
@@ -51,28 +62,45 @@
 
 
 
-            <section class="simple-post">
-              <div class="container-fluid">
+            <section >
+              <div class="container-fluid h-100">
 
-               <div class="row">
-                  <div class="col-md-6">
-						<h2>.02 Left Column</h2>
-                      <p>Quisque sodales vestibulum arcu porttitor finibus. Phasellus dictum nisl id augue ornare, vel interdum nibh mollis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Class aptent taciti sociosqu ad litora torquent.</p>
-                      <p>Maecenas non egestas metus, sed ultricies lectus. Aliquam sit amet gravida tellus. Phasellus id erat nec mi ullamcorper viverra. Quisque vitae pharetra sem. Maecenas sit amet velit ultrices, malesuada quam id, porta nisl.</p>
-                      <br><br>
-
-                  </div>
-                  <div class="col-md-6">
-						<h2>.02 Right Column</h2>
-                      <p>Vivamus ornare, eros et ornare consectetur, ipsum ipsum sollicitudin libero, at condimentum risus nulla non enim. Quisque sodales vestibulum arcu porttitor finibus. Phasellus dictum nisl id augue ornare, vel interdum nibh mollis.</p>
-                      <p>Donec et massa at dolor condimentum ornare nec non lorem. Maecenas non egestas metus, sed ultricies lectus. Aliquam sit amet gravida tellus. Phasellus id erat nec mi ullamcorper viverra. Quisque vitae pharetra sem. Maecenas sit amet velit ultrices, malesuada quam id, porta nisl. Cras scelerisque ex ut bibendum egestas.</p>
-
-                  </div>
+                <div id="chat-page" >
+                    <div class="row justify-content-center h-100">
+            
+                        <div class="col-md-8 col-xl-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-flex bd-highlight">
+                                        <div class="chat-summary">
+                                            <span>Chat room</span>
+                                        </div>
+                                    </div>
+                                </div>
+            
+                                <div class="card-body">
+            
+                                    <div id="chat">
+            
+                                    </div>
+            
+                                </div>
+            
+                                <form id="message-controls" name="message-controls" class="card-footer">
+                                    <div class="input-group">
+                                        <textarea id="message" class="form-control all-input" placeholder="Type your message..."></textarea>
+                                        <div class="input-group-append">
+                                            <button class="fas fa-location-arrow" type="submit"></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-              </div>
+            </div>
               </section>
-
+<!-- 
               <section class="simple-post">
               <div class="container-fluid">
 
@@ -97,10 +125,10 @@
                 </div>
 
               </div>
-              </section>
+              </section> -->
 
             <!-- Contact Form -->
-            <section class="contact-form">
+            <!-- <section class="contact-form">
               <div class="container-fluid">
                 <div class="row">
                   <div class="col-md-6">
@@ -130,7 +158,7 @@
                     </form>
                   </div>
                   <div class="col-md-6">
-                    <div id="map">
+                    <div id="map"> -->
                     <!-- How to change your own map point
                            1. Go to Google Maps
                            2. Click on your location point
@@ -138,12 +166,12 @@
                            4. Copy only URL and paste it within the src="" field below
                     -->
 
-                      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1197183.8373802372!2d-1.9415093691103689!3d6.781986417238027!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdb96f349e85efd%3A0xb8d1e0b88af1f0f5!2sKumasi+Central+Market!5e0!3m2!1sen!2sth!4v1532967884907" width="100%" height="420px" frameborder="0" style="border:0" allowfullscreen></iframe>
+                      <!-- <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1197183.8373802372!2d-1.9415093691103689!3d6.781986417238027!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdb96f349e85efd%3A0xb8d1e0b88af1f0f5!2sKumasi+Central+Market!5e0!3m2!1sen!2sth!4v1532967884907" width="100%" height="420px" frameborder="0" style="border:0" allowfullscreen></iframe>
                     </div>
                   </div>
                 </div>
               </div>
-            </section>
+            </section> -->
 
           </div>
         </div>
@@ -163,7 +191,7 @@
             <!-- Menu -->
             <nav id="menu">
               <ul>
-                <li><a href="/homepage">Homepage</a></li>
+                <li><a href="/">Homepage</a></li>
                 <li><a href="/chats_page">Chats</a></li>
                 <li><a href="/calls_page">Calls</a></li>
                 <li>

@@ -14,21 +14,24 @@ class SitePageController {
         return "homepage"
     }
 
-    @RequestMapping("/videoCall")
-    fun videoCallPage(@CookieValue(value = "user_id", required = false) userId: String, response: HttpServletResponse)  {
-        response.setHeader("Location", "http://localhost:3000/")
-        response.status = 302
-        response.addCookie(Cookie("user_id", userId))
-        println("redirected, this was the cookie $userId")
+//    fun videoCallPage(@CookieValue(value = "user_id", required = false) userId: String, response: HttpServletResponse)  {
+////        response.setHeader("Location", "http://localhost:3000/")
+////        response.status = 302
+////        response.addCookie(Cookie("user_id", userId))
+////        println("redirected, this was the cookie $userId")
+//    }
+    @RequestMapping("/calls_page")
+    fun videoCallPage() : String {
+        return "index2"
     }
 
     @RequestMapping("/voiceCall")
     fun voiceCallPage() : String {
         return "voiceCall"
     }
-    @RequestMapping("/textChat")
+    @RequestMapping("/chats_page")
     fun textChatPage() : String {
-        return "textChat2"
+        return "chats_page"
     }
 
 
