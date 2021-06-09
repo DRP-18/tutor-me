@@ -4,28 +4,26 @@ let stompClient
 let username
 
 const connect = (event) => {
-    username = document.querySelector('#username').value.trim()
+    
+    username = "New User"  
+    
     if (username) {
-        const login = document.querySelector('#login')
-        login.classList.add('hide')
-
-        const chatPage = document.querySelector('#chat-page')
-        chatPage.classList.remove('hide')
-
+               
         const socket = new SockJS('/textChat-chat')
         stompClient = Stomp.over(socket)
         stompClient.connect({}, onConnected, onError)
     }
-    event.preventDefault()
+    // event.preventDefault()
 }
 
 const onConnected = () => {
     stompClient.subscribe('/topic/chat', onMessageReceived)
-    console.log(JSON.stringify({sender: username, type: 'CONNECT'}))
-    stompClient.send("/app/chat.newUser",
-        {},
-        JSON.stringify({sender: username, type: 'CONNECT'})
-    )
+    
+    const cookieData = document.cookie.split("=")
+    const ID = cookieData[1]
+    stompClient.send("/app/chat.existingUser", {}, JSON.stringify({sender: ID, type: 'CONNECT'}))
+    stompClient.subscribe('/topic/chat-' + ID, saveUsername)
+      
     const status = document.querySelector('#status')
     status.className = 'hide'
 }
@@ -34,6 +32,18 @@ const onError = (error) => {
     const status = document.querySelector('#status')
     status.innerHTML = 'Could not find the connection you were looking for. Move along. Or, Refresh the page!'
     status.style.color = 'red'
+}
+
+const saveUsername = (data) => {
+    const message = JSON.parse(data.body);
+    username = message.sender
+    console.log(username)
+
+    console.log(JSON.stringify({sender: username, type: 'CONNECT'}))
+    stompClient.send("/app/chat.newUser",
+        {},
+        JSON.stringify({sender: username, type: 'CONNECT'})
+    )
 }
 
 const sendMessage = (event) => {
@@ -120,7 +130,8 @@ const getAvatarColor = (messageSender) => {
     return colours[index]
 }
 
-const loginForm = document.querySelector('#login-form')
-loginForm.addEventListener('submit', connect, true)
+// const loginForm = document.querySelector('#login-form')
+// loginForm.addEventListener('submit', connect, true)
+connect({})
 const messageControls = document.querySelector('#message-controls')
 messageControls.addEventListener('submit', sendMessage, true)
