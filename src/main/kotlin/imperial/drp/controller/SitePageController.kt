@@ -11,7 +11,7 @@ class SitePageController {
 
     @RequestMapping("/")
     fun homePage() : String {
-        return "index"
+        return "homepage"
     }
 
     @RequestMapping("/videoCall")
@@ -28,7 +28,7 @@ class SitePageController {
     }
     @RequestMapping("/textChat")
     fun textChatPage() : String {
-        return "textChat2"
+        return "chats_page"
     }
 
 
