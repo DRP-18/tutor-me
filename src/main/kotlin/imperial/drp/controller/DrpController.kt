@@ -31,6 +31,7 @@ class DrpController {
             if (userOpt.isPresent) {
                 var user = userOpt.get()
                 model.addAttribute("username", user.name!!)
+                model.addAttribute("nowTime", Calendar.getInstance())
                 when (user) {
                     is Tutor -> {
                         val tasks =
@@ -164,7 +165,9 @@ class DrpController {
                     var endCalendar = GregorianCalendar()
                     endCalendar.time = sdf.parse(endTime)
 
-                    taskRepository!!.save(Task(startCalendar, endCalendar, person, tutee, content))
+                    if (startCalendar <= endCalendar) {
+                        taskRepository!!.save(Task(startCalendar, endCalendar, person, tutee, content))
+                    }
                 }
             }
         }
