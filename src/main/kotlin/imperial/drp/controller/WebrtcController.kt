@@ -2,15 +2,12 @@ package imperial.drp.controller
 
 import imperial.drp.dao.PersonRepository
 import imperial.drp.model.CallingMessage
-import imperial.drp.model.VideoMessage
-import org.slf4j.LoggerFactory
+import imperial.drp.model.SimpleMessage
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
-import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.SimpMessageSendingOperations
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.CookieValue
 
 @Controller
 class WebrtcController {
@@ -21,8 +18,18 @@ class WebrtcController {
     @Autowired
     private val personRepository: PersonRepository? = null
 
+    @MessageMapping("/video.getUsername")
+    fun getName(@Payload message: SimpleMessage) {
+        val id = message.message
+        println("This is the username message $message")
+        println("This is the id converted to a long ${id.toLong()}")
+        val name = personRepository?.findById(id.toLong())?.get()?.name!!
+        println("Returning $name to $id")
+        sender.convertAndSend("/topic/video/${id}/username", SimpleMessage(name))
+    }
+
     @MessageMapping("/video.disconnect")
-    fun disconnect(@Payload message: VideoMessage)  {
+    fun disconnect(@Payload message: SimpleMessage)  {
         // delete user from records
     }
 
