@@ -1,53 +1,67 @@
 package imperial.drp.controller
 
 import imperial.drp.dao.PersonRepository
+import imperial.drp.entity.Person
 import imperial.drp.model.CallingMessage
+import imperial.drp.model.CallingMessageWithName
 import imperial.drp.model.SimpleMessage
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.messaging.simp.SimpMessageSendingOperations
 import org.springframework.stereotype.Controller
+import java.util.*
+
 
 @Controller
 class WebrtcController {
 
     @Autowired
-    lateinit var sender : SimpMessageSendingOperations
+    lateinit var sender: SimpMessageSendingOperations
 
     @Autowired
     private val personRepository: PersonRepository? = null
 
-    @MessageMapping("/video.getUsername")
-    fun getName(@Payload message: SimpleMessage) {
-        val id = message.message
-        println("This is the username message $message")
-        println("This is the id converted to a long ${id.toLong()}")
-        val name = personRepository?.findById(id.toLong())?.get()?.name!!
-        println("Returning $name to $id")
-        sender.convertAndSend("/topic/video/${id}/username", SimpleMessage(name))
+    @MessageMapping("/video.endCall")
+    fun endCall(@Payload message: SimpleMessage) {
+        println("The disconnecting message is $message")
+        println("The disconnecting message 2 ${message.message}")
+
+
+        sender.convertAndSend("/topic/video/${message.message}/endCall", object {})
+    }
+
+    @MessageMapping("/video.getAllUsers")
+    fun getAllUsers(@Payload message: SimpleMessage) {
+
+        val people = mutableMapOf<Long, String>()
+        personRepository!!.findAll().forEach {
+            people.put(it.id!!, it.name!!)
+        }
+        sender.convertAndSend("/topic/video/${message.message}/username", object {
+            val data = people
+        })
     }
 
     @MessageMapping("/video.disconnect")
-    fun disconnect(@Payload message: SimpleMessage)  {
-        // delete user from records
+    fun disconnect(@Payload message: SimpleMessage) {
+        println("The disconnecting message is $message")
+        sender.convertAndSend("/topic/video/${message.message}/endCall", object {})
     }
 
     @MessageMapping("/video.callUser")
     fun callUser(@Payload message: CallingMessage) {
         println("User message: ${message.callee}, ${message.caller}")
-//        val calleeID = personRepository?.findByName(message.callee)?.get(0)?.id
-//        println("Callee ID: ${calleeID}")
         val calleeID = message.callee
-        sender.convertAndSend("/topic/video/$calleeID/incomingCall", message)
+        val callerName = personRepository?.findById(message.caller.toLong())!!.get().name!!
+        sender.convertAndSend("/topic/video/$calleeID/incomingCall",
+                CallingMessageWithName(message.callee, message.caller, callerName, message.signal))
     }
 
 
     @MessageMapping("/video.acceptCall")
-    fun acceptCall(@Payload message: CallingMessage){
+    fun acceptCall(@Payload message: CallingMessage) {
         println("accept Call message: ${message.callee}, ${message.caller}")
-//        val callerID = personRepository?.findByName(message.caller)?.get(0)?.id
-//        print("Caller ID: ${callerID}}}")
         val callerID = message.caller
 
         sender.convertAndSend("/topic/video/$callerID/callAccepted", message)

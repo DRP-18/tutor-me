@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Options = ({ children }) => {
-    const { me, callAccepted, name, setName, callEnded, leaveCall, callUser } = useContext(SocketContext);
+    const { me, users, callAccepted, name, setName, callEnded, leaveCall, callUser } = useContext(SocketContext);
     const [idToCall, setIdToCall] = useState("");
     const classes = useStyles();
 
@@ -73,6 +73,20 @@ const Options = ({ children }) => {
                             )
                             }
                         </Grid>
+                    </Grid>
+                    <Grid>
+                        {Object.entries(users).map(([key, value]) => {
+                        {/*{Object.keys(users).map(key => {*/}
+                            console.log("This is me " + key + "-" + value)
+                            if (key === me) {
+                                return null;
+                            }
+                            return (
+                                <Button variant="contained" color="primary" fullWidth startIcon={<Phone fontSize="large" />} onClick={() => callUser(key)} className={classes.margin}>
+                                    Call {value}
+                                </Button>
+                            );
+                        })}
                     </Grid>
                 </form>
                 {children}

@@ -17,6 +17,7 @@ const ContextProvider = ({ children }) => {
     /*These are state fields */
     const [stream, setStream] = useState();
     const [me, setMe] = useState("");
+    const [users, setUsers] = useState({});
     const [call, setCall] = useState({});
     const [callAccepted, setCallAccepted] = useState(false);
     const [callEnded, setCallEnded] = useState(false);
@@ -52,23 +53,44 @@ const ContextProvider = ({ children }) => {
         console.log("This is my user ID: " + userID)
         stompClient.subscribe('/topic/video/' + userID + '/incomingCall', incomingCall)
         stompClient.subscribe('/topic/video/' + userID + '/username', onUsernameReceived)
-        stompClient.send("/app/video.getUsername", {}, JSON.stringify({message: userID}))
+        stompClient.subscribe('/topic/video/' + userID + '/endCall', leaveCall)
+        stompClient.send("/app/video.getAllUsers", {}, JSON.stringify({message: userID}))
     }
 
     const onError = () => {
         console.log("Error with socket connection!")
     }
 
-    const onUsernameReceived = (payload) => {
-        console.log(payload)
-        const message = JSON.parse(payload.body)
-        setName(message.message)
-        console.log("This is the returned username " + message.message)
+    function findUsersName(id) {
+        for (const [k, v] of Object.entries(users)) {
+            if (k == id) {
+                return v
+            }
+        }
     }
+
+    const onUsernameReceived = (payload) => {
+        console.log("This is the " + payload)
+        const message = JSON.parse(payload.body)
+        setUsers(message.data)
+        let name
+        for (const [k, v] of Object.entries(message.data)) {
+            if (k == userID) {
+                name = v
+                break
+            }
+        }
+        setMe(userID)
+        setName(name)
+        console.log(Object.keys(users))
+    }
+
+
 
     const incomingCall = (payload) => {
         const message = JSON.parse(payload.body);
-        setCall({ isReceivedCall: true, from: message.caller, name:message.caller, signal: message.signal})
+        console.log("Person calling me "+ message.callerName)
+        setCall({ isReceivedCall: true, from: message.caller, name:message.callerName, signal: message.signal})
         console.log("incoming call " + message)
         // recievingCall = true
         // caller = message.caller
@@ -108,7 +130,7 @@ const ContextProvider = ({ children }) => {
         console.log("Message being sent: ")
 
         peer.on("signal", (data) => {
-        console.log(JSON.stringify({ callee: id, caller: userID, signal: data }))
+            console.log(JSON.stringify({ callee: id, caller: userID, signal: data }))
             stompClient.send("/app/video.callUser", {},
                 JSON.stringify({ callee: id, caller: userID, signal: data }))
         });
@@ -122,6 +144,7 @@ const ContextProvider = ({ children }) => {
         const onCallAccepted = (signal) => {
             setCallAccepted(true);
             const message = JSON.parse(signal.body)
+            setCall({name:findUsersName(id)})
             peer.signal(message.signal)
         }
         stompClient.subscribe('/topic/video/' + userID + '/callAccepted', onCallAccepted)
@@ -131,14 +154,17 @@ const ContextProvider = ({ children }) => {
     }
 
     const leaveCall = () => {
+        console.log("LEAVING THE CALL " + call.from)
         setCallEnded(true);
         connectionRef.current.destroy(); /*Stop recieving input from user camera and microphone */
         // window.location.reload();
+        stompClient.send("/app/video.endCall", {},
+            JSON.stringify({message: call.from}))
     }
 
     return (
         /*This exposes all the information in this file to the package */
-        <SocketContext.Provider value={{ call, callAccepted, myVideo, userVideo, stream, name, setName, callEnded, me, callUser, leaveCall, answerCall }}>
+        <SocketContext.Provider value={{ call, callAccepted, myVideo, userVideo, stream, name, setName, callEnded, me, users, callUser, leaveCall, answerCall }}>
             {children}
         </SocketContext.Provider >
     );
