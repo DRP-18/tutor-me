@@ -2,18 +2,12 @@ import React, { createContext, useState, useRef, useEffect } from "react";
 import Peer from "simple-peer";
 import SockJS from "sockjs-client"
 import Stomp from "stompjs"
-// import Stomp from "webstomp-client"
 
 const SocketContext = createContext();
 let stompClient;
-const userID = 2
-// getCookie("user_id");
 
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-}
+
+
 
 
 /* Pass full URL of deployed server*/
@@ -27,6 +21,8 @@ const ContextProvider = ({ children }) => {
     const [callAccepted, setCallAccepted] = useState(false);
     const [callEnded, setCallEnded] = useState(false);
     const [name, setName] = useState("");
+    const userID = getCookie("user_id");
+
 
 
     const myVideo = useRef();
@@ -45,8 +41,15 @@ const ContextProvider = ({ children }) => {
             });
         stompClient.connect({}, onConnected, onError)
     }, []); /* Has an empty dependancy array*/
-
+    
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    
     const onConnected = () => {
+        console.log("This is my user ID: " + userID)
         stompClient.subscribe('/topic/video/' + userID + '/incomingCall', incomingCall)
         // stompClient.subscribe('/topic/video/' + userID + '/', onMessageReceived)
     }
@@ -75,7 +78,7 @@ const ContextProvider = ({ children }) => {
 
         peer.on("signal", (data) => {
             stompClient.send("/app/video.acceptCall", {},
-            JSON.stringify({ singal: data, callee: call.from })) //Since we are returning the message to the caller
+            JSON.stringify({ signal: data, callee: call.from })) //Since we are returning the message to the caller
         });
 
         peer.on("stream", (currentStream) => {
@@ -91,9 +94,26 @@ const ContextProvider = ({ children }) => {
     // CallPeer
     const callUser = (id) => {
         /*we are the person calling */
-        const peer = new Peer({ initiator: true, trickle: false, stream });
+        const peer = new Peer({ initiator: true, trickle: false,       config: {
+
+                iceServers: [
+                    {
+                        urls: "stun:numb.viagenie.ca",
+                        username: "sultan1640@gmail.com",
+                        credential: "98376683"
+                    },
+                    {
+                        urls: "turn:numb.viagenie.ca",
+                        username: "sultan1640@gmail.com",
+                        credential: "98376683"
+                    }
+                ]
+            },
+            stream: stream,
+        });
         console.log("The user has been called by " + id)
         console.log("Message being sent: ")
+
         peer.on("signal", (data) => {
         console.log(JSON.stringify({ callee: id, caller: userID, signal: data }))
             stompClient.send("/app/video.callUser", {},
@@ -101,14 +121,15 @@ const ContextProvider = ({ children }) => {
         });
 
         peer.on("stream", (currentStream) => {
-            userVideo.current.srcObject = currentStream;
+            if (userVideo.current) {
+                userVideo.current.srcObject = currentStream;
+            }
         });
 
         const onCallAccepted = (signal) => {
             setCallAccepted(true);
             peer.signal(signal)
         }
-
         stompClient.subscribe('/topic/video/' + userID + '/callAccepted', onCallAccepted)
   
 
