@@ -11,7 +11,7 @@ class SitePageController {
 
     @RequestMapping("/")
     fun homePage() : String {
-        return "index"
+        return "homepage"
     }
 
     @RequestMapping("/videoCall")
