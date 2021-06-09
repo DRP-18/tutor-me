@@ -34,8 +34,8 @@ class DrpController {
                 when (user) {
                     is Tutor -> {
                         val tasks =
-                            taskRepository!!.findByTutor(personRepository!!.findByName(user.name!!)[0])
-                        val tuteeTasksMap = HashMap<Tutee, MutableList<Task>>()
+                            taskRepository!!.findByTutorOrderByStartTimeAsc(personRepository!!.findByName(user.name!!)[0])
+                        val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
                         user.tutees!!.forEach {
                             tuteeTasksMap[it] = ArrayList()
                         }
@@ -47,7 +47,7 @@ class DrpController {
                     }
                     is Tutee -> {
                         val tasks =
-                            taskRepository!!.findByTutee(personRepository!!.findByName(user.name!!)[0])
+                            taskRepository!!.findByTuteeOrderByStartTimeAsc(personRepository!!.findByName(user.name!!)[0])
                         model.addAttribute("tasks", tasks)
                         return "tuteeHome"
                     }
@@ -156,7 +156,7 @@ class DrpController {
             if (person is Tutor) {
                 var tutee = personRepository!!.findById(tuteeId).get()
                 if (tutee is Tutee) {
-                    var sdf = SimpleDateFormat("yyyyMMddHHmmss")
+                    var sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm")
 
                     var startCalendar = GregorianCalendar()
                     startCalendar.time = sdf.parse(startTime)
