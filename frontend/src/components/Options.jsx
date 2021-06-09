@@ -17,6 +17,10 @@ const useStyles = makeStyles((theme) => ({
             flexDirection: 'column',
         },
     },
+    typography: {
+        flexGrow: 1,
+        textAlign: "center"
+    },
     container: {
         width: '600px',
         margin: '35px 0',
@@ -48,29 +52,28 @@ const Options = ({ children }) => {
             <Paper elevation={10} className={classes.paper}>
                 <form className={classes.root} noValidate autoComplete="off">
                     <Grid container className={classes.gridContainer}>
-                        <Grid item xs={12} md={6} className={classes.padding}>
-                            <Typography gutterBottom variant="h6">Account Info</Typography>
-                            <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
-                            <CopyToClipboard text={me} className={classes.margin}>
-                                <Button variant="contained" color="primary" fullWidth startIcon={<Assignment fontSize="large" />}>
-                                    Copy Your ID
-                                </Button>
-                            </CopyToClipboard>
-                        </Grid>
+                        {/*<Grid item xs={12} md={6} className={classes.padding}>*/}
+                            {/*<Typography gutterBottom variant="h6">Account Info</Typography>*/}
+                            {/*<TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} fullWidth />*/}
+                            {/*<CopyToClipboard text={me} className={classes.margin}>*/}
+                            {/*    <Button variant="contained" col+or="primary" fullWidth startIcon={<Assignment fontSize="large" />}>*/}
+                            {/*        Copy Your ID*/}
+                            {/*    </Button>*/}
+                            {/*</CopyToClipboard>*/}
+                        {/*</Grid>*/}
 
-                        <Grid item xs={12} md={6} className={classes.padding}>
-                            <Typography gutterBottom variant="h6">Make a call</Typography>
-                            <TextField label="ID to call" value={idToCall} onChange={(e) => setIdToCall(e.target.value)} fullWidth />
-                            {callAccepted && !callEnded ? (
+                        <Grid item xs={12} md={12} className={classes.padding}>
+                            <Typography gutterBottom variant="h6"  className={classes.typography}>Select a person to call</Typography>
+                            {/*<TextField label="ID to call" value={idToCall} onChange={(e) => setIdToCall(e.target.value)} fullWidth />*/}
+                            {callAccepted && !callEnded && (
                                 <Button variant="contained" color="secondary" fullWidth startIcon={<PhoneDisabled fontSize="large" />} onClick={leaveCall} className={classes.margin}>
                                     End call
                                 </Button>
-                            ) : (
-                                <Button variant="contained" color="primary" fullWidth startIcon={<Phone fontSize="large" />} onClick={() => callUser(idToCall)} className={classes.margin}>
-                                    Call
-                                </Button>
-
                             )
+                                // :(
+                                // <Button variant="contained" color="primary" fullWidth startIcon={<Phone fontSize="large" />} onClick={() => callUser(idToCall)} className={classes.margin}>
+                                //     Call
+                                // </Button>
                             }
                         </Grid>
                     </Grid>
