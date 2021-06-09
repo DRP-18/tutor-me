@@ -22,7 +22,7 @@ class SitePageController {
 //    }
     @RequestMapping("/calls_page")
     fun videoCallPage() : String {
-        return "index2"
+        return "index"
     }
 
     @RequestMapping("/voiceCall")

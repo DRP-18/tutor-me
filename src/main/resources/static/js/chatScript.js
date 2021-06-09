@@ -19,12 +19,19 @@ const connect = (event) => {
 const onConnected = () => {
   stompClient.subscribe('/topic/chat', onMessageReceived)
 
-  const cookieData = document.cookie.split("=")
-  const ID = cookieData[1]
+  const ID = getCookie("user_id")
   stompClient.send("/app/chat.existingUser", {},
       JSON.stringify({sender: ID, type: 'CONNECT'}))
   stompClient.subscribe('/topic/chat-' + ID, saveUsername)
 
+}
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return parts.pop().split(';').shift();
+  }
 }
 
 const onError = (error) => {

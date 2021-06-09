@@ -124,7 +124,16 @@ const ContextProvider = ({children}) => {
   const callUser = (id) => {
     /*we are the person calling */
     const peer = new Peer({
-      initiator: true, trickle: false, stream: stream,
+      initiator: true, trickle: false, config: {
+
+        iceServers: [
+          {
+            urls: "stun:numb.viagenie.ca",
+            username: "sultan1640@gmail.com",
+            credential: "98376683"
+          }
+        ]
+      }, stream: stream,
     });
     console.log("The user has been called by " + id)
     console.log("Message being sent: ")
@@ -141,7 +150,7 @@ const ContextProvider = ({children}) => {
     const onCallAccepted = (signal) => {
       setCallAccepted(true);
       const message = JSON.parse(signal.body)
-      setCall({name: findUsersName(id), from:id})
+      setCall({name: findUsersName(id), from: id})
       peer.signal(message.signal)
     }
     stompClient.subscribe('/topic/video/' + userID + '/callAccepted',
