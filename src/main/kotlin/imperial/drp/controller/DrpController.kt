@@ -20,7 +20,7 @@ class DrpController {
     @Autowired
     private val personRepository: PersonRepository? = null
 
-    @RequestMapping("/app")
+    @RequestMapping("/")
     fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
         if (userId != null) {
             var userOpt = personRepository!!.findById(userId)
@@ -50,7 +50,7 @@ class DrpController {
                 }
             }
         }
-        return "login"
+        return "homepage"
     }
 
     @PostMapping("/login")
@@ -59,22 +59,31 @@ class DrpController {
         response: HttpServletResponse,
         model: Model
     ): String {
+        println("got login post request")
         var matchingUsers = personRepository!!.findByName(username)
         if (matchingUsers.isNotEmpty()) {
             val userId = matchingUsers[0].id
             val cookie = Cookie("user_id", userId.toString())
             response.addCookie(cookie)
+            var userType = "tutor"
+            if (matchingUsers[0] is Tutor) {
+                userType = "tutor"
+            } else if (matchingUsers[0] is Tutee) {
+                userType = "tutee"
+            }
+            response.addCookie(Cookie("user_type", userType))
+            println("cookie added")
         }
         return "redirect"
     }
 
-    @GetMapping("/signup")
-    fun signupGet(
-        response: HttpServletResponse,
-        model: Model
-    ): String {
-        return "signup"
-    }
+//    @GetMapping("/signup")
+//    fun signupGet(
+//        response: HttpServletResponse,
+//        model: Model
+//    ): String {
+//        return "signup"
+//    }
 
     @PostMapping("/signup")
     fun signupPost(
@@ -100,7 +109,9 @@ class DrpController {
                 personRepository.save(user)
                 val userId = user.id
                 val cookie = Cookie("user_id", userId.toString())
+                val typeCookie = Cookie("user_type", userType)
                 response.addCookie(cookie)
+                response.addCookie(typeCookie)
             }
         }
         return "redirect"
@@ -111,6 +122,9 @@ class DrpController {
         val cookie = Cookie("user_id", null)
         cookie.maxAge = 0
         response.addCookie(cookie)
+        val cookie2 = Cookie("user_type", null)
+        cookie2.maxAge = 0
+        response.addCookie(cookie2)
         return "redirect"
     }
 }

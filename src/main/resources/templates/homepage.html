@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
@@ -12,12 +12,14 @@
   <title>Tutor-Me</title>
 
   <!-- Bootstrap core CSS -->
-  <link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link
+      href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Additional CSS Files -->
   <link rel="stylesheet" href="/css/fontawesome.css">
   <link rel="stylesheet" href="/css/templatemo-style.css">
-  <link rel="stylesheet" href="/css/owl.css">
+  <link
+      rel="stylesheet" href="/css/owl.css">
 
   <!-- CSS for popup login -->
   <link rel="stylesheet" href="/css/modelstyles.css">
@@ -25,14 +27,17 @@
 
 </head>
 
-<body class="is-preload">
+<body
+    class="is-preload">
 
 <!-- Wrapper -->
-<div id="wrapper">
+<div
+    id="wrapper">
 
   <!-- Main -->
   <div id="main">
-    <div class="inner">
+    <div
+        class="inner">
 
       <!-- Header -->
       <header id="header">
@@ -49,11 +54,14 @@
           </div>
 
           <div class="container">
-            <label for="username"><b>Username</b></label>
-            <input type="text" placeholder="Enter Username" name="username" required>
+            <label for="username">
+              <b>Username</b>
+            </label>
+            <input
+                type="text" placeholder="Enter Username" name="username" id="user-name" required>
 
             <!-- <label for="psw"><b>Password</b></label>
-            <input type="password" placeholder="Enter Password" name="psw" required> -->
+                        <input type="password" placeholder="Enter Password" name="psw" required> -->
 
             <button type="submit">Login</button>
             <button type="button" style="background-color: #0975a3"
@@ -71,13 +79,15 @@
 
       <div id="signUpModel" class="modal">
 
-        <form class="modal-content animate" action="/signup" method="post">
+        <form class="modal-content animate" action="/signup" method="post" name="signUpForm">
           <div class="imgcontainer">
             <img src="/images/img_avatar2.png" alt="Avatar" class="avatar">
           </div>
 
           <div class="container">
-            <label for="username"><b>Username</b></label>
+            <label for="username">
+              <b>Username</b>
+            </label>
             <input type="text" placeholder="Enter a username" name="username" required>
 
             <div class="col-sm-10">
@@ -110,21 +120,72 @@
 
       <script>
         window.onload = function () {
-          document.getElementById('loginModel').style.display = 'block'
+            const id = getCookie("user_id");
+            if (id === "") {
+            document.getElementById('loginModel').style.display = 'block'
+          }
+        }
+
+        // function fetchpost() {
+        //   // (A) GET FORM DATA
+        //   let data = new URLSearchParams();
+        //   data.append("username", document.getElementById("user-name").value);
+        //
+        //   // (B) FETCH
+        //   fetch('/login', {
+        //     method: 'post',
+        //     body: data
+        //   })
+        //   .then(function (response) {
+        //       return response.text();
+        //   })
+        //   // .then(function (text) {
+        //   //     console.log(text);
+        //   // })
+        //   .catch(function (error) {
+        //     alert(error)
+        //   });
+        //
+        //   // (C) PREVENT HTML FORM SUBMIT
+        //   return false;
+        // }
+
+        function getCookie(cname) {
+          var name = cname + "=";
+          var decodedCookie = decodeURIComponent(document.cookie);
+          var ca = decodedCookie.split(';');
+          for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+              c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+              return c.substring(name.length, c.length);
+            }
+          }
+          return "";
         }
       </script>
 
 
       <!-- Services -->
       <section class="services">
+        <h1 th:text="'Welcome, ' + ${username} + '!'"/>
+
+        <a href="/logout">
+            <button>Logout</button>
+        </a>
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-4">
               <div class="service-item first-item">
                 <div class="icon"></div>
                 <h4>Web Design</h4>
-                <p>Credit goes to <a rel="nofollow" href="https://www.pexels.com">Pexels</a> and <a
-                    rel="nofollow" href="https://www.rawpixel.com">Raw Pixel</a> for images used in
+                <p>Credit goes to
+                  <a rel="nofollow" href="https://www.pexels.com">Pexels</a>
+                  and
+                  <a rel="nofollow" href="https://www.rawpixel.com">Raw Pixel</a>
+                  for images used in
                   this template. Thank you.</p>
               </div>
             </div>
@@ -153,8 +214,8 @@
               <div class="service-item fivth-item">
                 <div class="icon"></div>
                 <h4>Get in touch</h4>
-                <p>You can get the fastest response from <a rel="nofollow"
-                                                            href="https://www.facebook.com/templatemo">templatemo</a>
+                <p>You can get the fastest response from
+                  <a rel="nofollow" href="https://www.facebook.com/templatemo">templatemo</a>
                   facebook page.</p>
               </div>
             </div>
@@ -251,7 +312,8 @@
   <!-- Sidebar -->
   <div id="sidebar">
 
-    <div class="inner">
+    <div
+        class="inner">
 
       <!-- Search Box -->
       <section id="search" class="alt">
@@ -263,10 +325,18 @@
       <!-- Menu -->
       <nav id="menu">
         <ul>
-          <li><a href="/">Homepage</a></li>
-          <li><a href="/chats_page">Chats</a></li>
-          <li><a href="/calls_page">Calls</a></li>
-          <li><a href="/calendar">Calendar</a></li>
+          <li>
+            <a href="/">Homepage</a>
+          </li>
+          <li>
+            <a href="/chats_page">Chats</a>
+          </li>
+          <li>
+            <a href="/calls_page">Calls</a>
+          </li>
+          <li>
+            <a href="/calendar">Calendar</a>
+          </li>
           <li>
             <span class="opener">Dropdown One</span>
             <ul>
@@ -283,32 +353,26 @@
               <li><a href="#">Sub Menu #3</a></li>
             </ul>
           </li>
-          <li><a href="https://www.google.com">External Link</a></li>
+          <li>
+            <a href="https://www.google.com">External Link</a>
+          </li>
         </ul>
       </nav>
 
       <!-- Footer -->
       <footer id="footer">
-        <br>DRP project by  </p>
+        <br>DRP project by
+        </p>
       </footer>
 
     </div>
   </div>
-</div>
-
-<!-- Scripts -->
-<!-- Bootstrap core JavaScript -->
+</body>
+</html></div><!-- Scripts --><!-- Bootstrap core JavaScript -->
 <script src="/assets/jquery/jquery.min.js"></script>
 <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
-
 <script src="/js/browser.min.js"></script>
 <script src="/js/breakpoints.min.js"></script>
 <script src="/js/transition.js"></script>
 <script src="/js/owl-carousel.js"></script>
-<script src="/js/custom.js"></script>
-</body>
-
-
-</body>
-
-</html>
+<script src="/js/custom.js"></script></body></body></html>

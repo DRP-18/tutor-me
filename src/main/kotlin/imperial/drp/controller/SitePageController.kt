@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletResponse
 @Controller
 class SitePageController {
 
-    @RequestMapping("/")
-    fun homePage() : String {
-        return "homepage"
-    }
+    // @RequestMapping("/")
+    // fun homePage() : String {
+    //     return "homepage"
+    // }
 
 //    fun videoCallPage(@CookieValue(value = "user_id", required = false) userId: String, response: HttpServletResponse)  {
 ////        response.setHeader("Location", "http://localhost:3000/")
