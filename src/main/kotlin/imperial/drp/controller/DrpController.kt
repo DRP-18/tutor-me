@@ -34,7 +34,7 @@ class DrpController {
                     is Tutor -> {
                         val tasks =
                             taskRepository!!.findByTutorOrderByStartTimeAsc(
-                                personRepository!!.findByName(
+                                personRepository.findByName(
                                     user.name!!
                                 )[0]
                             )
@@ -50,7 +50,7 @@ class DrpController {
                     is Tutee -> {
                         val tasks =
                             taskRepository!!.findByTuteeOrderByStartTimeAsc(
-                                personRepository!!.findByName(
+                                personRepository.findByName(
                                     user.name!!
                                 )[0]
                             )
@@ -181,7 +181,7 @@ class DrpController {
     ): String {
         personRepository!!.findById(userId).ifPresent { person ->
             if (person is Tutor) {
-                var tutee = personRepository!!.findById(tuteeId).get()
+                var tutee = personRepository.findById(tuteeId).get()
                 if (tutee is Tutee) {
                     var sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm")
 
@@ -246,7 +246,7 @@ class DrpController {
                 is Tutor -> {
                     var tasks =
                         taskRepository!!.findByTutorOrderByStartTimeAsc(
-                            personRepository!!.findByName(
+                            personRepository.findByName(
                                 user.name!!
                             )[0]
                         )
@@ -267,5 +267,21 @@ class DrpController {
             }
         }
         return ""
+    }
+
+    @GetMapping("viewtutees")
+    @ResponseBody
+    fun viewtutees(
+        @CookieValue(value = "user_id") userId: Long,
+        response: HttpServletResponse,
+    ): String {
+        var resp = ""
+        personRepository!!.findById(userId).ifPresent() { tutor ->
+            if (tutor is Tutor) {
+                resp = tutor.tutees!!.map { """{"name":"${it.name}","id":${it.id}}""" }.joinToString { it }
+            }
+        };
+
+        return resp
     }
 }
