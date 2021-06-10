@@ -4,14 +4,15 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-open class Message(
+class Message(
+        @field:ManyToOne var conversation: Conversation? = null,
         @field:Column(columnDefinition = "TIMESTAMP WITH TIME ZONE") var time: Calendar? = null,
         var message: String? = null
 ) {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    open val message_id: Long? = null
+    val message_id: Long? = null
 
 
 }

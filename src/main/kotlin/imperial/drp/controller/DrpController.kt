@@ -1,16 +1,16 @@
 package imperial.drp.controller
 
+import imperial.drp.dao.ConversationRepository
+import imperial.drp.dao.MessageRepository
 import imperial.drp.dao.TaskRepository
 import imperial.drp.dao.PersonRepository
-import imperial.drp.entity.Person
-import imperial.drp.entity.Task
-import imperial.drp.entity.Tutee
-import imperial.drp.entity.Tutor
+import imperial.drp.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import java.text.SimpleDateFormat
+import java.time.LocalTime
 import java.util.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
@@ -24,6 +24,12 @@ class DrpController {
 
     @Autowired
     private val personRepository: PersonRepository? = null
+
+    @Autowired
+    private val conversationRepository: ConversationRepository? = null
+
+    @Autowired
+    private val messageRepository: MessageRepository? = null
 
     @RequestMapping("/")
     fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
@@ -58,6 +64,56 @@ class DrpController {
         return "homepage"
     }
 
+    @RequestMapping("/chats_page")
+    fun textChatPage(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
+        if (userId != null) {
+            /* Conversations with this user_id */
+            val person = personRepository!!.findById(userId).get()
+            println("$person ${person.name} ${person.id}")
+            val convs = conversationRepository!!.findAllByUser1OrUser2(person, person)
+            println("Conversations $convs")
+            if (convs.isNotEmpty()) {
+                val recentChatsMap = mutableMapOf<Person, List<Message>>()
+
+                for (conv in convs) {
+                    var otherUser = conv.user1
+                    if (conv.user1!!.id == userId) {
+                        otherUser = conv.user2
+                    }
+                    println("Other user for $conv ${conv.id} ${conv.user1} ${conv.user2} is $otherUser")
+
+                    var messages = messageRepository!!.findByConversationOrderByTimeAsc(conv)
+                    println("Before sorted $messages")
+                    messages = messages.sortedBy { it.time }
+                    println("After sorting $messages")
+                    recentChatsMap[otherUser!!] = messages
+                }
+                model.addAttribute("recentChatsMap", recentChatsMap)
+            }
+        }
+        return "chats_page"
+    }
+
+    @RequestMapping("/calls_page")
+    fun videoCallPage(): String {
+        val person1 = personRepository!!.findById(1).get()
+        val person2 = personRepository!!.findById(2).get()
+        val conv = Conversation(person1, person2)
+        conversationRepository!!.save(conv)
+        messageRepository!!.save(Message(conv, GregorianCalendar(), "Hello World"))
+        val person11 = personRepository!!.findById(1).get()
+        val person21 = personRepository!!.findById(2).get()
+        val conv1 = Conversation(person11, person21)
+        conversationRepository!!.save(conv1)
+        messageRepository!!.save(Message(conv1, GregorianCalendar(), "Latest message"))
+        return "build/index"
+    }
+
+    @RequestMapping("/voiceCall")
+    fun voiceCallPage(): String {
+        return "voiceCall"
+    }
+
     fun getUserType(person: Person): String {
         return (
                 when (person) {
@@ -75,9 +131,9 @@ class DrpController {
 
     @PostMapping("/login")
     fun login(
-        @RequestParam(value = "username") username: String,
-        response: HttpServletResponse,
-        model: Model
+            @RequestParam(value = "username") username: String,
+            response: HttpServletResponse,
+            model: Model
     ): String {
         var matchingUsers = personRepository!!.findByName(username)
         if (matchingUsers.isNotEmpty()) {
@@ -195,6 +251,7 @@ class DrpController {
         }
         return "redirect"
     }
+
     @PostMapping("/deletetask")
     fun deletetask(
             @CookieValue(value = "user_id") userId: Long,

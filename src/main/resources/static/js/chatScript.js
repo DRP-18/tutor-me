@@ -18,7 +18,6 @@ const connect = (event) => {
 
 const onConnected = () => {
   stompClient.subscribe('/topic/chat', onMessageReceived)
-
   const ID = getCookie("user_id")
   stompClient.send("/app/chat.existingUser", {},
       JSON.stringify({sender: ID, type: 'CONNECT'}))
