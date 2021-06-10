@@ -124,13 +124,16 @@ const ContextProvider = ({children}) => {
   const callUser = (id) => {
     /*we are the person calling */
     const peer = new Peer({
-      initiator: true, trickle: false, config: {
+      initiator: true, trickle: false,
+      reconnectTimer: 100,
+      iceTransportPolicy: 'relay',
+      config: {
 
         iceServers: [
           {
-            urls: "stun:numb.viagenie.ca",
-            username: "sultan1640@gmail.com",
-            credential: "98376683"
+            urls: "stun.node4.co.uk:3478?transport=tcp",
+            // username: "sultan1640@gmail.com",
+            // credential: "98376683",
           }
         ]
       }, stream: stream,
