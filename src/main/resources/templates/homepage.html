@@ -196,10 +196,10 @@
                   </thead>
                   <tbody>
                   <tr th:each="task : ${tuteeTasks.value}">
-                    <td th:text="${task.startTime.time}"></td>
-                    <td th:text="${task.endTime.time}"></td>
-                    <td th:text="${task.content}"></td>
-                    <td>
+                    <td class="align-middle" th:text="${task.startTime.time}"></td>
+                    <td class="align-middle" th:text="${task.endTime.time}"></td>
+                    <td class="align-middle" th:text="${task.content}"></td>
+                    <td class="align-middle">
                       <form action="/deletetask" method="post">
                         <button class="btn btn-danger" type="submit" name="task_id"
                                 th:value="${task.id}">Delete
@@ -208,13 +208,13 @@
                     </td>
                   </tr>
                   <form action="/addtask" method="post">
-                    <td><input type="datetime-local" class="form-control" name="start_time"
+                    <td class="align-middle"><input type="datetime-local" class="form-control" name="start_time"
                                placeholder="e.g., 2018-06-12T19:30"></td>
-                    <td><input type="datetime-local" class="form-control" name="end_time"
+                    <td class="align-middle"><input type="datetime-local" class="form-control" name="end_time"
                                placeholder="e.g., 2018-06-12T19:30"></td>
-                    <td><input type="text" class="form-control" name="content"
+                    <td class="align-middle"><input type="text" class="form-control" name="content"
                                placeholder="Content"></td>
-                    <td>
+                    <td class="align-middle">
                       <button class="btn btn-primary" type="submit" name="tutee_id"
                               th:value="${tuteeTasks.key.id}">Add
                       </button>
@@ -251,10 +251,10 @@
                 </thead>
                 <tbody>
                 <tr th:each="task : ${tasks}">
-                  <td th:text="${task.startTime.time}"></td>
-                  <td th:text="${task.endTime.time}"></td>
-                  <td th:text="${task.tutor}"></td>
-                  <td th:text="${task.content}"></td>
+                  <td class="align-middle" th:text="${task.startTime.time}"></td>
+                  <td class="align-middle" th:text="${task.endTime.time}"></td>
+                  <td class="align-middle" th:text="${task.tutor}"></td>
+                  <td class="align-middle" th:text="${task.content}"></td>
                 </tr>
                 </tbody>
               </table>
