@@ -211,7 +211,7 @@ class DrpController {
     @RequestMapping("/deletetask")
     fun deletetask(
         @CookieValue(value = "user_id") userId: Long,
-        @CookieValue(value = "task_id") taskId: Long,
+        @RequestParam(value = "task_id") taskId: Long,
         response: HttpServletResponse,
         model: Model
     ): String {
@@ -250,7 +250,9 @@ class DrpController {
                                 user.name!!
                             )[0]
                         )
+                    print(tasks)
                     tasks = tasks.filter { it.tutee!!.name == tuteeName!! }
+                    print(tasks)
                     return tasks.map { toJsonString(it) }.toString()
 
                 }
@@ -278,7 +280,7 @@ class DrpController {
         var resp = ""
         personRepository!!.findById(userId).ifPresent() { tutor ->
             if (tutor is Tutor) {
-                resp = tutor.tutees!!.map { """{"name":"${it.name}","id":${it.id}}""" }.joinToString { it }
+                resp = tutor.tutees!!.map { """{"name":"${it.name}","id":${it.id}}""" }.toString()
             }
         };
 
