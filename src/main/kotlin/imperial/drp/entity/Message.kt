@@ -1,5 +1,6 @@
 package imperial.drp.entity
 
+import java.io.Serializable
 import java.util.*
 import javax.persistence.*
 

@@ -1,7 +1,8 @@
 'use strict'
 
-let stompClient
-let username
+let stompClient;
+let username;
+let allMessages;
 
 const connect = (event) => {
 
@@ -18,11 +19,22 @@ const connect = (event) => {
 
 const onConnected = () => {
   stompClient.subscribe('/topic/chat', onMessageReceived)
-  const ID = getCookie("user_id")
-  stompClient.send("/app/chat.existingUser", {},
-      JSON.stringify({sender: ID, type: 'CONNECT'}))
-  stompClient.subscribe('/topic/chat-' + ID, saveUsername)
+  const userId = getCookie("user_id")
+  stompClient.send("/app/chat.getMessages", {},
+      JSON.stringify({sender: userId}))
+  stompClient.subscribe('/topic/chat-' + userId + '-allMessages', saveMessages)
+  // stompClient.subscribe('/topic/chat-' + userId, saveUsername)
 
+}
+
+const saveMessages = (payload) => {
+  const message = JSON.parse(payload.body)
+  allMessages = JSON.parse(message.messages)
+  console.log("Got all of the messages " + allMessages + '-' + message)
+  console.log(allMessages["2"])
+  for (const [k, v] of Object.entries(allMessages)) {
+    console.log(k + '-' + v[0].message + v[1].message)
+  }
 }
 
 function getCookie(name) {
@@ -135,6 +147,6 @@ const getAvatarColor = (messageSender) => {
 // loginForm.addEventListener('submit', connect, true)
 window.onload = function () {
   const messageControls = document.getElementById('message-controls')
-  messageControls.addEventListener('submit', sendMessage, true)
+  // messageControls.addEventListener('submit', sendMessage, true)
   connect({})
 }
