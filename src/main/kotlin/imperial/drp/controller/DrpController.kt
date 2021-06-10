@@ -2,11 +2,7 @@ package imperial.drp.controller
 
 import imperial.drp.dao.PersonRepository
 import imperial.drp.dao.TaskRepository
-import imperial.drp.entity.Person
-import imperial.drp.entity.Task
-import imperial.drp.entity.toJsonString
-import imperial.drp.entity.Tutee
-import imperial.drp.entity.Tutor
+import imperial.drp.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -212,10 +208,10 @@ class DrpController {
         return "redirect"
     }
 
-    @PostMapping("/deletetask")
+    @RequestMapping("/deletetask")
     fun deletetask(
         @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "task_id") taskId: Long,
+        @CookieValue(value = "task_id") taskId: Long,
         response: HttpServletResponse,
         model: Model
     ): String {
@@ -236,10 +232,11 @@ class DrpController {
             return "/"
         }
 
-    @RequestMapping("/viewtask")
+    @PostMapping("/viewtask")
     @ResponseBody
     fun viewtask(
         @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "tutee_name", required = false) tuteeName: String?,
         response: HttpServletResponse,
     ): String {
         val userOpt = personRepository!!.findById(userId)
@@ -247,21 +244,15 @@ class DrpController {
             val user = userOpt.get()
             when (user) {
                 is Tutor -> {
-                    val tasks =
+                    var tasks =
                         taskRepository!!.findByTutorOrderByStartTimeAsc(
                             personRepository!!.findByName(
                                 user.name!!
                             )[0]
                         )
-                    val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
-                    user.tutees!!.forEach {
-                        tuteeTasksMap[it] = ArrayList()
-                    }
-                    tasks.forEach {
-                        tuteeTasksMap[it.tutee!!]!!.add(it)
-                    }
-                    print(tuteeTasksMap.toString())
-                    return tuteeTasksMap.toString()
+                    tasks = tasks.filter { it.tutee!!.name == tuteeName!! }
+                    return tasks.map { toJsonString(it) }.toString()
+
                 }
                 is Tutee -> {
                     val tasks =
@@ -271,7 +262,7 @@ class DrpController {
                             )[0]
                         )
 
-                    return tasks.joinToString(separator = "&!!&") { toJsonString(it) }
+                    return tasks.map { toJsonString(it) }.toString()
                 }
             }
         }
