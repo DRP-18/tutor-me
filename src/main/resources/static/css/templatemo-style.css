@@ -446,7 +446,7 @@ table {
 table tbody tr {
     border-left: 0;
     border-right: 0;
-    border-bottom: 10px solid #f7f7f7;
+    /* border-bottom: 10px solid #f7f7f7; */
 }
 
 table td {
