@@ -183,7 +183,7 @@ class DrpController {
             if (person is Tutor) {
                 var tutee = personRepository.findById(tuteeId).get()
                 if (tutee is Tutee) {
-                    var sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm")
+                    var sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
 
                     var startCalendar = GregorianCalendar()
                     startCalendar.time = sdf.parse(startTime)
