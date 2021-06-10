@@ -1,5 +1,7 @@
 package imperial.drp.entity
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.persistence.*
 
@@ -14,4 +16,9 @@ class Task(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long? = null
+}
+
+
+fun toJsonString(t: Task): String {
+    return """{"start_time": "${t.startTime!!.time}","end_time": "${t.endTime!!.time}","content": "${t.content}", "id": ${t.id}}"""
 }

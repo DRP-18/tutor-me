@@ -1,9 +1,10 @@
 package imperial.drp.controller
 
-import imperial.drp.dao.TaskRepository
 import imperial.drp.dao.PersonRepository
+import imperial.drp.dao.TaskRepository
 import imperial.drp.entity.Person
 import imperial.drp.entity.Task
+import imperial.drp.entity.toJsonString
 import imperial.drp.entity.Tutee
 import imperial.drp.entity.Tutor
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +16,6 @@ import java.util.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 @Controller
 class DrpController {
@@ -28,16 +28,20 @@ class DrpController {
     @RequestMapping("/")
     fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
         if (userId != null) {
-            var userOpt = personRepository!!.findById(userId)
+            val userOpt = personRepository!!.findById(userId)
             if (userOpt.isPresent) {
-                var user = userOpt.get()
+                val user = userOpt.get()
                 model.addAttribute("username", user.name!!)
                 model.addAttribute("nowTime", Calendar.getInstance())
                 model.addAttribute("userType", getUserType(user))
                 when (user) {
                     is Tutor -> {
                         val tasks =
-                                taskRepository!!.findByTutorOrderByStartTimeAsc(personRepository!!.findByName(user.name!!)[0])
+                            taskRepository!!.findByTutorOrderByStartTimeAsc(
+                                personRepository!!.findByName(
+                                    user.name!!
+                                )[0]
+                            )
                         val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
                         user.tutees!!.forEach {
                             tuteeTasksMap[it] = ArrayList()
@@ -49,7 +53,11 @@ class DrpController {
                     }
                     is Tutee -> {
                         val tasks =
-                                taskRepository!!.findByTuteeOrderByStartTimeAsc(personRepository!!.findByName(user.name!!)[0])
+                            taskRepository!!.findByTuteeOrderByStartTimeAsc(
+                                personRepository!!.findByName(
+                                    user.name!!
+                                )[0]
+                            )
                         model.addAttribute("tasks", tasks)
                     }
                 }
@@ -100,10 +108,10 @@ class DrpController {
 
     @PostMapping("/signup")
     fun signupPost(
-            @RequestParam(value = "username") username: String,
-            @RequestParam(value = "userType", required = false) userType: String?,
-            response: HttpServletResponse,
-            model: Model
+        @RequestParam(value = "username") username: String,
+        @RequestParam(value = "userType", required = false) userType: String?,
+        response: HttpServletResponse,
+        model: Model
     ): String {
         if (userType != null) {
             var matchingUsers = personRepository!!.findByName(username)
@@ -143,18 +151,18 @@ class DrpController {
 
     @PostMapping("/addtutee")
     fun addtutee(
-            @CookieValue(value = "user_id") userId: Long,
-            @RequestParam(value = "tutee_name") tuteeName: String,
-            response: HttpServletResponse,
-            model: Model
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "tutee_name") tuteeName: String,
+        response: HttpServletResponse,
+        model: Model
     ): String {
         personRepository!!.findById(userId).ifPresent {
             if (it is Tutor) {
-                var matchingPersons = personRepository!!.findByName(tuteeName)
+                val matchingPersons = personRepository.findByName(tuteeName)
                 if (matchingPersons.isNotEmpty()) {
                     val person = matchingPersons[0]
                     if (person is Tutee) {
-                        var newTutees = ArrayList<Tutee>(it.tutees)
+                        val newTutees = ArrayList<Tutee>(it.tutees)
                         newTutees.add(person)
                         it.tutees = newTutees
                         personRepository.save(it)
@@ -167,13 +175,13 @@ class DrpController {
 
     @PostMapping("/addtask")
     fun addtask(
-            @CookieValue(value = "user_id") userId: Long,
-            @RequestParam(value = "start_time") startTime: String,
-            @RequestParam(value = "end_time") endTime: String,
-            @RequestParam(value = "content") content: String,
-            @RequestParam(value = "tutee_id") tuteeId: Long,
-            response: HttpServletResponse,
-            model: Model
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "start_time") startTime: String,
+        @RequestParam(value = "end_time") endTime: String,
+        @RequestParam(value = "content") content: String,
+        @RequestParam(value = "tutee_id") tuteeId: Long,
+        response: HttpServletResponse,
+        model: Model
     ): String {
         personRepository!!.findById(userId).ifPresent { person ->
             if (person is Tutor) {
@@ -188,19 +196,28 @@ class DrpController {
                     endCalendar.time = sdf.parse(endTime)
 
                     if (startCalendar <= endCalendar) {
-                        taskRepository!!.save(Task(startCalendar, endCalendar, person, tutee, content))
+                        taskRepository!!.save(
+                            Task(
+                                startCalendar,
+                                endCalendar,
+                                person,
+                                tutee,
+                                content
+                            )
+                        )
                     }
                 }
             }
         }
         return "redirect"
     }
+
     @PostMapping("/deletetask")
     fun deletetask(
-            @CookieValue(value = "user_id") userId: Long,
-            @RequestParam(value = "task_id") taskId: Long,
-            response: HttpServletResponse,
-            model: Model
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "task_id") taskId: Long,
+        response: HttpServletResponse,
+        model: Model
     ): String {
         personRepository!!.findById(userId).ifPresent { person ->
             if (person is Tutor) {
@@ -212,5 +229,52 @@ class DrpController {
             }
         }
         return "redirect"
+    }
+
+    private val s: String
+        get() {
+            return "/"
+        }
+
+    @RequestMapping("/viewtask")
+    @ResponseBody
+    fun viewtask(
+        @CookieValue(value = "user_id") userId: Long,
+        response: HttpServletResponse,
+    ): String {
+        val userOpt = personRepository!!.findById(userId)
+        if (userOpt.isPresent) {
+            val user = userOpt.get()
+            when (user) {
+                is Tutor -> {
+                    val tasks =
+                        taskRepository!!.findByTutorOrderByStartTimeAsc(
+                            personRepository!!.findByName(
+                                user.name!!
+                            )[0]
+                        )
+                    val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
+                    user.tutees!!.forEach {
+                        tuteeTasksMap[it] = ArrayList()
+                    }
+                    tasks.forEach {
+                        tuteeTasksMap[it.tutee!!]!!.add(it)
+                    }
+                    print(tuteeTasksMap.toString())
+                    return tuteeTasksMap.toString()
+                }
+                is Tutee -> {
+                    val tasks =
+                        taskRepository!!.findByTuteeOrderByStartTimeAsc(
+                            personRepository.findByName(
+                                user.name!!
+                            )[0]
+                        )
+
+                    return tasks.joinToString(separator = "&!!&") { toJsonString(it) }
+                }
+            }
+        }
+        return ""
     }
 }
