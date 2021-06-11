@@ -3,6 +3,7 @@
 let stompClient;
 let username;
 let allMessages;
+let notChattedPeople = {}
 
 const connect = (event) => {
 
@@ -29,12 +30,47 @@ const onConnected = () => {
 
 const saveMessages = (payload) => {
   const message = JSON.parse(payload.body)
+  // Receives a map of all the messages sent
+  // With empty bodies if conversations havent been started yet.
   allMessages = JSON.parse(message.messages)
   console.log("Got all of the messages " + allMessages + '-' + message)
-  console.log(allMessages["2"])
+  // Saves the uninitiated conversations in a seperate object
+  const newMessageOptions = document.getElementById("newMessageOptions")
   for (const [k, v] of Object.entries(allMessages)) {
-    console.log(k + '-' + v[0].message + v[1].message)
+    if (v.length === 0) {
+      var option = document.createElement('a')
+      option.setAttribute('onclick', 'newConversation(' + k + ')')
+      option.innerText = k.toString()
+      option.classList.add("dropdown-item")
+      option.id = "newChat" + k.toString()
+      newMessageOptions.appendChild(option)
+      notChattedPeople[k] = v
+      delete allMessages[k]
+    }
   }
+}
+
+function newConversation(newId) {
+  console.log("Adding new chat for " + newId)
+  const newMessageOptions = document.getElementById("newMessageOptions")
+  const newIdOption = document.getElementById("newChat" + newId.toString())
+  newMessageOptions.removeChild(newIdOption)
+  addSideBarEntry(newId)
+}
+
+function addSideBarEntry(newId) {
+  const entry = document.createElement('div')
+  entry.classList.add("friend-drawer")
+  entry.classList.add("friend-drawer--onhover")
+  const nameDiv = document.createElement('div')
+  nameDiv.classList.add("text")
+  const name = document.createElement('h6')
+  name.innerText = newId
+  nameDiv.appendChild(name)
+  entry.appendChild(nameDiv)
+  const sidebar = document.getElementById("sideBarMessages")
+  sidebar.appendChild(entry)
+  sidebar.appendChild(document.createElement('hr'))
 }
 
 function getCookie(name) {
@@ -149,4 +185,5 @@ window.onload = function () {
   const messageControls = document.getElementById('message-controls')
   // messageControls.addEventListener('submit', sendMessage, true)
   connect({})
+
 }

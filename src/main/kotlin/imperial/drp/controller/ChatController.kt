@@ -6,6 +6,7 @@ import imperial.drp.dao.MessageRepository
 import imperial.drp.dao.PersonRepository
 import imperial.drp.entity.Message
 import imperial.drp.entity.Person
+import imperial.drp.entity.Tutor
 import imperial.drp.model.ChatMessage
 import net.minidev.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
@@ -63,6 +64,13 @@ class ChatController {
                 val messages = messageRepository!!.findByConversation(conv)
                 println("messages $messages ${messages.size}")
                 recentChatsMap[otherUser!!.toString()] = messages
+            }
+            if (person is Tutor) {
+                for (tutee in person.tutees!!) {
+                    if (tutee.id.toString() !in recentChatsMap.keys) {
+                        recentChatsMap[tutee!!.id.toString()] = emptyList()
+                    }
+                }
             }
         }
         println("about to send messages back $recentChatsMap")

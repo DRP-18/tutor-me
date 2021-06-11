@@ -1,6 +1,7 @@
 package imperial.drp.entity
 
 import javax.persistence.Entity
+import javax.persistence.JoinTable
 import javax.persistence.ManyToMany
 
 @Entity

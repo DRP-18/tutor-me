@@ -10,12 +10,10 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import java.text.SimpleDateFormat
-import java.time.LocalTime
 import java.util.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 @Controller
 class DrpController {
@@ -94,18 +92,29 @@ class DrpController {
         return "chats_page"
     }
 
+    fun getAllTutors(): List<Tutor> {
+        val everyone = personRepository!!.findAll()
+        val tutors = mutableListOf<Tutor>()
+        for (person in everyone) {
+            if (person is Tutor) {
+                tutors.add(person)
+            }
+        }
+        return tutors
+    }
+
     @RequestMapping("/calls_page")
     fun videoCallPage(): String {
-        val person1 = personRepository!!.findById(1).get()
-        val person2 = personRepository!!.findById(2).get()
-        val conv = Conversation(person1, person2)
-        conversationRepository!!.save(conv)
-        messageRepository!!.save(Message(conv, GregorianCalendar(), "Hello World"))
-        val person11 = personRepository!!.findById(1).get()
-        val person21 = personRepository!!.findById(2).get()
-        val conv1 = Conversation(person11, person21)
-        conversationRepository!!.save(conv1)
-        messageRepository!!.save(Message(conv1, GregorianCalendar(), "Latest message"))
+//        val person1 = personRepository!!.findById(1).get()
+//        val person2 = personRepository!!.findById(2).get()
+//        val conv = Conversation(person1, person2)
+//        conversationRepository!!.save(conv)
+//        messageRepository!!.save(Message(conv, GregorianCalendar(), "Hello World"))
+//        val person11 = personRepository!!.findById(1).get()
+//        val person21 = personRepository!!.findById(2).get()
+//        val conv1 = Conversation(person11, person21)
+//        conversationRepository!!.save(conv1)
+//        messageRepository!!.save(Message(conv1, GregorianCalendar(), "Latest message"))
         return "build/index"
     }
 
