@@ -280,7 +280,7 @@
                   <td class="align-middle" th:text="${task.tutor}"></td>
                   <td class="align-middle" th:text="${task.content}"></td>
                   <td class="align-middle">
-                    <form action="/donetask" method="post">
+                    <form action="/donetask" method="post" th:if="${!task.done}">
                       <button class="btn btn-success" type="submit" name="task_id"
                               th:value="${task.id}">Done
                       </button>
