@@ -196,7 +196,7 @@
                     <th scope="col">START</th>
                     <th scope="col">END</th>
                     <th scope="col">CONTENT</th>
-                    <th scope="col">ACTION</th>
+                    <th scope="col">ACTIONS</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -208,8 +208,10 @@
                                       style="pointer-events: none"></label>
                       </div>
                     </td>
-                    <td class="align-middle" th:text="${task.startTime.time}"></td>
-                    <td class="align-middle" th:text="${task.endTime.time}"></td>
+                    <td th:text="${task.startTime.time}"
+                        th:class="${nowTime.time.after(task.startTime.time)} ? 'text-danger' : ''"></td>
+                    <td th:text="${task.endTime.time}"
+                        th:class="${nowTime.time.after(task.endTime.time)} ? 'text-danger' : ''"></td>
                     <td class="align-middle" th:text="${task.content}"></td>
                     <td class="align-middle">
                       <form action="/deletetask" method="post">
@@ -263,7 +265,7 @@
                   <th scope="col">END</th>
                   <th scope="col">TUTOR</th>
                   <th scope="col">CONTENT</th>
-                  <th scope="col">ACTION</th>
+                  <th scope="col">ACTIONS</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -275,8 +277,10 @@
                                     style="pointer-events: none"></label>
                     </div>
                   </td>
-                  <td class="align-middle" th:text="${task.startTime.time}"></td>
-                  <td class="align-middle" th:text="${task.endTime.time}"></td>
+                  <td th:text="${task.startTime.time}"
+                      th:class="${nowTime.time.after(task.startTime.time)} ? 'text-danger' : ''"></td>
+                  <td th:text="${task.endTime.time}"
+                      th:class="${nowTime.time.after(task.endTime.time)} ? 'text-danger' : ''"></td>
                   <td class="align-middle" th:text="${task.tutor}"></td>
                   <td class="align-middle" th:text="${task.content}"></td>
                   <td class="align-middle">
