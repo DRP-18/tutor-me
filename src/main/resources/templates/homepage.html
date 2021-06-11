@@ -209,9 +209,9 @@
                       </div>
                     </td>
                     <td th:text="${task.startTime.time}"
-                        th:class="${nowTime.time.after(task.startTime.time)} ? 'text-danger' : ''"></td>
+                        th:class="(${nowTime.time.after(task.startTime.time)} ? 'text-danger' : '') + ' align-middle'"></td>
                     <td th:text="${task.endTime.time}"
-                        th:class="${nowTime.time.after(task.endTime.time)} ? 'text-danger' : ''"></td>
+                        th:class="(${nowTime.time.after(task.endTime.time)} ? 'text-danger' : '') + ' align-middle'"></td>
                     <td class="align-middle" th:text="${task.content}"></td>
                     <td class="align-middle">
                       <form action="/deletetask" method="post">
@@ -278,9 +278,9 @@
                     </div>
                   </td>
                   <td th:text="${task.startTime.time}"
-                      th:class="${nowTime.time.after(task.startTime.time)} ? 'text-danger' : ''"></td>
+                      th:class="(${nowTime.time.after(task.startTime.time)} ? 'text-danger' : '') + ' align-middle'"></td>
                   <td th:text="${task.endTime.time}"
-                      th:class="${nowTime.time.after(task.endTime.time)} ? 'text-danger' : ''"></td>
+                      th:class="(${nowTime.time.after(task.endTime.time)} ? 'text-danger' : '') + ' align-middle'"></td>
                   <td class="align-middle" th:text="${task.tutor}"></td>
                   <td class="align-middle" th:text="${task.content}"></td>
                   <td class="align-middle">
