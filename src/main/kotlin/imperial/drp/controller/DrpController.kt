@@ -286,4 +286,22 @@ class DrpController {
 
         return resp
     }
+
+    @RequestMapping("/donetask")
+    fun donetask(
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "task_id") taskId: Long,
+        response: HttpServletResponse,
+        model: Model
+    ): String {
+        personRepository!!.findById(userId).ifPresent { person ->
+            taskRepository!!.findById(taskId).ifPresent {
+                if (it.tutor == person || it.tutee == person) {
+                    it.done = true
+                    taskRepository.save(it)
+                }
+            }
+        }
+        return "redirect"
+    }
 }

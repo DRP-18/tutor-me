@@ -11,7 +11,8 @@ class Task(
     @field:Column(columnDefinition = "TIMESTAMP WITH TIME ZONE") var endTime: Calendar? = null,
     @field:ManyToOne var tutor: Tutor? = null,
     @field:ManyToOne var tutee: Tutee? = null,
-    var content: String? = null
+    var content: String? = null,
+    var done: Boolean = false
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

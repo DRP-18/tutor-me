@@ -602,16 +602,17 @@ section.forms .container-fluid {
 
 input[type="checkbox"],
 input[type="radio"] {
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    -ms-appearance: none;
-    appearance: none;
+    /* -moz-appearance: none; */
+    /* -webkit-appearance: none; */
+    /* -ms-appearance: none; */
+    /* appearance: none; */
     display: block;
     float: left;
-    margin-right: -2rem;
-    opacity: 0;
+    /* margin-right: -2rem; */
+    margin-top: 0rem;
+    /* opacity: 0; */
     width: 1rem;
-    z-index: -1;
+    /* z-index: -1; */
 }
 
 input[type="checkbox"] + label,
