@@ -105,16 +105,13 @@ class DrpController {
 
     @RequestMapping("/calls_page")
     fun videoCallPage(): String {
-//        val person1 = personRepository!!.findById(1).get()
-//        val person2 = personRepository!!.findById(2).get()
+//        val person1 = personRepository!!.findById(51).get()
+//        val person2 = personRepository!!.findById(31).get()
 //        val conv = Conversation(person1, person2)
 //        conversationRepository!!.save(conv)
-//        messageRepository!!.save(Message(conv, GregorianCalendar(), "Hello World"))
-//        val person11 = personRepository!!.findById(1).get()
-//        val person21 = personRepository!!.findById(2).get()
-//        val conv1 = Conversation(person11, person21)
-//        conversationRepository!!.save(conv1)
-//        messageRepository!!.save(Message(conv1, GregorianCalendar(), "Latest message"))
+//        messageRepository!!.save(Message(conv, person1, GregorianCalendar(), "It's sunny today"))
+//        messageRepository!!.save(Message(conv, person2, GregorianCalendar(), "Really looks pretty boring"))
+//        messageRepository!!.save(Message(conv, person1, GregorianCalendar(), "My bad, I checked BBC weather by mistake"))
         return "build/index"
     }
 

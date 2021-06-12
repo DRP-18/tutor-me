@@ -2,8 +2,8 @@
 
 let stompClient;
 let username;
-let allMessages;
-let notChattedPeople = {}
+let allMessages; // All the messages that this user has had before
+let notChattedPeople = {} // All the ids of people this user hasnt chatted with
 
 const connect = (event) => {
 
@@ -15,12 +15,13 @@ const connect = (event) => {
     stompClient = Stomp.over(socket)
     stompClient.connect({}, onConnected, onError)
   }
-  // event.preventDefault()
 }
 
 const onConnected = () => {
   stompClient.subscribe('/topic/chat', onMessageReceived)
   const userId = getCookie("user_id")
+
+  // Sent to populate the allMessages object
   stompClient.send("/app/chat.getMessages", {},
       JSON.stringify({sender: userId}))
   stompClient.subscribe('/topic/chat-' + userId + '-allMessages', saveMessages)
@@ -28,14 +29,17 @@ const onConnected = () => {
 
 }
 
+//Recieves the reply of all messages sent by user, parses it and populates allMessages
 const saveMessages = (payload) => {
   const message = JSON.parse(payload.body)
   // Receives a map of all the messages sent
-  // With empty bodies if conversations havent been started yet.
+  // With empty bodies if conversations haven't been started yet.
   allMessages = JSON.parse(message.messages)
   console.log("Got all of the messages " + allMessages + '-' + message)
   // Saves the uninitiated conversations in a seperate object
   const newMessageOptions = document.getElementById("newMessageOptions")
+  // Adds people we havent chatted to to notChattedPeople,
+  // and creates dropdown box entries for new conversations option
   for (const [k, v] of Object.entries(allMessages)) {
     if (v.length === 0) {
       var option = document.createElement('a')
@@ -50,6 +54,7 @@ const saveMessages = (payload) => {
   }
 }
 
+// Creates a new sidebar entry for chat and removes from new conversations dropdown box
 function newConversation(newId) {
   console.log("Adding new chat for " + newId)
   const newMessageOptions = document.getElementById("newMessageOptions")
@@ -58,10 +63,14 @@ function newConversation(newId) {
   addSideBarEntry(newId)
 }
 
+// Creates a new side bar element for provided user
 function addSideBarEntry(newId) {
   const entry = document.createElement('div')
   entry.classList.add("friend-drawer")
   entry.classList.add("friend-drawer--onhover")
+  entry.onclick = function () {
+    clickOnSideBarMessage(newId)
+  }
   const nameDiv = document.createElement('div')
   nameDiv.classList.add("text")
   const name = document.createElement('h6')
@@ -71,6 +80,68 @@ function addSideBarEntry(newId) {
   const sidebar = document.getElementById("sideBarMessages")
   sidebar.appendChild(entry)
   sidebar.appendChild(document.createElement('hr'))
+}
+
+// Opens up the clicked users chats page, to update the top bar information
+// and display their associated chats
+function clickOnSideBarMessage(clickedId) {
+  console.log("clicked on side bar " + clickedId)
+  //Change the name and status at top of page
+  document.getElementById("currentChatTopBarName").innerText = clickedId
+  document.getElementById(
+      "currentChatTopBarStatus").innerText = "Current Status"
+
+  //Update the displayed messages
+  let messageDiv;
+  const chatPanel = document.getElementById("chatPanel")
+  chatPanel.innerHTML = ""
+  const messageList = allMessages[clickedId.toString()]
+  if (messageList != null) {
+    messageList.slice().reverse().forEach(function (message) {
+      if (message.sender.id === clickedId) {
+        messageDiv = addSendingMessageToChatPanel(message)
+      } else {
+        messageDiv = addReceivingMessageToChatPanel(message)
+      }
+      chatPanel.prepend(messageDiv)
+    });
+  }
+}
+
+//message is of the form:
+//message: Actual content
+//message_id
+//sender: This has {id: sender_id, name: sender_name}/
+//time: message sent time
+function addSendingMessageToChatPanel(message) {
+  const rowDiv = document.createElement('div')
+  rowDiv.classList.add("row")
+  rowDiv.classList.add("no-gutters")
+  const colDiv = document.createElement('div')
+  colDiv.classList.add("col-md-3")
+  colDiv.classList.add("offset-md-9")
+  const messageDiv = document.createElement('div')
+  messageDiv.classList.add("chat-bubble")
+  messageDiv.classList.add("chat-bubble--right")
+  messageDiv.innerText = message.message
+  colDiv.appendChild(messageDiv)
+  rowDiv.appendChild(colDiv)
+  return rowDiv
+}
+
+function addReceivingMessageToChatPanel(message) {
+  const rowDiv = document.createElement('div')
+  rowDiv.classList.add("row")
+  rowDiv.classList.add("no-gutters")
+  const colDiv = document.createElement('div')
+  colDiv.classList.add("col-md-3")
+  const messageDiv = document.createElement('div')
+  messageDiv.classList.add("chat-bubble")
+  messageDiv.classList.add("chat-bubble--left")
+  messageDiv.innerText = message.message
+  colDiv.appendChild(messageDiv)
+  rowDiv.appendChild(colDiv)
+  return rowDiv
 }
 
 function getCookie(name) {

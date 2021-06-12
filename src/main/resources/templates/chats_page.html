@@ -101,7 +101,7 @@
           <div class="col-md-4 border-right">
             <div class="settings-tray">
               <img class="profile-image"
-                   src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/filip.jpg"
+                   src="images/img_avatar2.png"
                    alt="Profile img">
               <span class="settings-tray--right">
 
@@ -129,7 +129,10 @@
               </div>
             </div>
             <div id="sideBarMessages" th:each="personMessages : ${recentChatsMap}">
-              <div class="friend-drawer friend-drawer--onhover">
+              <div class="friend-drawer friend-drawer--onhover"
+                   onclick=clickOnSideBarMessage(51)>
+                <!--              <div class="friend-drawer friend-drawer&#45;&#45;onhover"-->
+                <!--                   th:attr="onclick=|clickOnSideBarMessage('${personMessages.key}')|">-->
                 <!--                    <img class="profile-image"-->
                 <!--                         src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/robocop.jpg"-->
                 <!--                         alt="">-->
@@ -144,71 +147,73 @@
               </div>
               <hr>
             </div>
-            <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover">-->
-            <!--                  <img class="profile-image"-->
-            <!--                    src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/optimus-prime.jpeg"-->
-            <!--                    alt="">-->
-            <!--                  <div class="text">-->
-            <!--                    <h6>Optimus</h6>-->
-            <!--                    <p class="text-muted">Wanna grab a beer?</p>-->
-            <!--                  </div>-->
-            <!--                  <span class="time text-muted small">00:32</span>-->
-            <!--                </div>-->
-            <hr>
-            <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover ">-->
-            <!--                  <img class="profile-image"-->
-            <!--                    src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/real-terminator.png"-->
-            <!--                    alt="">-->
-            <!--                  <div class="text">-->
-            <!--                    <h6>Skynet</h6>-->
-            <!--                    <p class="text-muted">Seen that canned piece of s?</p>-->
-            <!--                  </div>-->
-            <!--                  <span class="time text-muted small">13:21</span>-->
-            <!--                </div>-->
-            <hr>
-            <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover">-->
-            <!--                  <img class="profile-image"-->
-            <!--                    src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/termy.jpg"-->
-            <!--                    alt="">-->
-            <!--                  <div class="text">-->
-            <!--                    <h6>Termy</h6>-->
-            <!--                    <p class="text-muted">Im studying spanish...</p>-->
-            <!--                  </div>-->
-            <!--                  <span class="time text-muted small">13:21</span>-->
-            <!--                </div>-->
-            <hr>
-            <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover">-->
-            <!--                  <img class="profile-image"-->
-            <!--                    src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/rick.jpg"-->
-            <!--                    alt="">-->
-            <!--                  <div class="text">-->
-            <!--                    <h6>Richard</h6>-->
-            <!--                    <p class="text-muted">I'm not sure...</p>-->
-            <!--                  </div>-->
-            <!--                  <span class="time text-muted small">13:21</span>-->
-            <!--                </div>-->
-            <hr>
-            <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover">-->
-            <!--                  <img class="profile-image"-->
-            <!--                    src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/rachel.jpeg"-->
-            <!--                    alt="">-->
-            <!--                  <div class="text">-->
-            <!--                    <h6>XXXXX</h6>-->
-            <!--                    <p class="text-muted">Hi, wanna see something?</p>-->
-            <!--                  </div>-->
-            <!--                  <span class="time text-muted small">13:21</span>-->
-            <!--                </div>-->
+            <div>
+              <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover">-->
+              <!--                  <img class="profile-image"-->
+              <!--                    src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/optimus-prime.jpeg"-->
+              <!--                    alt="">-->
+              <!--                  <div class="text">-->
+              <!--                    <h6>Optimus</h6>-->
+              <!--                    <p class="text-muted">Wanna grab a beer?</p>-->
+              <!--                  </div>-->
+              <!--                  <span class="time text-muted small">00:32</span>-->
+              <!--                </div>-->
+              <!--            <hr>-->
+              <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover ">-->
+              <!--                  <img class="profile-image"-->
+              <!--                    src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/real-terminator.png"-->
+              <!--                    alt="">-->
+              <!--                  <div class="text">-->
+              <!--                    <h6>Skynet</h6>-->
+              <!--                    <p class="text-muted">Seen that canned piece of s?</p>-->
+              <!--                  </div>-->
+              <!--                  <span class="time text-muted small">13:21</span>-->
+              <!--                </div>-->
+              <!--            <hr>-->
+              <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover">-->
+              <!--                  <img class="profile-image"-->
+              <!--                    src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/termy.jpg"-->
+              <!--                    alt="">-->
+              <!--                  <div class="text">-->
+              <!--                    <h6>Termy</h6>-->
+              <!--                    <p class="text-muted">Im studying spanish...</p>-->
+              <!--                  </div>-->
+              <!--                  <span class="time text-muted small">13:21</span>-->
+              <!--                </div>-->
+              <!--            <hr>-->
+              <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover">-->
+              <!--                  <img class="profile-image"-->
+              <!--                    src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/rick.jpg"-->
+              <!--                    alt="">-->
+              <!--                  <div class="text">-->
+              <!--                    <h6>Richard</h6>-->
+              <!--                    <p class="text-muted">I'm not sure...</p>-->
+              <!--                  </div>-->
+              <!--                  <span class="time text-muted small">13:21</span>-->
+              <!--                </div>-->
+              <!--            <hr>-->
+              <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover">-->
+              <!--                  <img class="profile-image"-->
+              <!--                    src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/rachel.jpeg"-->
+              <!--                    alt="">-->
+              <!--                  <div class="text">-->
+              <!--                    <h6>XXXXX</h6>-->
+              <!--                    <p class="text-muted">Hi, wanna see something?</p>-->
+              <!--                  </div>-->
+              <!--                  <span class="time text-muted small">13:21</span>-->
+              <!--                </div>-->
+            </div>
           </div>
 
           <div class="col-md-8">
             <div class="settings-tray">
-              <div class="friend-drawer no-gutters friend-drawer--grey">
+              <div id="currentChatTopBar" class="friend-drawer no-gutters friend-drawer--grey">
                 <img class="profile-image"
-                     src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/robocop.jpg"
+                     src="images/img_avatar2.png"
                      alt="">
                 <div class="text">
-                  <h6>Robo Cop</h6>
-                  <p class="text-muted">Layin' down the law since like before Christ...</p>
+                  <h6 id="currentChatTopBarName"></h6>
+                  <p id="currentChatTopBarStatus" class="text-muted"></p>
                 </div>
                 <span class="settings-tray--right">
                     <i class="material-icons">cached</i>
@@ -220,69 +225,23 @@
 
 
             <div class="chat-panel">
-              <div class="row no-gutters">
-                <div class="col-md-3">
-                  <div class="chat-bubble chat-bubble--left">
-                    Hello dude!
-                  </div>
-                </div>
+              <div id="chatPanel">
+                <!--              <div class="row no-gutters">-->
+                <!--                <div class="col-md-3">-->
+                <!--                  <div class="chat-bubble chat-bubble&#45;&#45;left">-->
+                <!--                    Hello dude!-->
+                <!--                  </div>-->
+                <!--                </div>-->
+                <!--              </div>-->
+                <!--              <div class="row no-gutters">-->
+                <!--                <div class="col-md-3 offset-md-9">-->
+                <!--                  <div class="chat-bubble chat-bubble&#45;&#45;right">-->
+                <!--                    Hello dude!-->
+                <!--                  </div>-->
+                <!--                </div>-->
+                <!--              </div>-->
               </div>
-              <div class="row no-gutters">
-                <div class="col-md-3 offset-md-9">
-                  <div class="chat-bubble chat-bubble--right">
-                    Hello dude!
-                  </div>
-                </div>
-              </div>
-              <div class="row no-gutters">
-                <div class="col-md-3 offset-md-9">
-                  <div class="chat-bubble chat-bubble--right">
-                    Hello dude!
-                  </div>
-                </div>
-              </div>
-              <div class="row no-gutters">
-                <div class="col-md-3">
-                  <div class="chat-bubble chat-bubble--left">
-                    Hello dude!
-                  </div>
-                </div>
-              </div>
-              <div class="row no-gutters">
-                <div class="col-md-3">
-                  <div class="chat-bubble chat-bubble--left">
-                    Hello dude!
-                  </div>
-                </div>
-              </div>
-              <div class="row no-gutters">
-                <div class="col-md-3">
-                  <div class="chat-bubble chat-bubble--left">
-                    Hello dude!
-                  </div>
-                </div>
-              </div>
-              <div class="row no-gutters">
-                <div class="col-md-3 offset-md-9">
-                  <div class="chat-bubble chat-bubble--right">
-                    Hello dude!
-                  </div>
-                </div>
-              </div>
-              <div class="row no-gutters">
-                <div class="col-md-3 offset-md-9">
-                  <div class="chat-bubble chat-bubble--right">
-                    Hello dude!
-                  </div>
-                </div>
-              </div>
-              <div class="row no-gutters">
-                <div class="col-md-3 offset-md-9">
-                  <div class="chat-bubble chat-bubble--right">
-                    Hello dude!
-                  </div>
-                </div>
-              </div>
+
               <div class="row">
                 <div class="col-12">
                   <div class="chat-box-tray">
