@@ -128,24 +128,26 @@
                 <input placeholder="Search here" type="text">
               </div>
             </div>
-            <div id="sideBarMessages" th:each="personMessages : ${recentChatsMap}">
-              <div class="friend-drawer friend-drawer--onhover"
-                   onclick=clickOnSideBarMessage(51)>
-                <!--              <div class="friend-drawer friend-drawer&#45;&#45;onhover"-->
-                <!--                   th:attr="onclick=|clickOnSideBarMessage('${personMessages.key}')|">-->
-                <!--                    <img class="profile-image"-->
-                <!--                         src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/robocop.jpg"-->
-                <!--                         alt="">-->
-                <div class="text">
-                  <h6 th:text="${personMessages.key}"/>
-                  <p th:if="${!personMessages.value.isEmpty()}" class="text-muted"
-                     th:text="${personMessages.value[0].message}"/>
+            <div id="sideBarMessages">
+              <div th:each="personMessages : ${recentChatsMap}">
+                <div class="friend-drawer friend-drawer--onhover"
+                     onclick=clickOnSideBarMessage(51)>
+                  <!--              <div class="friend-drawer friend-drawer&#45;&#45;onhover"-->
+                  <!--                   th:attr="onclick=|clickOnSideBarMessage('${personMessages.key}')|">-->
+                  <!--                    <img class="profile-image"-->
+                  <!--                         src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/robocop.jpg"-->
+                  <!--                         alt="">-->
+                  <div class="text">
+                    <h6 th:text="${personMessages.key}"/>
+                    <p th:if="${!personMessages.value.isEmpty()}" class="text-muted"
+                       th:text="${personMessages.value[0].message}"/>
+                  </div>
+                  <span th:if="${!personMessages.value.isEmpty()}"
+                        th:text="${personMessages.value[0].time.getTime()}"
+                        class="time text-muted small"></span>
                 </div>
-                <span th:if="${!personMessages.value.isEmpty()}"
-                      th:text="${personMessages.value[0].time.getTime()}"
-                      class="time text-muted small"></span>
+                <hr>
               </div>
-              <hr>
             </div>
             <div>
               <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover">-->

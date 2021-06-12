@@ -1,15 +1,16 @@
 'use strict'
 
 let stompClient;
-let username;
+let username; // Name of current user
 let allMessages; // All the messages that this user has had before
+let currentSelectedChat; // Id of person currently talking to
 let notChattedPeople = {} // All the ids of people this user hasnt chatted with
 
 const connect = (event) => {
 
-  username = "New User"
+  username = getCookie("user_id")
 
-  if (username) {
+  if (username != null) {
 
     const socket = new SockJS('/textChat-chat')
     stompClient = Stomp.over(socket)
@@ -25,11 +26,15 @@ const onConnected = () => {
   stompClient.send("/app/chat.getMessages", {},
       JSON.stringify({sender: userId}))
   stompClient.subscribe('/topic/chat-' + userId + '-allMessages', saveMessages)
+  document.getElementById("sendMessage").addEventListener("click", sendMessage)
   // stompClient.subscribe('/topic/chat-' + userId, saveUsername)
-
 }
 
-//Recieves the reply of all messages sent by user, parses it and populates allMessages
+const onError = (error) => {
+  console.log("Something went wrong")
+}
+
+//Receives the reply of all messages sent by user, parses it and populates allMessages
 const saveMessages = (payload) => {
   const message = JSON.parse(payload.body)
   // Receives a map of all the messages sent
@@ -41,6 +46,7 @@ const saveMessages = (payload) => {
   // Adds people we havent chatted to to notChattedPeople,
   // and creates dropdown box entries for new conversations option
   for (const [k, v] of Object.entries(allMessages)) {
+    console.log(k + " " + v)
     if (v.length === 0) {
       var option = document.createElement('a')
       option.setAttribute('onclick', 'newConversation(' + k + ')')
@@ -86,6 +92,7 @@ function addSideBarEntry(newId) {
 // and display their associated chats
 function clickOnSideBarMessage(clickedId) {
   console.log("clicked on side bar " + clickedId)
+  currentSelectedChat = clickedId
   //Change the name and status at top of page
   document.getElementById("currentChatTopBarName").innerText = clickedId
   document.getElementById(
@@ -98,10 +105,11 @@ function clickOnSideBarMessage(clickedId) {
   const messageList = allMessages[clickedId.toString()]
   if (messageList != null) {
     messageList.slice().reverse().forEach(function (message) {
-      if (message.sender.id === clickedId) {
-        messageDiv = addSendingMessageToChatPanel(message)
+      console.log("sender " + message.sender.id + " clickedid " + clickedId)
+      if (message.sender.id !== clickedId) {
+        messageDiv = addSendingMessageToChatPanel(message.message)
       } else {
-        messageDiv = addReceivingMessageToChatPanel(message)
+        messageDiv = addReceivingMessageToChatPanel(message.message)
       }
       chatPanel.prepend(messageDiv)
     });
@@ -113,7 +121,7 @@ function clickOnSideBarMessage(clickedId) {
 //message_id
 //sender: This has {id: sender_id, name: sender_name}/
 //time: message sent time
-function addSendingMessageToChatPanel(message) {
+function addSendingMessageToChatPanel(messageContent) {
   const rowDiv = document.createElement('div')
   rowDiv.classList.add("row")
   rowDiv.classList.add("no-gutters")
@@ -123,13 +131,13 @@ function addSendingMessageToChatPanel(message) {
   const messageDiv = document.createElement('div')
   messageDiv.classList.add("chat-bubble")
   messageDiv.classList.add("chat-bubble--right")
-  messageDiv.innerText = message.message
+  messageDiv.innerText = messageContent
   colDiv.appendChild(messageDiv)
   rowDiv.appendChild(colDiv)
   return rowDiv
 }
 
-function addReceivingMessageToChatPanel(message) {
+function addReceivingMessageToChatPanel(messageContent) {
   const rowDiv = document.createElement('div')
   rowDiv.classList.add("row")
   rowDiv.classList.add("no-gutters")
@@ -138,7 +146,7 @@ function addReceivingMessageToChatPanel(message) {
   const messageDiv = document.createElement('div')
   messageDiv.classList.add("chat-bubble")
   messageDiv.classList.add("chat-bubble--left")
-  messageDiv.innerText = message.message
+  messageDiv.innerText = messageContent
   colDiv.appendChild(messageDiv)
   rowDiv.appendChild(colDiv)
   return rowDiv
@@ -150,10 +158,6 @@ function getCookie(name) {
   if (parts.length === 2) {
     return parts.pop().split(';').shift();
   }
-}
-
-const onError = (error) => {
-  console.log("Something went wrong")
 }
 
 const saveUsername = (data) => {
@@ -168,21 +172,22 @@ const saveUsername = (data) => {
   )
 }
 
-const sendMessage = (event) => {
-  const messageInput = document.querySelector('#message')
+const sendMessage = () => {
+  const messageInput = document.getElementById("messageBox")
   const messageContent = messageInput.value.trim()
-
-  if (messageContent && stompClient) {
+  if (messageContent !== null) {
     const chatMessage = {
+      content: messageContent,
       sender: username,
-      content: messageInput.value,
-      type: 'CHAT',
+      recipient: currentSelectedChat,
       time: moment().calendar()
     }
+    console.log("sending message " + chatMessage)
     stompClient.send("/app/chat.send", {}, JSON.stringify(chatMessage))
     messageInput.value = ''
+    const chatPanel = document.getElementById("chatPanel")
+    chatPanel.append(addSendingMessageToChatPanel(messageContent))
   }
-  event.preventDefault();
 }
 
 const onMessageReceived = (payload) => {
@@ -250,8 +255,6 @@ const getAvatarColor = (messageSender) => {
   return colours[index]
 }
 
-// const loginForm = document.querySelector('#login-form')
-// loginForm.addEventListener('submit', connect, true)
 window.onload = function () {
   const messageControls = document.getElementById('message-controls')
   // messageControls.addEventListener('submit', sendMessage, true)

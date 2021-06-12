@@ -4,19 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import imperial.drp.dao.ConversationRepository
 import imperial.drp.dao.MessageRepository
 import imperial.drp.dao.PersonRepository
+import imperial.drp.entity.Conversation
 import imperial.drp.entity.Message
-import imperial.drp.entity.Person
 import imperial.drp.entity.Tutor
 import imperial.drp.model.ChatMessage
-import net.minidev.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
-import org.springframework.messaging.handler.annotation.SendTo
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.messaging.simp.SimpMessageSendingOperations
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.CookieValue
+import java.util.*
 import javax.transaction.Transactional
 
 @Controller
@@ -33,20 +30,6 @@ class ChatController {
 
     @Autowired
     lateinit var sender: SimpMessageSendingOperations
-
-    @MessageMapping("/chat.send")
-    @SendTo("/topic/chat")
-    fun sendMessage(@Payload chatMessage: ChatMessage): ChatMessage {
-        println("Chat message recived ${chatMessage.content}")
-        return chatMessage
-    }
-
-    @MessageMapping("/chat.newUser")
-    @SendTo("/topic/chat")
-    fun newUser(@Payload chatMessage: ChatMessage, headerAccessor: SimpMessageHeaderAccessor): ChatMessage {
-        headerAccessor.sessionAttributes?.put("username", chatMessage.sender)
-        return chatMessage
-    }
 
     @Transactional
     @MessageMapping("/chat.getMessages")
@@ -65,14 +48,15 @@ class ChatController {
                 println("messages $messages ${messages.size}")
                 recentChatsMap[otherUser!!.toString()] = messages
             }
-            if (person is Tutor) {
-                for (tutee in person.tutees!!) {
-                    if (tutee.id.toString() !in recentChatsMap.keys) {
-                        recentChatsMap[tutee!!.id.toString()] = emptyList()
-                    }
+        }
+        if (person is Tutor) {
+            for (tutee in person.tutees!!) {
+                if (tutee.id.toString() !in recentChatsMap.keys) {
+                    recentChatsMap[tutee!!.id.toString()] = emptyList()
                 }
             }
         }
+
         println("about to send messages back $recentChatsMap")
         val jsonObject = ObjectMapper()
         val json = jsonObject.writeValueAsString(recentChatsMap)
@@ -82,14 +66,44 @@ class ChatController {
         })
     }
 
-    @MessageMapping("/chat.existingUser")
-    fun existingUser(@Payload chatMessage: ChatMessage) {
-        val id = chatMessage.sender.toLong()
-        var userOptional = personRepository!!.findById(id)
-        var user = ""
-        if (userOptional.isPresent) {
-            user = userOptional.get().name!!
-        }
-        sender.convertAndSend("/topic/chat-${chatMessage.sender}", ChatMessage(chatMessage.content, user, chatMessage.time))
+
+    @MessageMapping("/chat.send")
+    fun sendMessage(@Payload chatMessage: ChatMessage) {
+        println("Chat message received ${chatMessage.content} ${chatMessage.sender} ${chatMessage.recipient} ${chatMessage.time}")
+        val sender = personRepository!!.findById(chatMessage.sender.toLong()).get()
+        val recipient = personRepository!!.findById(chatMessage.recipient.toLong()).get()
+        val convList = conversationRepository!!.findAllByUser1OrUser2(sender, recipient)
+        val conv = (
+                if (convList.isEmpty()) {
+                    val tempConv = Conversation(sender, recipient)
+                    conversationRepository.save(tempConv)
+                    tempConv
+                } else {
+                    convList[0]
+                }
+                )
+        val message = Message(conv, sender, chatMessage.content, GregorianCalendar())
+        messageRepository!!.save(message)
     }
+
+
+//    @MessageMapping("/chat.newUser")
+//    @SendTo("/topic/chat")
+//    fun newUser(@Payload chatMessage: ChatMessage, headerAccessor: SimpMessageHeaderAccessor): ChatMessage {
+//        headerAccessor.sessionAttributes?.put("username", chatMessage.sender)
+//        return chatMessage
+//    }
+//
+//
+//
+//    @MessageMapping("/chat.existingUser")
+//    fun existingUser(@Payload chatMessage: ChatMessage) {
+//        val id = chatMessage.sender.toLong()
+//        var userOptional = personRepository!!.findById(id)
+//        var user = ""
+//        if (userOptional.isPresent) {
+//            user = userOptional.get().name!!
+//        }
+//        sender.convertAndSend("/topic/chat-${chatMessage.sender}", ChatMessage(chatMessage.content, user, chatMessage.time))
+//    }
 }
