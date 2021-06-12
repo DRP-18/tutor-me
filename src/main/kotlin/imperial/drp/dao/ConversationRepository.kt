@@ -14,5 +14,6 @@ interface ConversationRepository : CrudRepository<Conversation, Long> {
 //    }
 
     fun findAllByUser1OrUser2(user1: Person, user2: Person): List<Conversation>
+    fun findAllByUser1AndUser2(user1: Person, user2: Person): List<Conversation>
 
 }

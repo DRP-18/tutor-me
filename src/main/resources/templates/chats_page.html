@@ -131,9 +131,9 @@
             <div id="sideBarMessages">
               <div th:each="personMessages : ${recentChatsMap}">
                 <div class="friend-drawer friend-drawer--onhover"
-                     onclick=clickOnSideBarMessage(51)>
-                  <!--              <div class="friend-drawer friend-drawer&#45;&#45;onhover"-->
-                  <!--                   th:attr="onclick=|clickOnSideBarMessage('${personMessages.key}')|">-->
+                     th:attr="onclick=|clickOnSideBarMessage('${personMessages.key.id}')|">
+                  <!--                <div class="friend-drawer friend-drawer&#45;&#45;onhover"-->
+                  <!--                     onclick=clickOnSideBarMessage(51)>-->
                   <!--                    <img class="profile-image"-->
                   <!--                         src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/robocop.jpg"-->
                   <!--                         alt="">-->

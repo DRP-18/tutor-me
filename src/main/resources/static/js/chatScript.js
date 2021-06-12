@@ -1,8 +1,10 @@
 'use strict'
 
 let stompClient;
+const userId = getCookie("user_id")
 let username; // Name of current user
 let allMessages; // All the messages that this user has had before
+let allUsersDetails; // All ids, user names and further user detail
 let currentSelectedChat; // Id of person currently talking to
 let notChattedPeople = {} // All the ids of people this user hasnt chatted with
 
@@ -11,7 +13,6 @@ const connect = (event) => {
   username = getCookie("user_id")
 
   if (username != null) {
-
     const socket = new SockJS('/textChat-chat')
     stompClient = Stomp.over(socket)
     stompClient.connect({}, onConnected, onError)
@@ -20,13 +21,15 @@ const connect = (event) => {
 
 const onConnected = () => {
   stompClient.subscribe('/topic/chat', onMessageReceived)
-  const userId = getCookie("user_id")
-
-  // Sent to populate the allMessages object
-  stompClient.send("/app/chat.getMessages", {},
-      JSON.stringify({sender: userId}))
+  stompClient.subscribe('/topic/chat-' + userId + '-allUserDetails',
+      saveUsersDetails)
   stompClient.subscribe('/topic/chat-' + userId + '-allMessages', saveMessages)
   document.getElementById("sendMessage").addEventListener("click", sendMessage)
+
+  // Sent to populate allUsersDetails object
+  stompClient.send("/app/chat.getUsersDetails", {},
+      JSON.stringify({sender: userId}))
+
   // stompClient.subscribe('/topic/chat-' + userId, saveUsername)
 }
 
@@ -48,9 +51,9 @@ const saveMessages = (payload) => {
   for (const [k, v] of Object.entries(allMessages)) {
     console.log(k + " " + v)
     if (v.length === 0) {
-      var option = document.createElement('a')
+      const option = document.createElement('a');
       option.setAttribute('onclick', 'newConversation(' + k + ')')
-      option.innerText = k.toString()
+      option.innerText = allUsersDetails[k].name
       option.classList.add("dropdown-item")
       option.id = "newChat" + k.toString()
       newMessageOptions.appendChild(option)
@@ -58,6 +61,16 @@ const saveMessages = (payload) => {
       delete allMessages[k]
     }
   }
+}
+
+const saveUsersDetails = (payload) => {
+  const message = JSON.parse(payload.body)
+  allUsersDetails = JSON.parse(message.details)
+  console.log("Got all details " + allUsersDetails + '-' + message)
+
+  // Sent to populate the allMessages object
+  stompClient.send("/app/chat.getMessages", {},
+      JSON.stringify({sender: userId}))
 }
 
 // Creates a new sidebar entry for chat and removes from new conversations dropdown box
@@ -80,7 +93,7 @@ function addSideBarEntry(newId) {
   const nameDiv = document.createElement('div')
   nameDiv.classList.add("text")
   const name = document.createElement('h6')
-  name.innerText = newId
+  name.innerText = allUsersDetails[newId].name
   nameDiv.appendChild(name)
   entry.appendChild(nameDiv)
   const sidebar = document.getElementById("sideBarMessages")
@@ -94,9 +107,10 @@ function clickOnSideBarMessage(clickedId) {
   console.log("clicked on side bar " + clickedId)
   currentSelectedChat = clickedId
   //Change the name and status at top of page
-  document.getElementById("currentChatTopBarName").innerText = clickedId
   document.getElementById(
-      "currentChatTopBarStatus").innerText = "Current Status"
+      "currentChatTopBarName").innerText = allUsersDetails[clickedId].name
+  document.getElementById(
+      "currentChatTopBarStatus").innerText = allUsersDetails[clickedId].status
 
   //Update the displayed messages
   let messageDiv;
@@ -105,8 +119,9 @@ function clickOnSideBarMessage(clickedId) {
   const messageList = allMessages[clickedId.toString()]
   if (messageList != null) {
     messageList.slice().reverse().forEach(function (message) {
-      console.log("sender " + message.sender.id + " clickedid " + clickedId)
-      if (message.sender.id !== clickedId) {
+      console.log("sender " + message.sender.id + " clickedId " + clickedId)
+      console.log("value " + (message.sender.id != clickedId))
+      if (message.sender.id != clickedId) {
         messageDiv = addSendingMessageToChatPanel(message.message)
       } else {
         messageDiv = addReceivingMessageToChatPanel(message.message)
