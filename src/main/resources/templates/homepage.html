@@ -188,7 +188,10 @@
           <div class="row">
             <div class="col-xs-12 col-md-12">
               <div th:each="tuteeTasks : ${tuteeTasksMap}">
-                <h2 th:text="${tuteeTasks.key} + ' (Tutee)'"/>
+                <div class="col-md-12 bg-light text-right">
+                  <h2 th:text="${tuteeTasks.key} + ' (Tutee)'" class="d-table-cell"/>
+                  <button type="button" id="removeButton" class="btn btn-danger">Remove</button>
+                </div>
                 <table class="table">
                   <thead>
                   <tr>

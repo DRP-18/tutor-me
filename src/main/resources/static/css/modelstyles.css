@@ -25,6 +25,13 @@ button:hover {
   opacity: 0.8;
 }
 
+#removeButton {
+  background-color: #b21f2d;
+  float: right;
+  align-content: center;
+  display: inline;
+}
+
 .signUpButton {
   background-color: #138496;
 }

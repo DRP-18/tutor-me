@@ -1,7 +1,9 @@
 package imperial.drp.controller
 
-import imperial.drp.dao.PersonRepository
+import imperial.drp.dao.ConversationRepository
+import imperial.drp.dao.MessageRepository
 import imperial.drp.dao.TaskRepository
+import imperial.drp.dao.PersonRepository
 import imperial.drp.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -12,6 +14,7 @@ import java.util.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 @Controller
 class DrpController {
@@ -20,6 +23,12 @@ class DrpController {
 
     @Autowired
     private val personRepository: PersonRepository? = null
+
+    @Autowired
+    private val conversationRepository: ConversationRepository? = null
+
+    @Autowired
+    private val messageRepository: MessageRepository? = null
 
     @RequestMapping("/")
     fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
@@ -49,17 +58,75 @@ class DrpController {
                     }
                     is Tutee -> {
                         val tasks =
-                            taskRepository!!.findByTuteeOrderByStartTimeAsc(
-                                personRepository.findByName(
-                                    user.name!!
-                                )[0]
-                            )
+                                taskRepository!!.findByTuteeOrderByStartTimeAsc(
+                                        personRepository.findByName(
+                                                user.name!!
+                                        )[0]
+                                )
                         model.addAttribute("tasks", tasks)
                     }
                 }
             }
         }
         return "homepage"
+    }
+
+    @RequestMapping("/chats_page")
+    fun textChatPage(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
+        if (userId != null) {
+            /* Conversations with this user_id */
+            val person = personRepository!!.findById(userId).get()
+            println("$person ${person.name} ${person.id}")
+            val convs = conversationRepository!!.findAllByUser1OrUser2(person, person)
+            println("Conversations $convs")
+            if (convs.isNotEmpty()) {
+                val recentChatsMap = mutableMapOf<Person, List<Message>>()
+
+                for (conv in convs) {
+                    var otherUser = conv.user1
+                    if (conv.user1!!.id == userId) {
+                        otherUser = conv.user2
+                    }
+                    println("Other user for $conv ${conv.id} ${conv.user1} ${conv.user2} is $otherUser")
+
+                    var messages = messageRepository!!.findByConversationOrderByTimeAsc(conv)
+                    println("Before sorted $messages")
+                    messages = messages.sortedBy { it.time }
+                    println("After sorting $messages")
+                    recentChatsMap[otherUser!!] = messages
+                }
+                model.addAttribute("recentChatsMap", recentChatsMap)
+            }
+        }
+        return "chats_page"
+    }
+
+    fun getAllTutors(): List<Tutor> {
+        val everyone = personRepository!!.findAll()
+        val tutors = mutableListOf<Tutor>()
+        for (person in everyone) {
+            if (person is Tutor) {
+                tutors.add(person)
+            }
+        }
+        return tutors
+    }
+
+    @RequestMapping("/calls_page")
+    fun videoCallPage(): String {
+//        val person1 = personRepository!!.findById(51).get()
+//        val person2 = personRepository!!.findById(31).get()
+//        val conv = Conversation(person1, person2)
+//        conversationRepository!!.save(conv)
+//        messageRepository!!.save(Message(conv, person1, GregorianCalendar(), "It's sunny today"))
+//        messageRepository!!.save(Message(conv, person2, GregorianCalendar(), "Really looks pretty boring"))
+//        messageRepository!!.save(Message(conv, person1, GregorianCalendar(), "My bad, I checked BBC weather by mistake"))
+        return "build/index"
+    }
+
+    @RequestMapping("/voiceCall")
+    fun voiceCallPage(): String {
+        return "voiceCall"
     }
 
     fun getUserType(person: Person): String {
@@ -79,9 +146,9 @@ class DrpController {
 
     @PostMapping("/login")
     fun login(
-        @RequestParam(value = "username") username: String,
-        response: HttpServletResponse,
-        model: Model
+            @RequestParam(value = "username") username: String,
+            response: HttpServletResponse,
+            model: Model
     ): String {
         var matchingUsers = personRepository!!.findByName(username)
         if (matchingUsers.isNotEmpty()) {

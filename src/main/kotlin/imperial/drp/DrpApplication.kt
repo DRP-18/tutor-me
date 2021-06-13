@@ -16,13 +16,14 @@ import java.util.*
 @SpringBootApplication
 class DrpApplication {
     private val log = LoggerFactory.getLogger(DrpApplication::class.java)
+}
 
-    @Bean
-    fun initialize(
-        personRepository: PersonRepository,
-        taskRepository: TaskRepository
-    ): CommandLineRunner? {
-        return CommandLineRunner {
+//    @Bean
+//    fun initialize(
+//        personRepository: PersonRepository,
+//        taskRepository: TaskRepository
+//    ): CommandLineRunner? {
+//        return CommandLineRunner {
 //            personRepository.deleteAll()
 //            taskRepository.deleteAll()
 //
@@ -92,9 +93,9 @@ class DrpApplication {
 //                    "English question 1"
 //                )
 //            )
-        }
-    }
-}
+//        }
+//    }
+//}
 
 fun main(args: Array<String>) {
     runApplication<DrpApplication>(*args)

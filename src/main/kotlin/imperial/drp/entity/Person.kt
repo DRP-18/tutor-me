@@ -6,9 +6,7 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-open class Person(
-    open var name: String? = null
-) : Comparable<Person> {
+open class Person(open var name: String? = null, open val status: String = "Hey there!") : Comparable<Person> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     open val id: Long? = null
