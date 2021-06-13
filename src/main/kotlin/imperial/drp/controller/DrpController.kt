@@ -2,10 +2,12 @@ package imperial.drp.controller
 
 import imperial.drp.dao.ConversationRepository
 import imperial.drp.dao.MessageRepository
-import imperial.drp.dao.TaskRepository
 import imperial.drp.dao.PersonRepository
+import imperial.drp.dao.TaskRepository
 import imperial.drp.entity.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
@@ -14,7 +16,6 @@ import java.util.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 @Controller
 class DrpController {
@@ -58,11 +59,11 @@ class DrpController {
                     }
                     is Tutee -> {
                         val tasks =
-                                taskRepository!!.findByTuteeOrderByStartTimeAsc(
-                                        personRepository.findByName(
-                                                user.name!!
-                                        )[0]
-                                )
+                            taskRepository!!.findByTuteeOrderByStartTimeAsc(
+                                personRepository.findByName(
+                                    user.name!!
+                                )[0]
+                            )
                         model.addAttribute("tasks", tasks)
                     }
                 }
@@ -72,7 +73,10 @@ class DrpController {
     }
 
     @RequestMapping("/chats_page")
-    fun textChatPage(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
+    fun textChatPage(
+        @CookieValue(value = "user_id", required = false) userId: Long?,
+        model: Model
+    ): String {
         if (userId != null) {
             /* Conversations with this user_id */
             val person = personRepository!!.findById(userId).get()
@@ -117,16 +121,16 @@ class DrpController {
                         "tutee"
                     }
                     else -> {
-                        "tutor"
+                        ""
                     }
                 })
     }
 
     @PostMapping("/login")
     fun login(
-            @RequestParam(value = "username") username: String,
-            response: HttpServletResponse,
-            model: Model
+        @RequestParam(value = "username") username: String,
+        response: HttpServletResponse,
+        model: Model
     ): String {
         val matchingUsers = personRepository!!.findByName(username)
         if (matchingUsers.isNotEmpty()) {
@@ -348,5 +352,44 @@ class DrpController {
             }
         }
         return "redirect"
+    }
+
+    @GetMapping("/tutortasks")
+    fun tutortasks(@CookieValue(value = "user_id") userId: Long): ResponseEntity<Map<Tutee, List<Task>>> {
+        val userOpt = personRepository!!.findById(userId)
+        if (userOpt.isPresent) {
+            val user = userOpt.get()
+            if (user is Tutor) {
+                val tasks =
+                    taskRepository!!.findByTutorOrderByStartTimeAsc(user)
+                val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
+                user.tutees!!.forEach {
+                    tuteeTasksMap[it] = ArrayList()
+                }
+                tasks.forEach {
+                    tuteeTasksMap[it.tutee!!]!!.add(it)
+                }
+                return ResponseEntity(tuteeTasksMap, HttpStatus.OK)
+            }
+        }
+        return ResponseEntity(null, HttpStatus.NOT_FOUND)
+    }
+
+    @GetMapping("/tuteetasks")
+    fun tuteetasks(@CookieValue(value = "user_id") userId: Long): ResponseEntity<List<Task>> {
+        val userOpt = personRepository!!.findById(userId)
+        if (userOpt.isPresent) {
+            val user = userOpt.get()
+            if (user is Tutee) {
+                val tasks =
+                    taskRepository!!.findByTuteeOrderByStartTimeAsc(
+                        personRepository.findByName(
+                            user.name!!
+                        )[0]
+                    )
+                return ResponseEntity(tasks, HttpStatus.OK)
+            }
+        }
+        return ResponseEntity(null, HttpStatus.NOT_FOUND)
     }
 }

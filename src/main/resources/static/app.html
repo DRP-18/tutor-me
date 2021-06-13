@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+
+  <title>Tutor-Me</title>
+
+  <!-- Bootstrap core CSS -->
+  <link
+      href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Additional CSS Files -->
+  <link rel="stylesheet" href="/css/fontawesome.css">
+  <link rel="stylesheet" href="/css/templatemo-style.css">
+  <link
+      rel="stylesheet" href="/css/owl.css">
+
+  <!-- CSS for popup login -->
+  <link rel="stylesheet" href="/css/modelstyles.css">
+
+
+</head>
+
+<body
+    class="is-preload">
+
+<!-- Wrapper -->
+<div
+    id="wrapper">
+
+  <!-- Main -->
+  <div id="main">
+    <div
+        class="inner">
+
+      <!-- Header -->
+      <header id="header">
+        <div class="logo">
+          <a href="/">Tutor-Me</a>
+        </div>
+      </header>
+
+      <div id="loginModel" class="modal">
+
+        <form class="modal-content animate" action="/login" method="post">
+          <div class="imgcontainer">
+            <img src="/images/img_avatar2.png" alt="Avatar" class="avatar">
+          </div>
+
+          <div class="container">
+            <label for="username">
+              <b>Username</b>
+            </label>
+            <input
+                type="text" placeholder="Enter Username" name="username" id="user-name" required>
+
+            <!-- <label for="psw"><b>Password</b></label>
+                        <input type="password" placeholder="Enter Password" name="psw" required> -->
+
+            <button type="submit">Login</button>
+            <button type="button" style="background-color: #0975a3"
+                    onclick="document.getElementById('loginModel').style.display='none';document.getElementById('signUpModel').style.display='block'">
+              Sign Up
+            </button>
+          </div>
+
+          <!-- <div class="container" style="background-color:#f1f1f1"> -->
+          <!-- <button type="button" onclick="document.getElementById('loginModel').style.display='none'" class="cancelbtn">Cancel</button> -->
+          <!-- <span class="psw">Forgot <a href="#">password?</a></span> -->
+          <!-- </div> -->
+        </form>
+      </div>
+
+      <div id="signUpModel" class="modal">
+
+        <form class="modal-content animate" action="/signup" method="post" name="signUpForm">
+          <div class="imgcontainer">
+            <img src="/images/img_avatar2.png" alt="Avatar" class="avatar">
+          </div>
+
+          <div class="container">
+            <label for="username">
+              <b>Username</b>
+            </label>
+            <input type="text" placeholder="Enter a username" name="username" required>
+
+            <div class="col-sm-10">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="userType" id="inlineRadioTutor"
+                       value="tutor" checked>
+                <label class="form-check-label" for="inlineRadioTutor">
+                  Tutor
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="userType" id="inlineRadio"
+                       value="tutee">
+                <label class="form-check-label" for="inlineRadio">
+                  Tutee
+                </label>
+              </div>
+            </div>
+
+
+            <button type="submit">Sign Up</button>
+          </div>
+
+          <!-- <div class="container" style="background-color:#f1f1f1"> -->
+          <!-- <button type="button" onclick="document.getElementById('loginModel').style.display='none'" class="cancelbtn">Cancel</button> -->
+          <!-- <span class="psw">Forgot <a href="#">password?</a></span> -->
+          <!-- </div> -->
+        </form>
+      </div>
+
+      <!-- Services -->
+      <section class="services">
+        <h1 th:text="'Welcome, ' + ${username} + '!'" style="text-align: center"/>
+
+        <a href="/logout">
+          <button>Logout</button>
+        </a>
+      </section>
+
+      <section>
+        <!-- Tutor homepage -->
+        <p></p>
+        <div class="container-fluid" v-if="user.userType == 'tutor'">
+          <div class="row">
+            <div class="col-xs-12 col-md-12">
+              <div v-for="(tasks, key) in tasks.tuteeMap">
+                <div class="col-md-12 bg-light text-right">
+                  <h2 class="d-table-cell">{{key}} (Tutee)</h2>
+                  <button type="button" id="removeButton" class="btn btn-danger">Remove</button>
+                </div>
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">START</th>
+                    <th scope="col">END</th>
+                    <th scope="col">CONTENT</th>
+                    <th scope="col">ACTIONS</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr v-for="task in tasks">
+                    <td class="align-middle">
+                      <div class="form-check">
+                        <span v-if="!task.done">&#9744;</span>
+                        <span v-if="task.done">&#9745;</span>
+                      </div>
+                    </td>
+                    <td class="align-middle">{{formatTime(task.startTime)}}</td>
+                    <td class="align-middle">{{formatTime(task.endTime)}}</td>
+                    <td class="align-middle">{{task.content}}</td>
+                    <td class="align-middle">
+                      <form action="/deletetask" method="post">
+                        <button class="btn btn-danger" type="submit" name="task_id"
+                                v-bind:value="task.id">Delete
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  <tr>
+                    <form action="/addtask" method="post">
+                      <td class="align-middle"></td>
+                      <td class="align-middle"><input type="datetime-local" class="form-control"
+                                                      name="start_time"
+                                                      placeholder="e.g., 2018-06-12T19:30"></td>
+                      <td class="align-middle"><input type="datetime-local" class="form-control"
+                                                      name="end_time"
+                                                      placeholder="e.g., 2018-06-12T19:30"></td>
+                      <td class="align-middle"><input type="text" class="form-control"
+                                                      name="content"
+                                                      placeholder="Content"></td>
+                      <td class="align-middle">
+                        <button class="btn btn-primary" type="submit" name="tutee_id"
+                                th:value="${tuteeTasks.key.id}">Add
+                        </button>
+                      </td>
+                    </form>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <form action="/addtutee" method="post">
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" name="tutee_name"
+                         placeholder="Tutee Name">
+                  <button class="btn btn-primary" type="submit">Add</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Tutee homepage -->
+        <div class="container-fluid" v-if="user.userType == 'tutee'">
+          <div class="row">
+            <div class="col-xs-12 col-md-12">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">START</th>
+                  <th scope="col">END</th>
+                  <th scope="col">TUTOR</th>
+                  <th scope="col">CONTENT</th>
+                  <th scope="col">ACTIONS</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="task in tasks.list">
+                  <td class="align-middle">
+                    <div class="form-check">
+                      <span v-if="!task.done">&#9744;</span>
+                      <span v-if="task.done">&#9745;</span>
+                    </div>
+                  </td>
+                  <td class="align-middle">{{formatTime(task.startTime)}}</td>
+                  <td class="align-middle">{{formatTime(task.endTime)}}</td>
+                  <td class="align-middle">{{task.tutor.name}}</td>
+                  <td class="align-middle">{{task.content}}</td>
+                  <td class="align-middle">
+                    <form action="/donetask" method="post" v-if="!task.done">
+                      <button class="btn btn-success" type="submit" name="task_id"
+                              v-bind:value="task.id">Done
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!--        <div class="container-fluid">-->
+        <!--          <div class="row">-->
+        <!--            <div class="col-md-4">-->
+        <!--              <div class="service-item first-item">-->
+        <!--                <div class="icon"></div>-->
+        <!--                <h4>Web Design</h4>-->
+        <!--                <p>Credit goes to-->
+        <!--                  <a rel="nofollow" href="https://www.pexels.com">Pexels</a>-->
+        <!--                  and-->
+        <!--                  <a rel="nofollow" href="https://www.rawpixel.com">Raw Pixel</a>-->
+        <!--                  for images used in-->
+        <!--                  this template. Thank you.</p>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--            <div class="col-md-4">-->
+        <!--              <div class="service-item second-item">-->
+        <!--                <div class="icon"></div>-->
+        <!--                <h4>Bootstrap 4</h4>-->
+        <!--                <p>Proin aliquam facilisis ante interdum. Sed nulla feugiat tempus aliquam.</p>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--            <div class="col-md-4">-->
+        <!--              <div class="service-item third-item">-->
+        <!--                <div class="icon"></div>-->
+        <!--                <h4>HTML CSS</h4>-->
+        <!--                <p>Proin aliquam facilisis ante interdum. Sed nulla feugiat tempus aliquam.</p>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--            <div class="col-md-4">-->
+        <!--              <div class="service-item fourth-item">-->
+        <!--                <div class="icon"></div>-->
+        <!--                <h4>Download Free</h4>-->
+        <!--                <p>We have many free to use CSS web templates on our site for you.</p>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--            <div class="col-md-4">-->
+        <!--              <div class="service-item fivth-item">-->
+        <!--                <div class="icon"></div>-->
+        <!--                <h4>Get in touch</h4>-->
+        <!--                <p>You can get the fastest response from-->
+        <!--                  <a rel="nofollow" href="https://www.facebook.com/templatemo">templatemo</a>-->
+        <!--                  facebook page.</p>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--            <div class="col-md-4">-->
+        <!--              <div class="service-item sixth-item">-->
+        <!--                <div class="icon"></div>-->
+        <!--                <h4>Spread a word</h4>-->
+        <!--                <p>Please tell your friends about our website. This is very helpful.</p>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </div>-->
+      </section>
+
+      <!-- Top Image -->
+      <!--      <section class="top-image">-->
+      <!--        <div class="container-fluid">-->
+      <!--          <div class="row">-->
+      <!--            <div class="col-md-12">-->
+      <!--              <img src="/images/top-image.jpg" alt="">-->
+      <!--              <div class="down-content">-->
+      <!--                <h4>Ante Interdum Chambray</h4>-->
+      <!--                <p>Lorem ipsum dolor amet raclette chambray bitters, hammock celiac slow-carb-->
+      <!--                  flexitarian four dollar toast food truck health goth. Air plant brunch food truck-->
+      <!--                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch-->
+      <!--                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray-->
+      <!--                  typewriter put a bird on it brooklyn forage.</p>-->
+      <!--                <div class="primary-button">-->
+      <!--                  <a href="#">Read More</a>-->
+      <!--                </div>-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </section>-->
+
+      <!-- Left Image -->
+      <!--      <section class="left-image">-->
+      <!--        <div class="container-fluid">-->
+      <!--          <div class="row">-->
+      <!--            <div class="col-md-6">-->
+      <!--              <img src="/images/left-image.jpg" alt="">-->
+      <!--            </div>-->
+      <!--            <div class="col-md-6">-->
+      <!--              <div class="right-content">-->
+      <!--                <h4>Ante Interdum Raclette</h4>-->
+      <!--                <p>Lorem ipsum dolor amet raclette chambray bitters, hammock celiac slow-carb-->
+      <!--                  flexitarian four dollar toast food truck health goth. Air plant brunch food truck-->
+      <!--                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch-->
+      <!--                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray-->
+      <!--                  typewriter put a bird on it brooklyn forage.<br><br>Air plant brunch food truck-->
+      <!--                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch-->
+      <!--                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray-->
+      <!--                  typewriter put bird brooklyn</p>-->
+      <!--                <div class="primary-button">-->
+      <!--                  <a href="#">Read More</a>-->
+      <!--                </div>-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </section>-->
+
+      <!-- Right Image -->
+      <!--      <section class="right-image">-->
+      <!--        <div class="container-fluid">-->
+      <!--          <div class="row">-->
+      <!--            <div class="col-md-6">-->
+      <!--              <div class="left-content">-->
+      <!--                <h4>Ante Interdum Raclette</h4>-->
+      <!--                <p>Lorem ipsum dolor amet raclette chambray bitters, hammock celiac slow-carb-->
+      <!--                  flexitarian four dollar toast food truck health goth. Air plant brunch food truck-->
+      <!--                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch-->
+      <!--                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray-->
+      <!--                  typewriter put a bird on it brooklyn forage.<br><br>Air plant brunch food truck-->
+      <!--                  vegan scenester organic crucifix irony pour-over pop-up austin hexagon kitsch-->
+      <!--                  swag. Godard literally humblebrag cloud bread vice master cleanse chambray-->
+      <!--                  typewriter put bird brooklyn</p>-->
+      <!--                <div class="primary-button">-->
+      <!--                  <a href="#">Read More</a>-->
+      <!--                </div>-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="col-md-6">-->
+      <!--              <img src="/images/right-image.jpg" alt="">-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </section>-->
+
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+
+    <div
+        class="inner">
+
+      <!-- Search Box -->
+      <section id="search" class="alt">
+        <form method="get" action="#">
+          <input type="text" name="search" id="search" placeholder="Search..."/>
+        </form>
+      </section>
+
+      <!-- Menu -->
+      <nav id="menu">
+        <ul>
+          <li>
+            <a href="/">Homepage</a>
+          </li>
+          <li>
+            <a href="/chats_page">Chats</a>
+          </li>
+          <li>
+            <a href="/calls_page">Calls</a>
+          </li>
+          <li>
+            <a href="/calendar">Calendar</a>
+          </li>
+          <!--          <li>-->
+          <!--            <span class="opener">Dropdown One</span>-->
+          <!--            <ul>-->
+          <!--              <li><a href="#">First Sub Menu</a></li>-->
+          <!--              <li><a href="#">Second Sub Menu</a></li>-->
+          <!--              <li><a href="#">Third Sub Menu</a></li>-->
+          <!--            </ul>-->
+          <!--          </li>-->
+          <!--          <li>-->
+          <!--            <span class="opener">Dropdown Two</span>-->
+          <!--            <ul>-->
+          <!--              <li><a href="#">Sub Menu #1</a></li>-->
+          <!--              <li><a href="#">Sub Menu #2</a></li>-->
+          <!--              <li><a href="#">Sub Menu #3</a></li>-->
+          <!--            </ul>-->
+          <!--          </li>-->
+          <!--          <li>-->
+          <!--            <a href="https://www.google.com">External Link</a>-->
+          <!--          </li>-->
+        </ul>
+      </nav>
+
+      <!-- Footer -->
+      <footer id="footer">
+        <br>DRP project by
+        </p>
+      </footer>
+
+    </div>
+  </div>
+</div>
+<!-- Scripts --><!-- Bootstrap core JavaScript -->
+<script src="/assets/jquery/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/browser.min.js"></script>
+<script src="/js/breakpoints.min.js"></script>
+<script src="/js/transition.js"></script>
+<script src="/js/owl-carousel.js"></script>
+<script src="/js/custom.js"></script>
+<script src="/js/vue.js"></script>
+
+<script src="/js/task.js"></script>
+</body>
+</html>
