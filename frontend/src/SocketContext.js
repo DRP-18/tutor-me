@@ -103,7 +103,15 @@ const ContextProvider = ({children}) => {
     /* Initiator is who starts call
         stream from earlier getUserMedia
     */
-    const peer = new Peer({initiator: false, trickle: false, stream: stream});
+    const peer = new Peer({
+      initiator: false, trickle: false, stream: stream,
+      config: {
+        iceServers: [{
+          "url": "stun:stun2.1.google.com:19302"
+        }
+        ]
+      }
+    });
 
     peer.on("signal", (data) => {
       stompClient.send("/app/video.acceptCall", {},
@@ -131,7 +139,9 @@ const ContextProvider = ({children}) => {
 
         iceServers: [
           {
-            urls: "stun.node4.co.uk:3478?transport=tcp",
+            "url": "stun:stun2.1.google.com:19302"
+            // "url" : "stun:stun2.1.google.com:19302"
+            // urls: "stun.node4.co.uk:3478?transport=tcp",
             // username: "sultan1640@gmail.com",
             // credential: "98376683",
           }
