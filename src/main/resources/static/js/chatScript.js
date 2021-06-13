@@ -53,7 +53,7 @@ const saveMessages = (payload) => {
     console.log(k + " " + v)
     if (v.length === 0) {
       const option = document.createElement('a');
-      option.setAttribute('onclick', 'newConversation(' + k + ')')
+      option.setAttribute('onclick', 'newConversation(' + k + ', true)')
       option.innerText = allUsersDetails[k].name
       option.classList.add("dropdown-item")
       option.id = "newChat" + k.toString()
@@ -75,12 +75,17 @@ const saveUsersDetails = (payload) => {
 }
 
 // Creates a new sidebar entry for chat and removes from new conversations dropdown box
-function newConversation(newId) {
+function newConversation(newId, openMessage) {
   console.log("Adding new chat for " + newId)
+  allMessages[newId] = notChattedPeople[newId];
+  delete notChattedPeople[newId]
   const newMessageOptions = document.getElementById("newMessageOptions")
   const newIdOption = document.getElementById("newChat" + newId.toString())
   newMessageOptions.removeChild(newIdOption)
   addSideBarEntry(newId)
+  if (openMessage) {
+    clickOnSideBarMessage(newId)
+  }
 }
 
 // Creates a new side bar element for provided user
@@ -120,8 +125,6 @@ function clickOnSideBarMessage(clickedId) {
   const messageList = allMessages[clickedId.toString()]
   if (messageList != null) {
     messageList.slice().reverse().forEach(function (message) {
-      console.log("sender " + message.sender.id + " clickedId " + clickedId)
-      console.log("value " + (message.sender.id != clickedId))
       if (message.sender.id != clickedId) {
         messageDiv = addSendingMessageToChatPanel(message.message)
       } else {
@@ -129,6 +132,12 @@ function clickOnSideBarMessage(clickedId) {
       }
       chatPanel.prepend(messageDiv)
     });
+  }
+
+  // Remove the unread notifications text
+  const unreadSidebar = document.getElementById("unread-" + clickedId)
+  if (unreadSidebar.innerText !== "") {
+    unreadSidebar.innerText = ""
   }
 }
 
@@ -210,9 +219,33 @@ const sendMessage = () => {
 
 const receiveMessage = (payload) => {
   const message = JSON.parse(payload.body)
-  const chatPanel = document.getElementById("chatPanel")
-  chatPanel.append(addReceivingMessageToChatPanel(message.message))
-  allMessages[currentSelectedChat].push(message)
+  console.log("received message " + message)
+  allMessages[message.sender.id].push(message)
+  if (message.sender.id == currentSelectedChat) {
+    const chatPanel = document.getElementById("chatPanel")
+    chatPanel.append(addReceivingMessageToChatPanel(message.message))
+    console.log("add message to panel")
+  } else {
+    if (message.sender.id in notChattedPeople) {
+      newConversation(message.sender.id, false)
+    }
+    sendNotification(message)
+    console.log("sending notification")
+  }
+}
+
+const sendNotification = (message) => {
+  const startingMessage = "Unread: "
+  const messagePreLength = startingMessage.length; // Length of message before number
+  const unreadSidebar = document.getElementById("unread-" + message.sender.id)
+  if (unreadSidebar.innerText === "") {
+    unreadSidebar.innerText = startingMessage + "1"
+  } else {
+    const alreadyUnseenMessages = unreadSidebar.innerText.slice(
+        messagePreLength)
+    unreadSidebar.innerText = startingMessage + (parseInt(alreadyUnseenMessages)
+        + 1).toString()
+  }
 }
 
 const hashCode = (str) => {

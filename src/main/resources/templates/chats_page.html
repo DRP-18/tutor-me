@@ -139,6 +139,7 @@
                   <!--                         alt="">-->
                   <div class="text">
                     <h6 th:text="${personMessages.key}"/>
+                    <p th:id="'unread-'+${personMessages.key.id}" class="text-muted"></p>
                     <p th:if="${!personMessages.value.isEmpty()}" class="text-muted"
                        th:text="${personMessages.value[personMessages.value.size() - 1].message}"/>
                   </div>
