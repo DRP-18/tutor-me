@@ -150,7 +150,7 @@ class DrpController {
             response: HttpServletResponse,
             model: Model
     ): String {
-        var matchingUsers = personRepository!!.findByName(username)
+        val matchingUsers = personRepository!!.findByName(username)
         if (matchingUsers.isNotEmpty()) {
             val userId = matchingUsers[0].id
             val cookie = Cookie("user_id", userId.toString())
@@ -177,7 +177,7 @@ class DrpController {
         model: Model
     ): String {
         if (userType != null) {
-            var matchingUsers = personRepository!!.findByName(username)
+            val matchingUsers = personRepository!!.findByName(username)
             if (matchingUsers.isEmpty()) {
                 val user = when (userType) {
                     "tutor" -> {
@@ -248,7 +248,7 @@ class DrpController {
     ): String {
         personRepository!!.findById(userId).ifPresent { person ->
             if (person is Tutor) {
-                var tutee = personRepository.findById(tuteeId).get()
+                val tutee = personRepository.findById(tuteeId).get()
                 if (tutee is Tutee) {
                     var sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
 

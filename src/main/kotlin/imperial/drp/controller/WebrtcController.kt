@@ -63,7 +63,6 @@ class WebrtcController {
     fun acceptCall(@Payload message: CallingMessage) {
         println("accept Call message: ${message.callee}, ${message.caller}")
         val callerID = message.caller
-
         sender.convertAndSend("/topic/video/$callerID/callAccepted", message)
     }
 
