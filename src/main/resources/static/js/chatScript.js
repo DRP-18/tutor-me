@@ -25,6 +25,8 @@ const onConnected = () => {
       saveUsersDetails)
   stompClient.subscribe('/topic/chat-' + userId + '-allMessages', saveMessages)
   document.getElementById("sendMessage").addEventListener("click", sendMessage)
+  stompClient.subscribe('/topic/chat-' + userId + '-receiveMessage',
+      receiveMessage)
 
   // Sent to populate allUsersDetails object
   stompClient.send("/app/chat.getUsersDetails", {},
@@ -202,58 +204,16 @@ const sendMessage = () => {
     messageInput.value = ''
     const chatPanel = document.getElementById("chatPanel")
     chatPanel.append(addSendingMessageToChatPanel(messageContent))
+    allMessages[currentSelectedChat].push(
+        {sender: {id: userId}, message: messageContent})
   }
 }
 
-const onMessageReceived = (payload) => {
-  const message = JSON.parse(payload.body);
-
-  const chatCard = document.createElement('div')
-  chatCard.className = 'card-body'
-
-  const flexBox = document.createElement('div')
-  flexBox.className = 'd-flex justify-content-end mb-4'
-  chatCard.appendChild(flexBox)
-
-  const messageElement = document.createElement('div')
-  messageElement.className = 'msg_container_send'
-
-  flexBox.appendChild(messageElement)
-
-  if (message.type === 'CONNECT') {
-    messageElement.classList.add('event-message')
-    message.content = message.sender + ' connected!'
-  } else if (message.type === 'DISCONNECT') {
-    messageElement.classList.add('event-message')
-    message.content = message.sender + ' left!'
-  } else {
-    messageElement.classList.add('chat-message')
-
-    const avatarContainer = document.createElement('div')
-    avatarContainer.className = 'img_cont_msg'
-    const avatarElement = document.createElement('div')
-    avatarElement.className = 'circle user_img_msg'
-    const avatarText = document.createTextNode(message.sender[0])
-    avatarElement.appendChild(avatarText);
-    avatarElement.style['background-color'] = getAvatarColor(message.sender)
-    avatarContainer.appendChild(avatarElement)
-
-    messageElement.style['background-color'] = getAvatarColor(message.sender)
-
-    flexBox.appendChild(avatarContainer)
-
-    const time = document.createElement('span')
-    time.className = 'msg_time_send'
-    time.innerHTML = message.time
-    messageElement.appendChild(time)
-
-  }
-
-  messageElement.innerHTML = message.content
-
-  const chat = document.querySelector('#chat')
-  chat.appendChild(flexBox)
-  chat.scrollTop = chat.scrollHeight
+const receiveMessage = (payload) => {
+  const message = JSON.parse(payload.body)
+  const chatPanel = document.getElementById("chatPanel")
+  chatPanel.append(addReceivingMessageToChatPanel(message.message))
+  allMessages[currentSelectedChat].push(message)
 }
 
 const hashCode = (str) => {

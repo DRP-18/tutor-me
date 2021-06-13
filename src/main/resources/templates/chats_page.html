@@ -140,10 +140,10 @@
                   <div class="text">
                     <h6 th:text="${personMessages.key}"/>
                     <p th:if="${!personMessages.value.isEmpty()}" class="text-muted"
-                       th:text="${personMessages.value[0].message}"/>
+                       th:text="${personMessages.value[personMessages.value.size() - 1].message}"/>
                   </div>
                   <span th:if="${!personMessages.value.isEmpty()}"
-                        th:text="${personMessages.value[0].time.getTime()}"
+                        th:text="${personMessages.value[personMessages.value.size() - 1].time.getTime()}"
                         class="time text-muted small"></span>
                 </div>
                 <hr>

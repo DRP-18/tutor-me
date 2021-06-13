@@ -3,9 +3,11 @@ package imperial.drp.model
 import imperial.drp.entity.Message
 import java.util.*
 
-data class SimpleMessage(val message: String = "") {}
+data class SimpleMessage(val message: String = "")
 
 data class UserDetail(val name: String = "", val status: String = "")
+
+data class ChatMessage(val content: String = "", val sender: String = "", val recipient: String = "", val time: String = "")
 
 data class CallingMessage(val callee: String = "", val caller: String = "", val signal: SignalObject)
 

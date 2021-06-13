@@ -8,6 +8,7 @@ import imperial.drp.entity.Conversation
 import imperial.drp.entity.Message
 import imperial.drp.entity.Tutor
 import imperial.drp.model.ChatMessage
+import imperial.drp.model.SimpleMessage
 import imperial.drp.model.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -30,7 +31,7 @@ class ChatController {
     private val messageRepository: MessageRepository? = null
 
     @Autowired
-    lateinit var sender: SimpMessageSendingOperations
+    lateinit var messageSender: SimpMessageSendingOperations
 
     @Transactional
     @MessageMapping("/chat.getMessages")
@@ -62,7 +63,7 @@ class ChatController {
         val jsonObject = ObjectMapper()
         val json = jsonObject.writeValueAsString(recentChatsMap)
         println("jsoned ${json}")
-        sender.convertAndSend("/topic/chat-${chatMessage.sender}-allMessages", object {
+        messageSender.convertAndSend("/topic/chat-${chatMessage.sender}-allMessages", object {
             val messages = json
         })
     }
@@ -96,12 +97,12 @@ class ChatController {
         val jsonObject = ObjectMapper()
         val json = jsonObject.writeValueAsString(userDetails)
         println("jsoned ${json}")
-        sender.convertAndSend("/topic/chat-${chatMessage.sender}-allUserDetails", object {
+        messageSender.convertAndSend("/topic/chat-${chatMessage.sender}-allUserDetails", object {
             val details = json
         })
     }
 
-
+    @Transactional
     @MessageMapping("/chat.send")
     fun sendMessage(@Payload chatMessage: ChatMessage) {
         println("Chat message received ${chatMessage.content} ${chatMessage.sender} ${chatMessage.recipient} ${chatMessage.time}")
@@ -126,6 +127,7 @@ class ChatController {
         }
         val message = Message(conv, sender, chatMessage.content, GregorianCalendar())
         messageRepository!!.save(message)
+        messageSender.convertAndSend("/topic/chat-${chatMessage.recipient}-receiveMessage", message)
     }
 
 
