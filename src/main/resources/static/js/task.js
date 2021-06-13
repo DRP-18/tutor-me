@@ -1,11 +1,24 @@
+var vm = new Vue({
+  el: '#wrapper',
+  data: {
+    user: {},
+    tasks: {},
+  },
+  methods: {
+    formatTime: function (time) {
+      return new Date(time).toLocaleString();
+    }
+  },
+});
+
 function refreshTasks() {
   switch (getCookie("user_type")) {
     case "tutor":
       fetch('/tutortasks')
         .then(response => response.json())
-        .then(data => {
-          console.log(data);
-          // TODO
+        .then(tuteeMap => {
+          Vue.set(vm.user, "userType", "tutor");
+          Vue.set(vm.tasks, "tuteeMap", tuteeMap);
         })
         .catch(function() {
           console.log("error");
@@ -15,9 +28,9 @@ function refreshTasks() {
     case "tutee":
       fetch('/tuteetasks')
         .then(response => response.json())
-        .then(data => {
-          console.log(data);
-          // TODO
+        .then(list => {
+          Vue.set(vm.user, "userType", "tutee");
+          Vue.set(vm.tasks, "list", list);
         })
         .catch(function() {
           console.log("error");
@@ -44,4 +57,5 @@ function getCookie(cname) {
   return "";
 }
 
+refreshTasks();
 setInterval(refreshTasks, 5000);

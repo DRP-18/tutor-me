@@ -118,61 +118,6 @@
         </form>
       </div>
 
-      <script>
-        window.onload = function () {
-          const id = getCookie("user_id");
-          if (id === "") {
-            document.getElementById('loginModel').style.display = 'block'
-          }
-        }
-
-        // function fetchpost() {
-        //   // (A) GET FORM DATA
-        //   let data = new URLSearchParams();
-        //   data.append("username", document.getElementById("user-name").value);
-        //
-        //   // (B) FETCH
-        //   fetch('/login', {
-        //     method: 'post',
-        //     body: data
-        //   })
-        //   .then(function (response) {
-        //       return response.text();
-        //   })
-        //   // .then(function (text) {
-        //   //     console.log(text);
-        //   // })
-        //   .catch(function (error) {
-        //     alert(error)
-        //   });
-        //
-        //   // (C) PREVENT HTML FORM SUBMIT
-        //   return false;
-        // }
-
-        function getCookie(cname) {
-          var name = cname + "=";
-          var decodedCookie = decodeURIComponent(document.cookie);
-          var ca = decodedCookie.split(';');
-          for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') {
-              c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-              return c.substring(name.length, c.length);
-            }
-          }
-          return "";
-        }
-
-
-
-
-
-      </script>
-
-
       <!-- Services -->
       <section class="services">
         <h1 th:text="'Welcome, ' + ${username} + '!'" style="text-align: center"/>
@@ -185,12 +130,12 @@
       <section>
         <!-- Tutor homepage -->
         <p></p>
-        <div class="container-fluid" th:if="${userType}=='tutor'">
+        <div class="container-fluid" v-if="user.userType == 'tutor'">
           <div class="row">
             <div class="col-xs-12 col-md-12">
-              <div th:each="tuteeTasks : ${tuteeTasksMap}">
+              <div v-for="(tasks, key) in tasks.tuteeMap">
                 <div class="col-md-12 bg-light text-right">
-                  <h2 th:text="${tuteeTasks.key} + ' (Tutee)'" class="d-table-cell"/>
+                  <h2 class="d-table-cell">{{key}} (Tutee)</h2>
                   <button type="button" id="removeButton" class="btn btn-danger">Remove</button>
                 </div>
                 <table class="table">
@@ -204,43 +149,43 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr th:each="task : ${tuteeTasks.value}">
+                  <tr v-for="task in tasks">
                     <td class="align-middle">
                       <div class="form-check">
-                        <label><input class="form-check-input" type="checkbox"
-                                      th:checked="${task.done}"
-                                      style="pointer-events: none"></label>
+                        <span v-if="!task.done">&#9744;</span>
+                        <span v-if="task.done">&#9745;</span>
                       </div>
                     </td>
-                    <td th:text="${task.startTime.time}"
-                        th:class="(${nowTime.time.after(task.startTime.time)} ? 'text-danger' : '') + ' align-middle'"></td>
-                    <td th:text="${task.endTime.time}"
-                        th:class="(${nowTime.time.after(task.endTime.time)} ? 'text-danger' : '') + ' align-middle'"></td>
-                    <td class="align-middle" th:text="${task.content}"></td>
+                    <td class="align-middle">{{formatTime(task.startTime)}}</td>
+                    <td class="align-middle">{{formatTime(task.endTime)}}</td>
+                    <td class="align-middle">{{task.content}}</td>
                     <td class="align-middle">
                       <form action="/deletetask" method="post">
                         <button class="btn btn-danger" type="submit" name="task_id"
-                                th:value="${task.id}">Delete
+                                v-bind:value="task.id">Delete
                         </button>
                       </form>
                     </td>
                   </tr>
-                  <form action="/addtask" method="post">
-                    <td class="align-middle"></td>
-                    <td class="align-middle"><input type="datetime-local" class="form-control"
-                                                    name="start_time"
-                                                    placeholder="e.g., 2018-06-12T19:30"></td>
-                    <td class="align-middle"><input type="datetime-local" class="form-control"
-                                                    name="end_time"
-                                                    placeholder="e.g., 2018-06-12T19:30"></td>
-                    <td class="align-middle"><input type="text" class="form-control" name="content"
-                                                    placeholder="Content"></td>
-                    <td class="align-middle">
-                      <button class="btn btn-primary" type="submit" name="tutee_id"
-                              th:value="${tuteeTasks.key.id}">Add
-                      </button>
-                    </td>
-                  </form>
+                  <tr>
+                    <form action="/addtask" method="post">
+                      <td class="align-middle"></td>
+                      <td class="align-middle"><input type="datetime-local" class="form-control"
+                                                      name="start_time"
+                                                      placeholder="e.g., 2018-06-12T19:30"></td>
+                      <td class="align-middle"><input type="datetime-local" class="form-control"
+                                                      name="end_time"
+                                                      placeholder="e.g., 2018-06-12T19:30"></td>
+                      <td class="align-middle"><input type="text" class="form-control"
+                                                      name="content"
+                                                      placeholder="Content"></td>
+                      <td class="align-middle">
+                        <button class="btn btn-primary" type="submit" name="tutee_id"
+                                th:value="${tuteeTasks.key.id}">Add
+                        </button>
+                      </td>
+                    </form>
+                  </tr>
                   </tbody>
                 </table>
               </div>
@@ -257,8 +202,7 @@
 
 
         <!-- Tutee homepage -->
-
-        <div class="container-fluid" th:if="${userType}=='tutee'">
+        <div class="container-fluid" v-if="user.userType == 'tutee'">
           <div class="row">
             <div class="col-xs-12 col-md-12">
               <table class="table">
@@ -273,24 +217,21 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="task : ${tasks}">
+                <tr v-for="task in tasks.list">
                   <td class="align-middle">
                     <div class="form-check">
-                      <label><input class="form-check-input" type="checkbox"
-                                    th:checked="${task.done}"
-                                    style="pointer-events: none"></label>
+                      <span v-if="!task.done">&#9744;</span>
+                      <span v-if="task.done">&#9745;</span>
                     </div>
                   </td>
-                  <td th:text="${task.startTime.time}"
-                      th:class="(${nowTime.time.after(task.startTime.time)} ? 'text-danger' : '') + ' align-middle'"></td>
-                  <td th:text="${task.endTime.time}"
-                      th:class="(${nowTime.time.after(task.endTime.time)} ? 'text-danger' : '') + ' align-middle'"></td>
-                  <td class="align-middle" th:text="${task.tutor}"></td>
-                  <td class="align-middle" th:text="${task.content}"></td>
+                  <td class="align-middle">{{formatTime(task.startTime)}}</td>
+                  <td class="align-middle">{{formatTime(task.endTime)}}</td>
+                  <td class="align-middle">{{task.tutor.name}}</td>
+                  <td class="align-middle">{{task.content}}</td>
                   <td class="align-middle">
-                    <form action="/donetask" method="post" th:if="${!task.done}">
+                    <form action="/donetask" method="post" v-if="!task.done">
                       <button class="btn btn-success" type="submit" name="task_id"
-                              th:value="${task.id}">Done
+                              v-bind:value="task.id">Done
                       </button>
                     </form>
                   </td>
