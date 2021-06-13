@@ -101,32 +101,10 @@ class DrpController {
         return "chats_page"
     }
 
-    fun getAllTutors(): List<Tutor> {
-        val everyone = personRepository!!.findAll()
-        val tutors = mutableListOf<Tutor>()
-        for (person in everyone) {
-            if (person is Tutor) {
-                tutors.add(person)
-            }
-        }
-        return tutors
-    }
 
     @RequestMapping("/calls_page")
     fun videoCallPage(): String {
-//        val person1 = personRepository!!.findById(51).get()
-//        val person2 = personRepository!!.findById(31).get()
-//        val conv = Conversation(person1, person2)
-//        conversationRepository!!.save(conv)
-//        messageRepository!!.save(Message(conv, person1, GregorianCalendar(), "It's sunny today"))
-//        messageRepository!!.save(Message(conv, person2, GregorianCalendar(), "Really looks pretty boring"))
-//        messageRepository!!.save(Message(conv, person1, GregorianCalendar(), "My bad, I checked BBC weather by mistake"))
-        return "build/index"
-    }
-
-    @RequestMapping("/voiceCall")
-    fun voiceCallPage(): String {
-        return "voiceCall"
+        return "videoCallsPage/index"
     }
 
     fun getUserType(person: Person): String {
@@ -181,7 +159,7 @@ class DrpController {
             if (matchingUsers.isEmpty()) {
                 val user = when (userType) {
                     "tutor" -> {
-                        Tutor(username, emptyList())
+                        Tutor(username, mutableListOf())
                     }
                     "tutee" -> {
                         Tutee(username)
@@ -225,10 +203,10 @@ class DrpController {
                 if (matchingPersons.isNotEmpty()) {
                     val person = matchingPersons[0]
                     if (person is Tutee) {
-                        val newTutees = ArrayList<Tutee>(it.tutees)
-                        newTutees.add(person)
-                        it.tutees = newTutees
+                        it.tutees!!.add(person)
                         personRepository.save(it)
+                        person.tutors!!.add(it)
+                        personRepository.save(person)
                     }
                 }
             }

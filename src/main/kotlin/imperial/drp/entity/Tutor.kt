@@ -8,6 +8,6 @@ import javax.persistence.ManyToMany
 @Entity
 class Tutor(
         name: String? = null,
-        @JsonIgnore @field:ManyToMany var tutees: List<Tutee>? = null
+        @JsonIgnore @field:ManyToMany var tutees: MutableList<Tutee>? = mutableListOf()
 ) : Person(name) {
 }

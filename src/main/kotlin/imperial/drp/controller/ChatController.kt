@@ -4,11 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import imperial.drp.dao.ConversationRepository
 import imperial.drp.dao.MessageRepository
 import imperial.drp.dao.PersonRepository
-import imperial.drp.entity.Conversation
-import imperial.drp.entity.Message
-import imperial.drp.entity.Tutor
+import imperial.drp.entity.*
 import imperial.drp.model.ChatMessage
-import imperial.drp.model.SimpleMessage
 import imperial.drp.model.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -52,11 +49,10 @@ class ChatController {
             }
         }
         if (person is Tutor) {
-            for (tutee in person.tutees!!) {
-                if (tutee.id.toString() !in recentChatsMap.keys) {
-                    recentChatsMap[tutee!!.id.toString()] = emptyList()
-                }
-            }
+            addEmptyConversationToPersons(person.tutees!!, recentChatsMap)
+        }
+        if (person is Tutee) {
+            addEmptyConversationToPersons(person.tutors!!, recentChatsMap)
         }
 
         println("about to send messages back $recentChatsMap")
@@ -66,6 +62,14 @@ class ChatController {
         messageSender.convertAndSend("/topic/chat-${chatMessage.sender}-allMessages", object {
             val messages = json
         })
+    }
+
+    private fun addEmptyConversationToPersons(people: List<Person>, recentChatsMap: MutableMap<String, List<Message>>) {
+        for (person in people) {
+            if (person.id.toString() !in recentChatsMap.keys) {
+                recentChatsMap[person.id.toString()] = emptyList()
+            }
+        }
     }
 
     @Transactional
@@ -81,18 +85,16 @@ class ChatController {
                 if (conv.user1!!.id == userId) {
                     otherUser = conv.user2
                 }
-                val user = personRepository!!.findById(otherUser!!.id!!).get()
+                val user = personRepository.findById(otherUser!!.id!!).get()
                 val detail = UserDetail(user.name!!, user.status)
-                userDetails[otherUser!!.id!!.toString()] = detail
+                userDetails[otherUser.id!!.toString()] = detail
             }
         }
         if (person is Tutor) {
-            for (tutee in person.tutees!!) {
-                if (tutee.id.toString() !in userDetails.keys) {
-                    val user = personRepository!!.findById(tutee.id!!).get()
-                    userDetails[tutee!!.id.toString()] = UserDetail(user.name!!, user.status)
-                }
-            }
+            addUserDetailsOfPerson(person.tutees!!, userDetails)
+        }
+        if (person is Tutee) {
+            addUserDetailsOfPerson(person.tutors!!, userDetails)
         }
         val jsonObject = ObjectMapper()
         val json = jsonObject.writeValueAsString(userDetails)
@@ -102,13 +104,23 @@ class ChatController {
         })
     }
 
+    private fun addUserDetailsOfPerson(people: List<Person>, userDetails: MutableMap<String, UserDetail>) {
+        val ids = userDetails.keys
+        for (person in people) {
+            if (person.id.toString() !in ids) {
+                val user = personRepository!!.findById(person.id!!).get()
+                userDetails[person.id.toString()] = UserDetail(user.name!!, user.status)
+            }
+        }
+    }
+
     @Transactional
     @MessageMapping("/chat.send")
     fun sendMessage(@Payload chatMessage: ChatMessage) {
         println("Chat message received ${chatMessage.content} ${chatMessage.sender} ${chatMessage.recipient} ${chatMessage.time}")
         val sender = personRepository!!.findById(chatMessage.sender.toLong()).get()
         val recipient = personRepository!!.findById(chatMessage.recipient.toLong()).get()
-        var convList = mutableListOf<Conversation>()
+        val convList = mutableListOf<Conversation>()
         convList.addAll(conversationRepository!!.findAllByUser1AndUser2(sender, recipient))
         convList.addAll(conversationRepository!!.findAllByUser1OrUser2(recipient, sender))
         lateinit var conv: Conversation
