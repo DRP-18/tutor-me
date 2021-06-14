@@ -4,6 +4,7 @@ import imperial.drp.dao.ConversationRepository
 import imperial.drp.dao.MessageRepository
 import imperial.drp.dao.PersonRepository
 import imperial.drp.dao.TaskRepository
+import imperial.drp.dto.TaskMapItemDto
 import imperial.drp.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -31,46 +32,46 @@ class DrpController {
     @Autowired
     private val messageRepository: MessageRepository? = null
 
-    @RequestMapping("/")
-    fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
-        if (userId != null) {
-            val userOpt = personRepository!!.findById(userId)
-            if (userOpt.isPresent) {
-                val user = userOpt.get()
-                model.addAttribute("username", user.name!!)
-                model.addAttribute("nowTime", Calendar.getInstance())
-                model.addAttribute("userType", getUserType(user))
-                when (user) {
-                    is Tutor -> {
-                        val tasks =
-                            taskRepository!!.findByTutorOrderByStartTimeAsc(
-                                personRepository.findByName(
-                                    user.name!!
-                                )[0]
-                            )
-                        val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
-                        user.tutees!!.forEach {
-                            tuteeTasksMap[it] = ArrayList()
-                        }
-                        tasks.forEach {
-                            tuteeTasksMap[it.tutee!!]!!.add(it)
-                        }
-                        model.addAttribute("tuteeTasksMap", tuteeTasksMap)
-                    }
-                    is Tutee -> {
-                        val tasks =
-                            taskRepository!!.findByTuteeOrderByStartTimeAsc(
-                                personRepository.findByName(
-                                    user.name!!
-                                )[0]
-                            )
-                        model.addAttribute("tasks", tasks)
-                    }
-                }
-            }
-        }
-        return "homepage"
-    }
+//    @RequestMapping("/")
+//    fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
+//        if (userId != null) {
+//            val userOpt = personRepository!!.findById(userId)
+//            if (userOpt.isPresent) {
+//                val user = userOpt.get()
+//                model.addAttribute("username", user.name!!)
+//                model.addAttribute("nowTime", Calendar.getInstance())
+//                model.addAttribute("userType", getUserType(user))
+//                when (user) {
+//                    is Tutor -> {
+//                        val tasks =
+//                            taskRepository!!.findByTutorOrderByStartTimeAsc(
+//                                personRepository.findByName(
+//                                    user.name!!
+//                                )[0]
+//                            )
+//                        val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
+//                        user.tutees!!.forEach {
+//                            tuteeTasksMap[it] = ArrayList()
+//                        }
+//                        tasks.forEach {
+//                            tuteeTasksMap[it.tutee!!]!!.add(it)
+//                        }
+//                        model.addAttribute("tuteeTasksMap", tuteeTasksMap)
+//                    }
+//                    is Tutee -> {
+//                        val tasks =
+//                            taskRepository!!.findByTuteeOrderByStartTimeAsc(
+//                                personRepository.findByName(
+//                                    user.name!!
+//                                )[0]
+//                            )
+//                        model.addAttribute("tasks", tasks)
+//                    }
+//                }
+//            }
+//        }
+//        return "homepage"
+//    }
 
     @RequestMapping("/chats_page")
     fun textChatPage(
@@ -355,19 +356,19 @@ class DrpController {
     }
 
     @GetMapping("/tutortasks")
-    fun tutortasks(@CookieValue(value = "user_id") userId: Long): ResponseEntity<Map<Long, List<Task>>> {
+    fun tutortasks(@CookieValue(value = "user_id") userId: Long): ResponseEntity<Map<Long, TaskMapItemDto>> {
         val userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
             val user = userOpt.get()
             if (user is Tutor) {
                 val tasks =
                     taskRepository!!.findByTutorOrderByStartTimeAsc(user)
-                val tuteeTasksMap = TreeMap<Long, MutableList<Task>>()
+                val tuteeTasksMap = TreeMap<Long, TaskMapItemDto>()
                 user.tutees!!.forEach {
-                    tuteeTasksMap[it.id!!] = ArrayList()
+                    tuteeTasksMap[it.id!!] = TaskMapItemDto(it.name!!, ArrayList())
                 }
                 tasks.forEach {
-                    tuteeTasksMap[it.tutee!!.id]!!.add(it)
+                    tuteeTasksMap[it.tutee!!.id]!!.tasks.add(it)
                 }
                 return ResponseEntity(tuteeTasksMap, HttpStatus.OK)
             }
@@ -409,5 +410,24 @@ class DrpController {
         } else {
             ResponseEntity(null, HttpStatus.NOT_FOUND)
         }
+    }
+
+    @PostMapping("removemytutee")
+    fun removemytutee(
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "tutee_id") tuteeId: Long,
+        model: Model
+    ): String {
+        val userOpt = personRepository!!.findById(userId)
+        if (userOpt.isPresent) {
+            val user = userOpt.get()
+            if (user is Tutor) {
+                personRepository.findById(tuteeId).ifPresent {
+                    user.tutees!!.remove(it)
+                    personRepository.save(user)
+                }
+            }
+        }
+        return "redirect"
     }
 }

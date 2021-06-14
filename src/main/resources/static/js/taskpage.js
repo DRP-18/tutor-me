@@ -1,5 +1,5 @@
 var vm = new Vue({
-  el: '#wrapper',
+  el: '#main',
   data: {
     user: {},
     tasks: {},
@@ -41,6 +41,17 @@ function refreshTasks() {
   }
 }
 
+function refreshTitle() {
+  fetch('/userinfo')
+    .then(response => response.json())
+    .then(person => {
+      Vue.set(vm.user, "name", person.name);
+    })
+    .catch(function() {
+      Vue.set(vm.user, "name", getCookie("user_type"));
+    });
+}
+
 function getCookie(cname) {
   var name = cname + "=";
   var decodedCookie = decodeURIComponent(document.cookie);
@@ -64,5 +75,6 @@ window.onload = function () {
   }
 };
 
+refreshTitle();
 refreshTasks();
 setInterval(refreshTasks, 5000);
