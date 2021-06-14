@@ -368,7 +368,7 @@ class DrpController {
                     tuteeTasksMap[it.id!!] = TaskMapItemDto(it.name!!, ArrayList())
                 }
                 tasks.forEach {
-                    tuteeTasksMap[it.tutee!!.id]!!.tasks.add(it)
+                    tuteeTasksMap[it.tutee!!.id]?.tasks?.add(it)
                 }
                 return ResponseEntity(tuteeTasksMap, HttpStatus.OK)
             }
