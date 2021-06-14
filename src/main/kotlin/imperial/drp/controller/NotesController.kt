@@ -1,5 +1,6 @@
 package imperial.drp.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import imperial.drp.dao.ConversationRepository
 import imperial.drp.dao.MessageRepository
 import imperial.drp.dao.NoteRepository
@@ -25,7 +26,6 @@ class NotesController {
 
     @Autowired
     private val messageRepository: MessageRepository? = null
-
 
     @Autowired
     private val noteRepository: NoteRepository? = null
@@ -72,5 +72,40 @@ class NotesController {
 //        messageSender.convertAndSend("/topic/chat-${chatMessage.recipient}-receiveMessage", message)
 
 // send all notes back via a specified channel 
+    }
+
+    @Transactional
+    fun getAllNotes(@Payload notes: List<String>) {
+//        val userId = notes[1].sender.toLong()
+//        val person = personRepository!!.findById(userId).get()
+//        val convs = conversationRepository!!.findAllByUser1OrUser2(person, person)
+//        val recentChatsMap = mutableMapOf<String, List<Message>>()
+//        if (convs.isNotEmpty()) {
+//            for (conv in convs) {
+//                var otherUser = conv.user1!!.id
+//                if (conv.user1!!.id == userId) {
+//                    otherUser = conv.user2!!.id
+//                }
+//                val messages = messageRepository!!.findByConversation(conv)
+//                println("messages $messages ${messages.size}")
+//                recentChatsMap[otherUser!!.toString()] = messages
+//            }
+//        }
+//        if (person is Tutor) {
+//            addEmptyConversationToPersons(person.tutees!!, recentChatsMap)
+//        }
+//        if (person is Tutee) {
+//            addEmptyConversationToPersons(person.tutors!!, recentChatsMap)
+//        }
+//
+//        println("about to send messages back $recentChatsMap")
+//        val jsonObject = ObjectMapper()
+//        val json = jsonObject.writeValueAsString(recentChatsMap)
+//        println("jsoned ${json}")
+//        messageSender.convertAndSend("/topic/chat-${chatMessage.sender}-allMessages", object {
+//            val messages = json
+//        })
+
+//        '/notes-' + userId + '-receiveNotes'
     }
 }
