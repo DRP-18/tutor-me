@@ -1,5 +1,5 @@
 var vm = new Vue({
-  el: '#wrapper',
+  el: '#main',
   data: {
     user: {},
     tasks: {},
