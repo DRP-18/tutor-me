@@ -57,5 +57,12 @@ function getCookie(cname) {
   return "";
 }
 
+window.onload = function () {
+  const id = getCookie("user_id");
+  if (id === "") {
+    document.getElementById('loginModel').style.display = 'block'
+  }
+};
+
 refreshTasks();
 setInterval(refreshTasks, 5000);

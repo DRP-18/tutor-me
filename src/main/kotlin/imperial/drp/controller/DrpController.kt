@@ -355,19 +355,19 @@ class DrpController {
     }
 
     @GetMapping("/tutortasks")
-    fun tutortasks(@CookieValue(value = "user_id") userId: Long): ResponseEntity<Map<Tutee, List<Task>>> {
+    fun tutortasks(@CookieValue(value = "user_id") userId: Long): ResponseEntity<Map<Long, List<Task>>> {
         val userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
             val user = userOpt.get()
             if (user is Tutor) {
                 val tasks =
                     taskRepository!!.findByTutorOrderByStartTimeAsc(user)
-                val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
+                val tuteeTasksMap = TreeMap<Long, MutableList<Task>>()
                 user.tutees!!.forEach {
-                    tuteeTasksMap[it] = ArrayList()
+                    tuteeTasksMap[it.id!!] = ArrayList()
                 }
                 tasks.forEach {
-                    tuteeTasksMap[it.tutee!!]!!.add(it)
+                    tuteeTasksMap[it.tutee!!.id]!!.add(it)
                 }
                 return ResponseEntity(tuteeTasksMap, HttpStatus.OK)
             }
@@ -391,5 +391,23 @@ class DrpController {
             }
         }
         return ResponseEntity(null, HttpStatus.NOT_FOUND)
+    }
+
+    @GetMapping("/userinfo")
+    fun userinfo(@CookieValue(value = "user_id", required = false) myId: Long?,
+                 @RequestParam(value = "user_id", required = false) otherId: Long?): ResponseEntity<Person> {
+        var userId = -1L;
+        if (otherId != null) {
+            userId = otherId
+        } else if (myId != null) {
+            userId = myId
+        }
+
+        val userOpt = personRepository!!.findById(userId)
+        return if (userOpt.isPresent) {
+            ResponseEntity(userOpt.get(), HttpStatus.OK)
+        } else {
+            ResponseEntity(null, HttpStatus.NOT_FOUND)
+        }
     }
 }

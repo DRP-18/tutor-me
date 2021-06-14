@@ -24,6 +24,7 @@
   <!-- CSS for popup login -->
   <link rel="stylesheet" href="/css/modelstyles.css">
 
+  <link rel="stylesheet" href="/css/taskpage.css">
 
 </head>
 
@@ -119,7 +120,7 @@
       </div>
 
       <!-- Services -->
-      <section class="services">
+      <section class="services" v-cloak>
         <h1 th:text="'Welcome, ' + ${username} + '!'" style="text-align: center"/>
 
         <a href="/logout">
@@ -127,16 +128,24 @@
         </a>
       </section>
 
-      <section>
+      <section v-cloak>
         <!-- Tutor homepage -->
         <p></p>
+        <div class="text-center" v-if="user.userType == undefined">
+          <div class="spinner-border" role="status">
+          </div>
+        </div>
         <div class="container-fluid" v-if="user.userType == 'tutor'">
           <div class="row">
             <div class="col-xs-12 col-md-12">
               <div v-for="(tasks, key) in tasks.tuteeMap">
-                <div class="col-md-12 bg-light text-right">
+                <div class="d-flex justify-content-between">
                   <h2 class="d-table-cell">{{key}} (Tutee)</h2>
-                  <button type="button" id="removeButton" class="btn btn-danger">Remove</button>
+                  <form action="/deletetutee" method="post">
+                    <button type="button" class="btn btn-danger" type="submit" v-bind:value="key">
+                      Remove
+                    </button>
+                  </form>
                 </div>
                 <table class="table">
                   <thead>
@@ -181,7 +190,7 @@
                                                       placeholder="Content"></td>
                       <td class="align-middle">
                         <button class="btn btn-primary" type="submit" name="tutee_id"
-                                th:value="${tuteeTasks.key.id}">Add
+                                v-bind:value="key">Add
                         </button>
                       </td>
                     </form>
@@ -445,6 +454,6 @@
 <script src="/js/custom.js"></script>
 <script src="/js/vue.js"></script>
 
-<script src="/js/task.js"></script>
+<script src="/js/taskpage.js"></script>
 </body>
 </html>
