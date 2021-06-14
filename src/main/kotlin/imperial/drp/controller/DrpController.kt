@@ -4,6 +4,7 @@ import imperial.drp.dao.ConversationRepository
 import imperial.drp.dao.MessageRepository
 import imperial.drp.dao.PersonRepository
 import imperial.drp.dao.TaskRepository
+import imperial.drp.dto.TaskMapItemDto
 import imperial.drp.entity.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -355,19 +356,19 @@ class DrpController {
     }
 
     @GetMapping("/tutortasks")
-    fun tutortasks(@CookieValue(value = "user_id") userId: Long): ResponseEntity<Map<Long, List<Task>>> {
+    fun tutortasks(@CookieValue(value = "user_id") userId: Long): ResponseEntity<Map<Long, TaskMapItemDto>> {
         val userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
             val user = userOpt.get()
             if (user is Tutor) {
                 val tasks =
                     taskRepository!!.findByTutorOrderByStartTimeAsc(user)
-                val tuteeTasksMap = TreeMap<Long, MutableList<Task>>()
+                val tuteeTasksMap = TreeMap<Long, TaskMapItemDto>()
                 user.tutees!!.forEach {
-                    tuteeTasksMap[it.id!!] = ArrayList()
+                    tuteeTasksMap[it.id!!] = TaskMapItemDto(it.name!!, ArrayList())
                 }
                 tasks.forEach {
-                    tuteeTasksMap[it.tutee!!.id]!!.add(it)
+                    tuteeTasksMap[it.tutee!!.id]!!.tasks.add(it)
                 }
                 return ResponseEntity(tuteeTasksMap, HttpStatus.OK)
             }
@@ -409,5 +410,24 @@ class DrpController {
         } else {
             ResponseEntity(null, HttpStatus.NOT_FOUND)
         }
+    }
+
+    @PostMapping("removemytutee")
+    fun removemytutee(
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "tutee_id") tuteeId: Long,
+        model: Model
+    ): String {
+        val userOpt = personRepository!!.findById(userId)
+        if (userOpt.isPresent) {
+            val user = userOpt.get()
+            if (user is Tutor) {
+                personRepository.findById(tuteeId).ifPresent {
+                    user.tutees!!.remove(it)
+                    personRepository.save(user)
+                }
+            }
+        }
+        return "redirect"
     }
 }

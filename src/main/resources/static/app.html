@@ -121,7 +121,7 @@
 
       <!-- Services -->
       <section class="services" v-cloak>
-        <h1 th:text="'Welcome, ' + ${username} + '!'" style="text-align: center"/>
+        <h1 style="text-align: center" v-if="user.name != undefined">Welcome, {{user.name}}!</h1>
 
         <a href="/logout">
           <button>Logout</button>
@@ -138,11 +138,11 @@
         <div class="container-fluid" v-if="user.userType == 'tutor'">
           <div class="row">
             <div class="col-xs-12 col-md-12">
-              <div v-for="(tasks, key) in tasks.tuteeMap">
+              <div v-for="(item, key) in tasks.tuteeMap">
                 <div class="d-flex justify-content-between">
-                  <h2 class="d-table-cell">{{key}} (Tutee)</h2>
-                  <form action="/deletetutee" method="post">
-                    <button type="button" class="btn btn-danger" type="submit" v-bind:value="key">
+                  <h2 class="d-table-cell">{{item.personName}} (Tutee)</h2>
+                  <form action="/removemytutee" method="post">
+                    <button class="btn btn-danger" type="submit" name="tutee_id" v-bind:value="key">
                       Remove
                     </button>
                   </form>
@@ -158,7 +158,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr v-for="task in tasks">
+                  <tr v-for="task in item.tasks">
                     <td class="align-middle">
                       <div class="form-check">
                         <span v-if="!task.done">&#9744;</span>
@@ -177,26 +177,29 @@
                     </td>
                   </tr>
                   <tr>
-                    <form action="/addtask" method="post">
-                      <td class="align-middle"></td>
-                      <td class="align-middle"><input type="datetime-local" class="form-control"
-                                                      name="start_time"
-                                                      placeholder="e.g., 2018-06-12T19:30"></td>
-                      <td class="align-middle"><input type="datetime-local" class="form-control"
-                                                      name="end_time"
-                                                      placeholder="e.g., 2018-06-12T19:30"></td>
-                      <td class="align-middle"><input type="text" class="form-control"
-                                                      name="content"
-                                                      placeholder="Content"></td>
-                      <td class="align-middle">
-                        <button class="btn btn-primary" type="submit" name="tutee_id"
-                                v-bind:value="key">Add
-                        </button>
-                      </td>
-                    </form>
+                    <td class="align-middle"></td>
+                    <td class="align-middle"><input v-bind:form="'form-addtask-' + key"
+                                                    type="datetime-local" class="form-control"
+                                                    name="start_time"
+                                                    placeholder="e.g., 2018-06-12T19:30"></td>
+                    <td class="align-middle"><input v-bind:form="'form-addtask-' + key"
+                                                    type="datetime-local" class="form-control"
+                                                    name="end_time"
+                                                    placeholder="e.g., 2018-06-12T19:30"></td>
+                    <td class="align-middle"><input v-bind:form="'form-addtask-' + key" type="text"
+                                                    class="form-control"
+                                                    name="content"
+                                                    placeholder="Content"></td>
+                    <td class="align-middle">
+                      <button v-bind:form="'form-addtask-' + key" class="btn btn-primary"
+                              type="submit" name="tutee_id"
+                              v-bind:value="key">Add
+                      </button>
+                    </td>
                   </tr>
                   </tbody>
                 </table>
+                <form action="/addtask" method="post" v-bind:id="'form-addtask-' + key"></form>
               </div>
               <form action="/addtutee" method="post">
                 <div class="input-group mb-3">
