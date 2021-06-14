@@ -1,5 +1,8 @@
 package imperial.drp.controller
 
+import com.twilio.Twilio
+import com.twilio.rest.api.v2010.account.Token
+import com.twilio.type.IceServer
 import imperial.drp.dao.PersonRepository
 import imperial.drp.entity.Person
 import imperial.drp.model.CallingMessage
@@ -10,11 +13,24 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.messaging.simp.SimpMessageSendingOperations
 import org.springframework.stereotype.Controller
+import java.lang.System.getenv
 import java.util.*
 
 
 @Controller
 class WebrtcController {
+
+
+    lateinit var iceServers: List<IceServer>
+
+    init {
+        val ACCOUNT_SID = getenv("TWILIO_ACCOUNT_SID")
+        val AUTH_TOKEN = getenv("TWILIO_AUTH_TOKEN")
+        println("ACCOUNT SID  START: ${ACCOUNT_SID.take(5)}")
+        println("AUTH TOKEN  START: ${AUTH_TOKEN.take(5)}")
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN)
+        iceServers = Token.creator().create().iceServers
+    }
 
     @Autowired
     lateinit var sender: SimpMessageSendingOperations
@@ -66,4 +82,9 @@ class WebrtcController {
         sender.convertAndSend("/topic/video/$callerID/callAccepted", message)
     }
 
+    @MessageMapping("/video.iceCandidates")
+    fun getIceCandidates(@Payload message: SimpleMessage) {
+        print("Sending back to ${message.message}" + iceServers)
+        sender.convertAndSend("/topic/video/${message.message}/iceCandidates", iceServers)
+    }
 }

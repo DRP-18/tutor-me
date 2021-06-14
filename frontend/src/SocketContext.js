@@ -18,6 +18,8 @@ const ContextProvider = ({children}) => {
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [name, setName] = useState("");
+  const [iceCandidates, setIceCandidates] = useState({});
+
   const userID = getCookie("user_id");
 
   const myVideo = useRef();
@@ -52,7 +54,12 @@ const ContextProvider = ({children}) => {
     stompClient.subscribe('/topic/video/' + userID + '/username',
         onUsernameReceived)
     stompClient.subscribe('/topic/video/' + userID + '/endCall', leaveCall)
+    stompClient.subscribe('/topic/video/' + userID + '/iceCandidates',
+        saveIceCandidates)
+
     stompClient.send("/app/video.getAllUsers", {},
+        JSON.stringify({message: userID}))
+    stompClient.send("/app/video.iceCandidates", {},
         JSON.stringify({message: userID}))
   }
 
@@ -84,6 +91,13 @@ const ContextProvider = ({children}) => {
     console.log(Object.keys(users))
   }
 
+  const saveIceCandidates = (payload) => {
+    console.log("This is the " + payload)
+    const message = JSON.parse(payload.body)
+    console.log("These are the ice candidates " + message)
+    setIceCandidates(message)
+  }
+
   const incomingCall = (payload) => {
     const message = JSON.parse(payload.body);
     console.log("Person calling me " + message.callerName)
@@ -106,10 +120,7 @@ const ContextProvider = ({children}) => {
     const peer = new Peer({
       initiator: false, trickle: false, stream: stream,
       config: {
-        iceServers: [{
-          "url": "stun:stun2.1.google.com:19302"
-        }
-        ]
+        iceServers: iceCandidates
       }
     });
 
@@ -136,16 +147,16 @@ const ContextProvider = ({children}) => {
       reconnectTimer: 100,
       iceTransportPolicy: 'relay',
       config: {
-
-        iceServers: [
-          {
-            "url": "stun:stun2.1.google.com:19302"
-            // "url" : "stun:stun2.1.google.com:19302"
-            // urls: "stun.node4.co.uk:3478?transport=tcp",
-            // username: "sultan1640@gmail.com",
-            // credential: "98376683",
-          }
-        ]
+        iceServers: iceCandidates
+        // iceServers: [
+        //   {
+        //     "url": "stun:stun2.1.google.com:19302"
+        //     // "url" : "stun:stun2.1.google.com:19302"
+        //     // urls: "stun.node4.co.uk:3478?transport=tcp",
+        //     // username: "sultan1640@gmail.com",
+        //     // credential: "98376683",
+        //   }
+        // ]
       }, stream: stream,
     });
     console.log("The user has been called by " + id)

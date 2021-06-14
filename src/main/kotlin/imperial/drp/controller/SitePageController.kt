@@ -19,7 +19,7 @@ class SitePageController {
     //     return "homepage"
     // }
 
-    //    @RequestMapping("/calls_page")
+//        @RequestMapping("/calls_page")
 //    fun videoCallPage(@CookieValue(value = "user_id", required = false) userId: String, response: HttpServletResponse) {
 //        response.setHeader("Location", "http://localhost:3000/")
 //        response.status = 302

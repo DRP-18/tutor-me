@@ -1,17 +1,10 @@
 package imperial.drp
 
-import imperial.drp.dao.PersonRepository
-import imperial.drp.dao.TaskRepository
-import imperial.drp.entity.Person
-import imperial.drp.entity.Task
-import imperial.drp.entity.Tutee
-import imperial.drp.entity.Tutor
+import com.twilio.Twilio
+import com.twilio.rest.api.v2010.account.Token
 import org.slf4j.LoggerFactory
-import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.context.annotation.Bean
-import java.util.*
 
 @SpringBootApplication
 class DrpApplication {
