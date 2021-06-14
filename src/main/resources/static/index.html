@@ -141,10 +141,12 @@
               <div v-for="(item, key) in tasks.tuteeMap">
                 <div class="d-flex justify-content-between">
                   <h2 class="d-table-cell">{{item.personName}} (Tutee)</h2>
-                  <form action="/removemytutee" method="post">
-                    <button class="btn btn-danger" type="submit" name="tutee_id" v-bind:value="key">
-                      Remove
-                    </button>
+                  <form action="/removemytutee" method="post"
+                        v-bind:id="'form-removemytutee-' + key"
+                        v-on:submit.prevent="removeMyTutee('form-removemytutee-' + key)">
+                    <input type="hidden" name="tutee_id"
+                           v-bind:value="key"/>
+                    <button class="btn btn-danger" type="submit">Remove</button>
                   </form>
                 </div>
                 <table class="table">
@@ -204,11 +206,14 @@
                       v-on:submit.prevent="addTask('form-addtask-' + key)"
                       v-bind:id="'form-addtask-' + key"></form>
               </div>
-              <form action="/addtutee" method="post">
+              <form action="/addtutee" method="post"
+                    id="form-addtutee">
                 <div class="input-group mb-3">
                   <input type="text" class="form-control" name="tutee_name"
                          placeholder="Tutee Name">
-                  <button class="btn btn-primary" type="submit">Add</button>
+                  <button class="btn btn-primary" type="reset"
+                          v-on:click="addTutee('form-addtutee')">Add
+                  </button>
                 </div>
               </form>
             </div>
@@ -244,10 +249,12 @@
                   <td class="align-middle">{{task.tutor.name}}</td>
                   <td class="align-middle">{{task.content}}</td>
                   <td class="align-middle">
-                    <form action="/donetask" method="post" v-if="!task.done">
-                      <button class="btn btn-success" type="submit" name="task_id"
-                              v-bind:value="task.id">Done
-                      </button>
+                    <form action="/donetask" method="post" v-if="!task.done"
+                          v-on:submit.prevent="doneTask('form-donetask-' + task.id)"
+                          v-bind:id="'form-donetask-' + task.id">
+                      <input type="hidden" name="task_id"
+                             v-bind:value="task.id"/>
+                      <button class="btn btn-success">Done</button>
                     </form>
                   </td>
                 </tr>

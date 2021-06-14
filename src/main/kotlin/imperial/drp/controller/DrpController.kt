@@ -201,24 +201,38 @@ class DrpController {
     fun addtutee(
         @CookieValue(value = "user_id") userId: Long,
         @RequestParam(value = "tutee_name") tuteeName: String,
-        response: HttpServletResponse,
-        model: Model
-    ): String {
-        personRepository!!.findById(userId).ifPresent {
-            if (it is Tutor) {
+        response: HttpServletResponse
+    ): ResponseEntity<PostResponseDto> {
+        var userOpt = personRepository!!.findById(userId)
+        if (userOpt.isPresent) {
+            var user = userOpt.get()
+            if (user is Tutor) {
                 val matchingPersons = personRepository.findByName(tuteeName)
                 if (matchingPersons.isNotEmpty()) {
                     val person = matchingPersons[0]
                     if (person is Tutee) {
-                        it.tutees!!.add(person)
-                        personRepository.save(it)
-                        person.tutors!!.add(it)
+                        user.tutees!!.add(person)
+                        personRepository.save(user)
+                        person.tutors!!.add(user)
                         personRepository.save(person)
+                        return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                     }
+                    return ResponseEntity(
+                        PostResponseDto(error = "the person you try to add isn't a tutee"),
+                        HttpStatus.NOT_FOUND
+                    )
                 }
+                return ResponseEntity(
+                    PostResponseDto(error = "tutee doesn't exist"),
+                    HttpStatus.NOT_FOUND
+                )
             }
+            return ResponseEntity(
+                PostResponseDto(error = "you're not a tutor"),
+                HttpStatus.NOT_FOUND
+            )
         }
-        return "redirect"
+        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.NOT_FOUND)
     }
 
     @PostMapping("/addtask")
@@ -381,16 +395,29 @@ class DrpController {
         @RequestParam(value = "task_id") taskId: Long,
         response: HttpServletResponse,
         model: Model
-    ): String {
-        personRepository!!.findById(userId).ifPresent { person ->
-            taskRepository!!.findById(taskId).ifPresent {
-                if (it.tutor == person || it.tutee == person) {
-                    it.done = true
-                    taskRepository.save(it)
+    ): ResponseEntity<PostResponseDto> {
+        var userOpt = personRepository!!.findById(userId)
+        if (userOpt.isPresent) {
+            var user = userOpt.get()
+            var taskOpt = taskRepository!!.findById(taskId)
+            if (taskOpt.isPresent) {
+                var task = taskOpt.get()
+                if (task.tutor == user || task.tutee == user) {
+                    task.done = true
+                    taskRepository.save(task)
+                    return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                 }
+                return ResponseEntity(
+                    PostResponseDto(error = "you have not access to the task"),
+                    HttpStatus.NOT_FOUND
+                )
             }
+            return ResponseEntity(
+                PostResponseDto(error = "task doesn't exist"),
+                HttpStatus.NOT_FOUND
+            )
         }
-        return "redirect"
+        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.NOT_FOUND)
     }
 
     @GetMapping("/tutortasks")
@@ -455,19 +482,29 @@ class DrpController {
     @PostMapping("removemytutee")
     fun removemytutee(
         @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "tutee_id") tuteeId: Long,
-        model: Model
-    ): String {
+        @RequestParam(value = "tutee_id") tuteeId: Long
+    ): ResponseEntity<PostResponseDto> {
         val userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
             val user = userOpt.get()
             if (user is Tutor) {
-                personRepository.findById(tuteeId).ifPresent {
-                    user.tutees!!.remove(it)
+                var tuteeOpt = personRepository.findById(tuteeId)
+                if (tuteeOpt.isPresent) {
+                    var tutee = tuteeOpt.get()
+                    user.tutees!!.remove(tutee)
                     personRepository.save(user)
+                    return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                 }
+                return ResponseEntity(
+                    PostResponseDto(error = "the person is not your tutee"),
+                    HttpStatus.NOT_FOUND
+                )
             }
+            return ResponseEntity(
+                PostResponseDto(error = "you're not a tutor"),
+                HttpStatus.NOT_FOUND
+            )
         }
-        return "redirect"
+        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.NOT_FOUND)
     }
 }
