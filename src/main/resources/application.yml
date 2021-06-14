@@ -4,6 +4,3 @@ spring:
   datasource:
     hikari:
       auto-commit: false
-  jpa:
-    hibernate:
-      ddl-auto: create
