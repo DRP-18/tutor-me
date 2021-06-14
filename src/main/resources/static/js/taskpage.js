@@ -7,6 +7,38 @@ var vm = new Vue({
   methods: {
     formatTime: function (time) {
       return new Date(time).toLocaleString();
+    },
+    deleteTask: function (formId) {
+      var data = new URLSearchParams(new FormData(document.getElementById(formId)));
+      fetch('/deletetask', {
+        method: 'POST',
+        body: data
+      })
+      .then(response => response.json())
+      .then(rsp => {
+        console.log(rsp);
+        refreshTasks();
+      })
+      .catch(function() {
+        console.log("error");
+        // TODO
+      });
+    },
+    addTask: function (formId) {
+      var data = new URLSearchParams(new FormData(document.getElementById(formId)));
+      fetch('/addtask', {
+        method: 'POST',
+        body: data
+      })
+      .then(response => response.json())
+      .then(rsp => {
+        console.log(rsp);
+        refreshTasks();
+      })
+      .catch(function() {
+        console.log("error");
+        // TODO
+      });
     }
   },
 });

@@ -4,6 +4,7 @@ import imperial.drp.dao.ConversationRepository
 import imperial.drp.dao.MessageRepository
 import imperial.drp.dao.PersonRepository
 import imperial.drp.dao.TaskRepository
+import imperial.drp.dto.PostResponseDto
 import imperial.drp.dto.TaskMapItemDto
 import imperial.drp.entity.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.servlet.http.Cookie
@@ -227,54 +229,90 @@ class DrpController {
         @RequestParam(value = "content") content: String,
         @RequestParam(value = "tutee_id") tuteeId: Long,
         response: HttpServletResponse,
-        model: Model
-    ): String {
-        personRepository!!.findById(userId).ifPresent { person ->
-            if (person is Tutor) {
+    ): ResponseEntity<PostResponseDto> {
+        var userOpt = personRepository!!.findById(userId)
+        if (userOpt.isPresent) {
+            var user = userOpt.get()
+            if (user is Tutor) {
                 val tutee = personRepository.findById(tuteeId).get()
                 if (tutee is Tutee) {
                     var sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+                    try {
+                        var startCalendar = GregorianCalendar()
+                        startCalendar.time = sdf.parse(startTime)
 
-                    var startCalendar = GregorianCalendar()
-                    startCalendar.time = sdf.parse(startTime)
+                        var endCalendar = GregorianCalendar()
+                        endCalendar.time = sdf.parse(endTime)
 
-                    var endCalendar = GregorianCalendar()
-                    endCalendar.time = sdf.parse(endTime)
-
-                    if (startCalendar <= endCalendar) {
-                        taskRepository!!.save(
-                            Task(
-                                startCalendar,
-                                endCalendar,
-                                person,
-                                tutee,
-                                content
+                        if (startCalendar <= endCalendar) {
+                            taskRepository!!.save(
+                                Task(
+                                    startCalendar,
+                                    endCalendar,
+                                    user,
+                                    tutee,
+                                    content
+                                )
                             )
+                            return ResponseEntity(PostResponseDto(), HttpStatus.OK)
+                        }
+                        return ResponseEntity(
+                            PostResponseDto(error = "the end time cannot be earlier than the start time"),
+                            HttpStatus.NOT_FOUND
+                        )
+                    } catch (e: ParseException) {
+                        return ResponseEntity(
+                            PostResponseDto(error = "failed to parse the start time or the end time"),
+                            HttpStatus.NOT_FOUND
                         )
                     }
                 }
+                return ResponseEntity(
+                    PostResponseDto(error = "the person to assign task to is not a tutee"),
+                    HttpStatus.NOT_FOUND
+                )
             }
+            return ResponseEntity(
+                PostResponseDto(error = "you're not a tutor"),
+                HttpStatus.NOT_FOUND
+            )
         }
-        return "redirect"
+        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.NOT_FOUND)
     }
 
-    @RequestMapping("/deletetask")
+    @PostMapping("/deletetask")
     fun deletetask(
         @CookieValue(value = "user_id") userId: Long,
         @RequestParam(value = "task_id") taskId: Long,
-        response: HttpServletResponse,
-        model: Model
-    ): String {
-        personRepository!!.findById(userId).ifPresent { person ->
-            if (person is Tutor) {
-                taskRepository!!.findById(taskId).ifPresent {
-                    if (it.tutor == person) {
-                        taskRepository.delete(it)
+        response: HttpServletResponse
+    ): ResponseEntity<PostResponseDto> {
+        var userOpt = personRepository!!.findById(userId)
+        if (userOpt.isPresent) {
+            var user = userOpt.get()
+            if (user is Tutor) {
+                var taskOpt = taskRepository!!.findById(taskId)
+                if (taskOpt.isPresent) {
+                    var task = taskOpt.get()
+                    if (task.tutor == user) {
+                        taskRepository.delete(task)
+                        return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                     }
+                    return ResponseEntity(
+                        PostResponseDto(error = "you don't own this task"),
+                        HttpStatus.NOT_FOUND
+                    )
                 }
+                return ResponseEntity(
+                    PostResponseDto(error = "task doesn't exist"),
+                    HttpStatus.NOT_FOUND
+                )
             }
+            return ResponseEntity(
+                PostResponseDto(error = "you're not a tutor"),
+                HttpStatus.NOT_FOUND
+            )
         }
-        return "redirect"
+        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.NOT_FOUND)
     }
 
     private val s: String
@@ -395,8 +433,10 @@ class DrpController {
     }
 
     @GetMapping("/userinfo")
-    fun userinfo(@CookieValue(value = "user_id", required = false) myId: Long?,
-                 @RequestParam(value = "user_id", required = false) otherId: Long?): ResponseEntity<Person> {
+    fun userinfo(
+        @CookieValue(value = "user_id", required = false) myId: Long?,
+        @RequestParam(value = "user_id", required = false) otherId: Long?
+    ): ResponseEntity<Person> {
         var userId = -1L;
         if (otherId != null) {
             userId = otherId

@@ -169,10 +169,11 @@
                     <td class="align-middle">{{formatTime(task.endTime)}}</td>
                     <td class="align-middle">{{task.content}}</td>
                     <td class="align-middle">
-                      <form action="/deletetask" method="post">
-                        <button class="btn btn-danger" type="submit" name="task_id"
-                                v-bind:value="task.id">Delete
-                        </button>
+                      <form action="/deletetask" method="post"
+                            v-on:submit.prevent="deleteTask('form-deletetask-' + task.id)"
+                            v-bind:id="'form-deletetask-' + task.id">
+                        <input type="hidden" name="task_id" v-bind:value="task.id"/>
+                        <button class="btn btn-danger">Delete</button>
                       </form>
                     </td>
                   </tr>
@@ -191,15 +192,17 @@
                                                     name="content"
                                                     placeholder="Content"></td>
                     <td class="align-middle">
-                      <button v-bind:form="'form-addtask-' + key" class="btn btn-primary"
-                              type="submit" name="tutee_id"
-                              v-bind:value="key">Add
+                      <input type="hidden" v-bind:form="'form-addtask-' + key" name="tutee_id"
+                             v-bind:value="key"/>
+                      <button v-bind:form="'form-addtask-' + key" class="btn btn-primary">Add
                       </button>
                     </td>
                   </tr>
                   </tbody>
                 </table>
-                <form action="/addtask" method="post" v-bind:id="'form-addtask-' + key"></form>
+                <form action="/addtask" method="post"
+                      v-on:submit.prevent="addTask('form-addtask-' + key)"
+                      v-bind:id="'form-addtask-' + key"></form>
               </div>
               <form action="/addtutee" method="post">
                 <div class="input-group mb-3">
@@ -440,7 +443,8 @@
 
       <!-- Footer -->
       <footer id="footer">
-        <br><p>DRP project by
+        <br>
+        <p>DRP project by
         </p>
       </footer>
 
