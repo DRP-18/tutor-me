@@ -8,6 +8,22 @@ var vm = new Vue({
     formatTime: function (time) {
       return new Date(time).toLocaleString();
     },
+    addTask: function (formId) {
+      var data = new URLSearchParams(new FormData(document.getElementById(formId)));
+      fetch('/addtask', {
+        method: 'POST',
+        body: data
+      })
+      .then(response => response.json())
+      .then(rsp => {
+        console.log(rsp);
+        refreshTasks();
+      })
+      .catch(function() {
+        console.log("error");
+        // TODO
+      });
+    },
     deleteTask: function (formId) {
       var data = new URLSearchParams(new FormData(document.getElementById(formId)));
       fetch('/deletetask', {
@@ -24,9 +40,41 @@ var vm = new Vue({
         // TODO
       });
     },
-    addTask: function (formId) {
+    doneTask: function (formId) {
       var data = new URLSearchParams(new FormData(document.getElementById(formId)));
-      fetch('/addtask', {
+      fetch('/donetask', {
+        method: 'POST',
+        body: data
+      })
+      .then(response => response.json())
+      .then(rsp => {
+        console.log(rsp);
+        refreshTasks();
+      })
+      .catch(function() {
+        console.log("error");
+        // TODO
+      });
+    },
+    addTutee: function (formId) {
+      var data = new URLSearchParams(new FormData(document.getElementById(formId)));
+      fetch('/addtutee', {
+        method: 'POST',
+        body: data
+      })
+      .then(response => response.json())
+      .then(rsp => {
+        console.log(rsp);
+        refreshTasks();
+      })
+      .catch(function() {
+        console.log("error");
+        // TODO
+      });
+    },
+    removeMyTutee: function (formId) {
+      var data = new URLSearchParams(new FormData(document.getElementById(formId)));
+      fetch('/removemytutee', {
         method: 'POST',
         body: data
       })
