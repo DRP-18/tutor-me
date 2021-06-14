@@ -1,15 +1,7 @@
 package imperial.drp.controller
 
-import imperial.drp.dao.PersonRepository
-import imperial.drp.entity.Message
-import imperial.drp.entity.Person
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
-import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.RequestMapping
-import javax.servlet.http.Cookie
-import javax.servlet.http.HttpServletResponse
 
 @Controller
 class SitePageController {
@@ -27,5 +19,8 @@ class SitePageController {
 //        println("redirected, this was the cookie $userId")
 //    }
 
-
+    @RequestMapping("/task")
+    fun task(): String {
+        return "task"
+    }
 }
