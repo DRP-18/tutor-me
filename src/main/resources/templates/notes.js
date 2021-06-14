@@ -94,13 +94,11 @@ const connect = (event) => {
     const noteContent = addText.value.trim()
     
   if (noteContent !== null) {
-        const chatMessage = {
+        const noteMessage = {
           content: noteContent,
-          sender: username,
-          recipient: "",
-          time: ""
+          sender: username
         }
-        stompClient.send("/notes.addNote", {}, JSON.stringify(chatMessage))
+        stompClient.send("/notes.addNote", {}, JSON.stringify(noteMessage))
         noteContent.value = ''
     }
     // let notes = localStorage.getItem("notes");
