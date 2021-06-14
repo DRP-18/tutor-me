@@ -219,20 +219,20 @@ class DrpController {
                     }
                     return ResponseEntity(
                         PostResponseDto(error = "the person you try to add isn't a tutee"),
-                        HttpStatus.NOT_FOUND
+                        HttpStatus.FORBIDDEN
                     )
                 }
                 return ResponseEntity(
                     PostResponseDto(error = "tutee doesn't exist"),
-                    HttpStatus.NOT_FOUND
+                    HttpStatus.FORBIDDEN
                 )
             }
             return ResponseEntity(
                 PostResponseDto(error = "you're not a tutor"),
-                HttpStatus.NOT_FOUND
+                HttpStatus.FORBIDDEN
             )
         }
-        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.NOT_FOUND)
+        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
     }
 
     @PostMapping("/addtask")
@@ -272,26 +272,26 @@ class DrpController {
                         }
                         return ResponseEntity(
                             PostResponseDto(error = "the end time cannot be earlier than the start time"),
-                            HttpStatus.NOT_FOUND
+                            HttpStatus.FORBIDDEN
                         )
                     } catch (e: ParseException) {
                         return ResponseEntity(
                             PostResponseDto(error = "failed to parse the start time or the end time"),
-                            HttpStatus.NOT_FOUND
+                            HttpStatus.FORBIDDEN
                         )
                     }
                 }
                 return ResponseEntity(
                     PostResponseDto(error = "the person to assign task to is not a tutee"),
-                    HttpStatus.NOT_FOUND
+                    HttpStatus.FORBIDDEN
                 )
             }
             return ResponseEntity(
                 PostResponseDto(error = "you're not a tutor"),
-                HttpStatus.NOT_FOUND
+                HttpStatus.FORBIDDEN
             )
         }
-        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.NOT_FOUND)
+        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
     }
 
     @PostMapping("/deletetask")
@@ -313,20 +313,20 @@ class DrpController {
                     }
                     return ResponseEntity(
                         PostResponseDto(error = "you don't own this task"),
-                        HttpStatus.NOT_FOUND
+                        HttpStatus.FORBIDDEN
                     )
                 }
                 return ResponseEntity(
                     PostResponseDto(error = "task doesn't exist"),
-                    HttpStatus.NOT_FOUND
+                    HttpStatus.FORBIDDEN
                 )
             }
             return ResponseEntity(
                 PostResponseDto(error = "you're not a tutor"),
-                HttpStatus.NOT_FOUND
+                HttpStatus.FORBIDDEN
             )
         }
-        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.NOT_FOUND)
+        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
     }
 
     private val s: String
@@ -409,15 +409,15 @@ class DrpController {
                 }
                 return ResponseEntity(
                     PostResponseDto(error = "you have not access to the task"),
-                    HttpStatus.NOT_FOUND
+                    HttpStatus.FORBIDDEN
                 )
             }
             return ResponseEntity(
                 PostResponseDto(error = "task doesn't exist"),
-                HttpStatus.NOT_FOUND
+                HttpStatus.FORBIDDEN
             )
         }
-        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.NOT_FOUND)
+        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
     }
 
     @GetMapping("/tutortasks")
@@ -438,7 +438,7 @@ class DrpController {
                 return ResponseEntity(tuteeTasksMap, HttpStatus.OK)
             }
         }
-        return ResponseEntity(null, HttpStatus.NOT_FOUND)
+        return ResponseEntity(null, HttpStatus.FORBIDDEN)
     }
 
     @GetMapping("/tuteetasks")
@@ -456,7 +456,7 @@ class DrpController {
                 return ResponseEntity(tasks, HttpStatus.OK)
             }
         }
-        return ResponseEntity(null, HttpStatus.NOT_FOUND)
+        return ResponseEntity(null, HttpStatus.FORBIDDEN)
     }
 
     @GetMapping("/userinfo")
@@ -475,7 +475,7 @@ class DrpController {
         return if (userOpt.isPresent) {
             ResponseEntity(userOpt.get(), HttpStatus.OK)
         } else {
-            ResponseEntity(null, HttpStatus.NOT_FOUND)
+            ResponseEntity(null, HttpStatus.FORBIDDEN)
         }
     }
 
@@ -497,14 +497,14 @@ class DrpController {
                 }
                 return ResponseEntity(
                     PostResponseDto(error = "the person is not your tutee"),
-                    HttpStatus.NOT_FOUND
+                    HttpStatus.FORBIDDEN
                 )
             }
             return ResponseEntity(
                 PostResponseDto(error = "you're not a tutor"),
-                HttpStatus.NOT_FOUND
+                HttpStatus.FORBIDDEN
             )
         }
-        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.NOT_FOUND)
+        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
     }
 }

@@ -1,5 +1,6 @@
 package imperial.drp.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -12,7 +13,8 @@ class Task(
     @field:ManyToOne var tutor: Tutor? = null,
     @field:ManyToOne var tutee: Tutee? = null,
     var content: String? = null,
-    var done: Boolean = false
+    var done: Boolean = false,
+    @JsonIgnore @field:OneToMany var attachments: MutableList<File>? = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
