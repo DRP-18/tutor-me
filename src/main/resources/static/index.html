@@ -207,12 +207,13 @@
                       v-bind:id="'form-addtask-' + key"></form>
               </div>
               <form action="/addtutee" method="post"
-                    v-on:submit.prevent="addTutee('form-addtutee')"
                     id="form-addtutee">
                 <div class="input-group mb-3">
                   <input type="text" class="form-control" name="tutee_name"
                          placeholder="Tutee Name">
-                  <button class="btn btn-primary" type="submit">Add</button>
+                  <button class="btn btn-primary" type="reset"
+                          v-on:click="addTutee('form-addtutee')">Add
+                  </button>
                 </div>
               </form>
             </div>
