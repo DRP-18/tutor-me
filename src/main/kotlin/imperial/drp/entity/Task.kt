@@ -20,8 +20,3 @@ class Task(
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long? = null
 }
-
-//TODO: Use @JsonProperty
-fun toJsonString(t: Task): String {
-    return """{"start_time": "${t.startTime!!.time}","end_time": "${t.endTime!!.time}","content": "${t.content}", "id": ${t.id}}"""
-}

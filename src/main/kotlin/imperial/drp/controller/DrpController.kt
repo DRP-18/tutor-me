@@ -334,45 +334,6 @@ class DrpController {
             return "/"
         }
 
-    @PostMapping("/viewtask")
-    @ResponseBody
-    fun viewtask(
-        @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "tutee_name", required = false) tuteeName: String?,
-        response: HttpServletResponse,
-    ): String {
-        val userOpt = personRepository!!.findById(userId)
-        if (userOpt.isPresent) {
-            val user = userOpt.get()
-            when (user) {
-                is Tutor -> {
-                    var tasks =
-                        taskRepository!!.findByTutorOrderByStartTimeAsc(
-                            personRepository.findByName(
-                                user.name!!
-                            )[0]
-                        )
-                    print(tasks)
-                    tasks = tasks.filter { it.tutee!!.name == tuteeName!! }
-                    print(tasks)
-                    return tasks.map { toJsonString(it) }.toString()
-
-                }
-                is Tutee -> {
-                    val tasks =
-                        taskRepository!!.findByTuteeOrderByStartTimeAsc(
-                            personRepository.findByName(
-                                user.name!!
-                            )[0]
-                        )
-
-                    return tasks.map { toJsonString(it) }.toString()
-                }
-            }
-        }
-        return ""
-    }
-
     @GetMapping("viewtutees")
     @ResponseBody
     fun viewtutees(
