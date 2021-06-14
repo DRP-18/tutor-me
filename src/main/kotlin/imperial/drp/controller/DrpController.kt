@@ -32,46 +32,46 @@ class DrpController {
     @Autowired
     private val messageRepository: MessageRepository? = null
 
-    @RequestMapping("/")
-    fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
-        if (userId != null) {
-            val userOpt = personRepository!!.findById(userId)
-            if (userOpt.isPresent) {
-                val user = userOpt.get()
-                model.addAttribute("username", user.name!!)
-                model.addAttribute("nowTime", Calendar.getInstance())
-                model.addAttribute("userType", getUserType(user))
-                when (user) {
-                    is Tutor -> {
-                        val tasks =
-                            taskRepository!!.findByTutorOrderByStartTimeAsc(
-                                personRepository.findByName(
-                                    user.name!!
-                                )[0]
-                            )
-                        val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
-                        user.tutees!!.forEach {
-                            tuteeTasksMap[it] = ArrayList()
-                        }
-                        tasks.forEach {
-                            tuteeTasksMap[it.tutee!!]!!.add(it)
-                        }
-                        model.addAttribute("tuteeTasksMap", tuteeTasksMap)
-                    }
-                    is Tutee -> {
-                        val tasks =
-                            taskRepository!!.findByTuteeOrderByStartTimeAsc(
-                                personRepository.findByName(
-                                    user.name!!
-                                )[0]
-                            )
-                        model.addAttribute("tasks", tasks)
-                    }
-                }
-            }
-        }
-        return "homepage"
-    }
+//    @RequestMapping("/")
+//    fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
+//        if (userId != null) {
+//            val userOpt = personRepository!!.findById(userId)
+//            if (userOpt.isPresent) {
+//                val user = userOpt.get()
+//                model.addAttribute("username", user.name!!)
+//                model.addAttribute("nowTime", Calendar.getInstance())
+//                model.addAttribute("userType", getUserType(user))
+//                when (user) {
+//                    is Tutor -> {
+//                        val tasks =
+//                            taskRepository!!.findByTutorOrderByStartTimeAsc(
+//                                personRepository.findByName(
+//                                    user.name!!
+//                                )[0]
+//                            )
+//                        val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
+//                        user.tutees!!.forEach {
+//                            tuteeTasksMap[it] = ArrayList()
+//                        }
+//                        tasks.forEach {
+//                            tuteeTasksMap[it.tutee!!]!!.add(it)
+//                        }
+//                        model.addAttribute("tuteeTasksMap", tuteeTasksMap)
+//                    }
+//                    is Tutee -> {
+//                        val tasks =
+//                            taskRepository!!.findByTuteeOrderByStartTimeAsc(
+//                                personRepository.findByName(
+//                                    user.name!!
+//                                )[0]
+//                            )
+//                        model.addAttribute("tasks", tasks)
+//                    }
+//                }
+//            }
+//        }
+//        return "homepage"
+//    }
 
     @RequestMapping("/chats_page")
     fun textChatPage(
