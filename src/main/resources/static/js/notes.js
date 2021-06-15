@@ -142,7 +142,8 @@ const connect = (event) => {
     document.getElementById("addButton").addEventListener("click", addNote)
     
     stompClient.subscribe('/topic/notes-' + userId + '-receiveNotes', receiveNotesAndDisplay)
-    
+    stompClient.subscribe('/topic/notes-' + userId + '-newNoteId', getNewNoteId)
+
     stompClient.send('/app/notes.getNotes', {}, JSON.stringify({message: userId}))
 
     // stompClient.subscribe('/notes-' + userId + '-deleteNote', deleteNote)
@@ -175,24 +176,24 @@ const connect = (event) => {
         }
         stompClient.send("/app/notes.addNote", {}, JSON.stringify(noteMessage))
         
-        let notesElm = document.getElementById("notes");
+      //   let notesElm = document.getElementById("notes");
 
-        if(nothingTag) {
-          notesElm.innerHTML = ''
-          nothingTag = false;
-        }
+      //   if(nothingTag) {
+      //     notesElm.innerHTML = ''
+      //     nothingTag = false;
+      //   }
 
-        addHTML(noteContent)    
+      //   addHTML(noteContent)    
   
-        if (notes.length == 0) {
-            notesElm.innerHTML = `Nothing to show!
-            Use "Add a Note" section above to add notes.`;
-            nothingTag = true;
-      }
+      //   if (notes.length == 0) {
+      //       notesElm.innerHTML = `Nothing to show!
+      //       Use "Add a Note" section above to add notes.`;
+      //       nothingTag = true;
+      // }
 
-        notesElm.value = ''
+      //   notesElm.value = ''
 
-        console.log("adding a new note" + noteMessage)
+      //   console.log("adding a new note" + noteMessage)
     }
     // let notes = localStorage.getItem("notes");
 
@@ -212,6 +213,36 @@ const connect = (event) => {
     // showNotes();
 };
 
+
+const getNewNoteId = (payload) => {
+  const addText = document.getElementById("addText");
+    const noteContent = addText.value.trim()
+
+  const message = JSON.parse(payload.body)
+
+  const noteId = message.message
+
+  let notesElm = document.getElementById("notes");
+
+  if(nothingTag) {
+    notesElm.innerHTML = ''
+    nothingTag = false;
+  }
+
+  // addHTML(noteContent)    
+  addHTML(noteContent, noteId) 
+
+  if (notes.length == 0) {
+      notesElm.innerHTML = `Nothing to show!
+      Use "Add a Note" section above to add notes.`;
+      nothingTag = true;
+}
+
+  notesElm.value = ''
+
+  // console.log("adding a new note" + noteMessage)
+
+}
 
 const receiveNotesAndDisplay = (payload) => {
 

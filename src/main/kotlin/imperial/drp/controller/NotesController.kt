@@ -40,9 +40,11 @@ class NotesController {
     fun saveNote(@Payload note: NoteMessage) {
         println("Note message received ${note.content} ${note.sender}")
 
-        val noteToSave = Note(note.sender.toLong(), note.content)
+        val userId = note.sender.toLong()
+        val noteToSave = Note(userId, note.content)
         noteRepository!!.save(noteToSave)
 
+        messageSender.convertAndSend("/topic/notes-${userId}-newNoteId", SimpleMessage(noteToSave.id.toString()))
 //        val sender = personRepository!!.findById(userId).get()
 //        val noteContentList = mutableListOf<String>()
 //
