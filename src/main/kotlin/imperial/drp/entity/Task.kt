@@ -14,7 +14,7 @@ class Task(
     @field:ManyToOne var tutee: Tutee? = null,
     var content: String? = null,
     var done: Boolean = false,
-    @field:OneToMany var attachments: MutableList<File>? = mutableListOf()
+    @JsonIgnore @field:OneToMany var attachments: MutableList<File>? = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

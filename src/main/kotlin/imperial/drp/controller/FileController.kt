@@ -53,7 +53,7 @@ class FileController {
         @CookieValue(value = "user_id") userId: Long,
         @RequestParam(value = "task_id") taskId: Long,
         @RequestParam(value = "file") multipartFile: MultipartFile
-    ): ResponseEntity<PostResponseDto> {
+    ): String {
         var userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
             var user = userOpt.get()
@@ -70,19 +70,12 @@ class FileController {
                     dbFile = fileRepository!!.save(dbFile)
                     task.attachments!!.add(dbFile)
                     taskRepository.save(task)
-                    return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                 }
-                return ResponseEntity(
-                    PostResponseDto(error = "you have not access to the task"),
-                    HttpStatus.FORBIDDEN
-                )
+
             }
-            return ResponseEntity(
-                PostResponseDto(error = "task doesn't exist"),
-                HttpStatus.FORBIDDEN
-            )
+
         }
-        return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
+        return "redirect"
     }
 
     @GetMapping("/taskfiles")

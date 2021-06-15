@@ -483,8 +483,7 @@ class DrpController {
     fun taskinfo(
         @CookieValue(value = "user_id") userId: Long,
         @RequestParam(value = "task_id") taskId: Long,
-        response: HttpServletResponse,
-        model: Model
+        response: HttpServletResponse
     ): ResponseEntity<Task> {
         var userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
@@ -495,15 +494,7 @@ class DrpController {
                 if (task.tutor == user || task.tutee == user) {
                     return ResponseEntity(task, HttpStatus.OK)
                 }
-                return ResponseEntity(
-                    null,
-                    HttpStatus.FORBIDDEN
-                )
             }
-            return ResponseEntity(
-                null,
-                HttpStatus.FORBIDDEN
-            )
         }
         return ResponseEntity(null, HttpStatus.FORBIDDEN)
     }
