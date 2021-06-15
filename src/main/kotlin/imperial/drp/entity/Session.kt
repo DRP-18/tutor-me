@@ -9,7 +9,7 @@ class Session(
         @field:ManyToOne var tutor: Tutor? = null,
         @field:Column(columnDefinition = "TIMESTAMP WITH TIME ZONE") var dateTime: Calendar? = null,
         @field:Column(columnDefinition = "TIME") var duration: LocalTime? = null,
-        @field:ManyToMany var tutees: MutableList<Tutee>? = mutableListOf()
+        @field:ManyToMany var tutees: MutableList<Tutee> = mutableListOf()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

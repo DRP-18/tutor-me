@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -15,18 +14,24 @@
     <!-- Bootstrap core CSS -->
     <link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-    <!--
-                    Ramayana CSS Template
-                    https://templatemo.com/tm-529-ramayana
-                    -->
-
     <!-- Additional CSS Files -->
     <link rel="stylesheet" href="/css/fontawesome.css">
     <link rel="stylesheet" href="/css/templatemo-style.css">
     <link rel="stylesheet" href="/css/owl.css">
 
+
+    <!--    FullCalendar -->
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.7.2/main.min.css' rel='stylesheet'/>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.7.2/main.min.js'></script>
+    <script src='/js/session.js'></script>
+
+    <style>
+        #calendar {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+    </style>
+
 
 </head>
 
@@ -60,17 +65,6 @@
                 </div>
             </div>
 
-            <script>
-
-                document.addEventListener('DOMContentLoaded', function () {
-                    var calendarEl = document.getElementById('calendar');
-                    var calendar = new FullCalendar.Calendar(calendarEl, {
-                        initialView: 'dayGridMonth'
-                    });
-                    calendar.render();
-                });
-
-            </script>
 
             <section style="margin-top:40px;">
                 <div id="calendar">
