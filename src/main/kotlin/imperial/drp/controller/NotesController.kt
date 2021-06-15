@@ -124,6 +124,7 @@ class NotesController {
     @MessageMapping("/notes.deleteNote")
     fun deleteNote(@Payload message: UserDetail) {
 
+        println(message.status)
         val noteId = message.status.toLong()
         val noteToDelete = noteRepository!!.findById(noteId).get()
 
@@ -132,7 +133,7 @@ class NotesController {
         val userId = message.name.toLong()
         val listOfNotes = noteRepository.findByUserId(userId)
 
-        messageSender.convertAndSend("/topic/notes-${userId}-receiveNotes", listOfNotes)
+//        messageSender.convertAndSend("/topic/notes-${userId}-receiveNotes", listOfNotes)
     }
 
 }

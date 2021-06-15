@@ -5,6 +5,7 @@ const userId = getCookie("user_id")
 let username; // Name of current user
 let index = 0; // global note index
 let html = "";
+let nothingTag = true;
 // let allMessages; // All the messages that this user has had before
 
 function getCookie(name) {
@@ -58,24 +59,65 @@ function getCookie(name) {
 // }
 
 const addHTML = (element, id) => {
-  html += `<div class="noteCard my-2 mx-2 card"
-              style="width: 18rem;">
-                  <div class="card-body">
-                      <h5 class="card-title">
-                          Note ${index + 1}
-                      </h5>
-                      <p class="card-text">
-                          ${element}
-                      </p>
+  // html += `<div id="Note ${id}" class="noteCard my-2 mx-2 card"
+  //             style="width: 18rem;">
+  //                 <div class="card-body">
+  //                     <h5 class="card-title">
+  //                         Note ${index + 1}
+  //                     </h5>
+  //                     <p class="card-text">
+  //                         ${element}
+  //                     </p>
 
-                    <button id="${id}" onclick=
-                      "deleteNote(this.id)"
-                      class="btn btn-primary">
-                      Delete Note
-                  </button>
-              </div>
-          </div>`;
-  index = index + 1
+  //                   <button id="${id}" onclick=
+  //                     "deleteNote(${id})"
+  //                     class="btn btn-primary">
+  //                     Delete Note
+  //                 </button>
+  //             </div>
+  //         </div>`;
+  // index = index + 1
+
+  console.log("Making note")
+  const note = document.createElement('div')
+  note.id = ("Note " + id)
+  note.classList.add("noteCard") 
+  note.classList.add("my-2")
+  note.classList.add("mx-2")
+  note.classList.add("card")
+  
+  note.style = ("width: 18rem;")
+
+  console.log("Making inner note")
+  const innerNote = document.createElement('div')
+  innerNote.classList.add("card-body")
+
+  const header = document.createElement('h5')
+  header.innerText = ('Note ' + (++index))
+  
+  const paragraph = document.createElement('p')
+  paragraph.classList.add("card-text")
+  paragraph.innerText = (element)
+
+  const button = document.createElement('button')
+  button.id = (id)
+  button.onclick = function () {
+    deleteNote(id)
+  }
+  button.classList.add("btn")
+  button.classList.add("btn-primary")
+  button.innerText = ('Delete Note')
+
+  
+  console.log("putting it togetehr")
+  innerNote.appendChild(header)
+  innerNote.appendChild(paragraph)
+  innerNote.appendChild(button)
+
+  note.appendChild(innerNote)
+
+  const notesDraw = document.getElementById("notes")
+  notesDraw.appendChild(note)
 }
 
 //make button id the note id
@@ -133,17 +175,19 @@ const connect = (event) => {
         }
         stompClient.send("/app/notes.addNote", {}, JSON.stringify(noteMessage))
         
-            
-        addHTML(noteContent)    
-                
-    
         let notesElm = document.getElementById("notes");
-    
-        if (notes.length != 0) {
-          notesElm.innerHTML = html;
-        } else {
+
+        if(nothingTag) {
+          notesElm.innerHTML = ''
+          nothingTag = false;
+        }
+
+        addHTML(noteContent)    
+  
+        if (notes.length == 0) {
             notesElm.innerHTML = `Nothing to show!
             Use "Add a Note" section above to add notes.`;
+            nothingTag = true;
       }
 
         notesElm.value = ''
@@ -174,19 +218,25 @@ const receiveNotesAndDisplay = (payload) => {
   console.log("Displaying notes" + payload.body)
     const notes = JSON.parse(payload.body)
 
+    let notesElm = document.getElementById("notes");
+
+    if(nothingTag) {
+      notesElm.innerHTML = ''
+      nothingTag = false;
+    }
+    
     notes.map(note => addHTML(note.content, note.id));
       
       // noteContents.forEach(function(element) { addHTML(element)});
 
       //add noteid to addhtml function
   
-      let notesElm = document.getElementById("notes");
+    
   
-      if (notes.length != 0) {
-        notesElm.innerHTML = html;
-      } else {
+      if (notes.length == 0) {
           notesElm.innerHTML = `Nothing to show!
           Use "Add a Note" section above to add notes.`;
+          nothingTag = true;
     }
   }
   
@@ -195,8 +245,35 @@ const receiveNotesAndDisplay = (payload) => {
 // Function to delete a note
 const deleteNote = (noteId) => {
     //get notes from database 
-    
+    var elem = document.getElementById("Note " + noteId)
+    elem.parentNode.removeChild(elem);
+
+
+    console.log(noteId)
     stompClient.send('/app/notes.deleteNote', {}, JSON.stringify({name: userId, status: noteId}))
+
+    // var button = document.getElementById(noteId)
+    // button.parentNode.removeChild(button);
+
+    return false;
+//     `<div class="noteCard my-2 mx-2 card"
+//     style="width: 18rem;">
+//         <div class="card-body">
+//             <h5 class="card-title">
+//                 Note ${index + 1}
+//             </h5>
+//             <p class="card-text">
+//                 ${element}
+//             </p>
+
+//           <button id="${id}" onclick=
+//             "deleteNote(this.id)"
+//             class="btn btn-primary">
+//             Delete Note
+//         </button>
+//     </div>
+// </div>`;
+    
 
     // if (notes == null) notesObj = [];
     // else notesObj = JSON.parse(notes);
