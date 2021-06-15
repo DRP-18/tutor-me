@@ -456,7 +456,7 @@ class DrpController {
         @CookieValue(value = "user_id", required = false) myId: Long?,
         @RequestParam(value = "user_id", required = false) otherId: Long?
     ): ResponseEntity<Person> {
-        var userId = -1L;
+        var userId = -1L
         if (otherId != null) {
             userId = otherId
         } else if (myId != null) {

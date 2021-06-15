@@ -2,13 +2,18 @@ package imperial.drp.entity
 
 import java.time.LocalTime
 import java.util.*
+import javax.persistence.*
 
+@Entity
 class Session(
-        var tutor: Tutor? = null,
-        var tutees: MutableList<Tutee>? = mutableListOf(),
-        var date: Calendar? = null,
-        var duration: LocalTime? = null
+        @field:ManyToOne var tutor: Tutor? = null,
+        @field:Column(columnDefinition = "TIMESTAMP WITH TIME ZONE") var dateTime: Calendar? = null,
+        @field:Column(columnDefinition = "TIME") var duration: LocalTime? = null,
+        @field:ManyToMany var tutees: MutableList<Tutee>? = mutableListOf()
 ) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    val id: Long? = null
 }
 
 ///addSession
