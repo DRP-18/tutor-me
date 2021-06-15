@@ -24,7 +24,7 @@
   <!-- CSS for popup login -->
   <link rel="stylesheet" href="/css/modelstyles.css">
 
-  <link rel="stylesheet" href="/css/taskpage.css">
+  <link rel="stylesheet" href="/css/frontpage.css">
 
 </head>
 
@@ -171,12 +171,16 @@
                     <td class="align-middle">{{formatTime(task.endTime)}}</td>
                     <td class="align-middle">{{task.content}}</td>
                     <td class="align-middle">
-                      <form action="/deletetask" method="post"
-                            v-on:submit.prevent="deleteTask('form-deletetask-' + task.id)"
-                            v-bind:id="'form-deletetask-' + task.id">
-                        <input type="hidden" name="task_id" v-bind:value="task.id"/>
-                        <button class="btn btn-danger">Delete</button>
-                      </form>
+                      <div class="d-flex">
+                        <a class="btn btn-info" v-bind:href="'/task/' + task.id"
+                           role="button" style="margin: 8px 0;">DETAILS</a>
+                        <form action="/deletetask" method="post"
+                              v-on:submit.prevent="deleteTask('form-deletetask-' + task.id)"
+                              v-bind:id="'form-deletetask-' + task.id">
+                          <input type="hidden" name="task_id" v-bind:value="task.id"/>
+                          <button class="btn btn-danger">Delete</button>
+                        </form>
+                      </div>
                     </td>
                   </tr>
                   <tr>
@@ -468,6 +472,6 @@
 <script src="/js/custom.js"></script>
 <script src="/js/vue.js"></script>
 
-<script src="/js/taskpage.js"></script>
+<script src="/js/frontpage.js"></script>
 </body>
 </html>

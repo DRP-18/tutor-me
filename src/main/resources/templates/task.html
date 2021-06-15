@@ -5,10 +5,16 @@
   <title>Task</title>
 </head>
 <body>
-<form action="/uploadtaskfile" method="post" enctype="multipart/form-data">
-  <input type="file" name="file">
-  <input type="text" name="task_id">
-  <button type="submit">Submit</button>
-</form>
+<div id="main">
+  <form action="/uploadtaskfile" method="post" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <input type="hidden" name="task_id" v-bind:value="taskId">
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+<script src="/js/vue.js"></script>
+
+<script src="/js/taskpage.js"></script>
 </body>
 </html>
