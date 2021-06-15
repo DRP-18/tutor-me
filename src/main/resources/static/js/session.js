@@ -13,6 +13,11 @@ function getCookie(name) {
 function addSession(name, startDate, endDate) {
   console.log(
       "inside addsession with-" + name + "-" + startDate + "-" + endDate)
+  console.log(new Date(startDate).toLocaleString())
+
+  console.log(new Date(startDate).toLocaleDateString())
+  console.log(new Date(startDate).toUTCString())
+
   console.log("array " + JSON.stringify([name]))
   console.log("message " + JSON.stringify({
     tutor: username,
@@ -50,7 +55,8 @@ document.addEventListener('DOMContentLoaded', function () {
     selectMirror: true,
     businessHours: true,
     select: function (arg) {
-      var title = prompt('Event Title:');
+      const formattedTime = arg.start.toString().slice(0, 24)
+      const title = prompt('Event Title:');
       if (title) {
         calendar.addEvent({
           title: title,
@@ -60,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
       }
       console.log("Clicked on event")
-      addSession(title, arg.start, arg.end)
+      addSession(title, formattedTime, arg.end)
       calendar.unselect()
     },
     eventClick: function (arg) {
