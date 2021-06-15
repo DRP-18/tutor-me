@@ -1,6 +1,7 @@
 package imperial.drp.controller
 
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
@@ -19,8 +20,8 @@ class SitePageController {
 //        println("redirected, this was the cookie $userId")
 //    }
 
-    @RequestMapping("/task")
-    fun task(): String {
+    @RequestMapping("/task/{task_id}")
+    fun task(@PathVariable("task_id") taskId: Long): String {
         return "task"
     }
 }

@@ -3,11 +3,13 @@ package imperial.drp.controller
 import com.twilio.Twilio
 import com.twilio.rest.api.v2010.account.Token
 import com.twilio.type.IceServer
+import imperial.drp.DrpApplication
 import imperial.drp.dao.PersonRepository
 import imperial.drp.entity.Person
 import imperial.drp.model.CallingMessage
 import imperial.drp.model.CallingMessageWithName
 import imperial.drp.model.SimpleMessage
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
@@ -20,16 +22,21 @@ import java.util.*
 @Controller
 class WebrtcController {
 
+    private val log = LoggerFactory.getLogger(WebrtcController::class.java)
 
     lateinit var iceServers: List<IceServer>
 
     init {
         val ACCOUNT_SID = getenv("TWILIO_ACCOUNT_SID")
         val AUTH_TOKEN = getenv("TWILIO_AUTH_TOKEN")
-        println("ACCOUNT SID  START: ${ACCOUNT_SID.take(5)}")
-        println("AUTH TOKEN  START: ${AUTH_TOKEN.take(5)}")
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN)
-        iceServers = Token.creator().create().iceServers
+        if (ACCOUNT_SID != null && AUTH_TOKEN != null) {
+            println("ACCOUNT SID  START: ${ACCOUNT_SID.take(5)}")
+            println("AUTH TOKEN  START: ${AUTH_TOKEN.take(5)}")
+            Twilio.init(ACCOUNT_SID, AUTH_TOKEN)
+            iceServers = Token.creator().create().iceServers
+        } else {
+            log.warn("TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN doesn't present!")
+        }
     }
 
     @Autowired
