@@ -3,6 +3,8 @@
 let stompClient;
 const userId = getCookie("user_id")
 let username; // Name of current user
+let index = 0; // global note index
+let html = "";
 // let allMessages; // All the messages that this user has had before
 
 function getCookie(name) {
@@ -24,7 +26,7 @@ function showNotes() {
         notesObj = JSON.parse(notes);
     }
 
-    let html = "";
+
 
     notesObj.forEach(function(element, index) {
         html += `<div class="noteCard my-2 mx-2 card"
@@ -53,6 +55,27 @@ function showNotes() {
         notesElm.innerHTML = `Nothing to show!
         Use "Add a Note" section above to add notes.`;
 
+}
+
+const addHTML = (element) => {
+  html += `<div class="noteCard my-2 mx-2 card"
+              style="width: 18rem;">
+                  <div class="card-body">
+                      <h5 class="card-title">
+                          Note ${index + 1}
+                      </h5>
+                      <p class="card-text">
+                          ${element}
+                      </p>
+  
+                    <button id="${index}" onclick=
+                      "deleteNote(this.id)"
+                      class="btn btn-primary">
+                      Delete Note
+                  </button>
+              </div>
+          </div>`;
+  index = index + 1
 }
 
 const connect = (event) => {
@@ -86,7 +109,7 @@ const connect = (event) => {
   
     console.log("Connecting")
         
-    showNotes();
+    // showNotes();
     // stompClient.subscribe('/topic/chat-' + userId, saveUsername)
   }
   
@@ -107,7 +130,37 @@ const connect = (event) => {
           sender: username
         }
         stompClient.send("/app/notes.addNote", {}, JSON.stringify(noteMessage))
-        noteContent.value = ''
+        
+            
+            html += `<div class="noteCard my-2 mx-2 card"
+                style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            Note ${index + 1}
+                        </h5>
+                        <p class="card-text">
+                            ${noteContent}
+                        </p>
+    
+                      <button id="${index}" onclick=
+                        "deleteNote(this.id)"
+                        class="btn btn-primary">
+                        Delete Note
+                    </button>
+                </div>
+            </div>`;
+        
+    
+        let notesElm = document.getElementById("notes");
+    
+        if (notes.length != 0) {
+          notesElm.innerHTML = html;
+        } else {
+            notesElm.innerHTML = `Nothing to show!
+            Use "Add a Note" section above to add notes.`;
+      }
+
+        notesElm.value = ''
 
         console.log("adding a new note" + noteMessage)
     }
@@ -135,33 +188,9 @@ const receiveNotesAndDisplay = (payload) => {
   console.log("Displaying notes" + payload.body)
     const notes = JSON.parse(payload.body)
 
-      // if (notes == null){
-      //  notesObj = [];
-      // } else {
-      //  notesObj = JSON.parse(notes);
-      // }
-  
-      let html = "";
-  
-      notes.forEach(function(element, index) {
-          html += `<div class="noteCard my-2 mx-2 card"
-              style="width: 18rem;">
-                  <div class="card-body">
-                      <h5 class="card-title">
-                          Note ${index + 1}
-                      </h5>
-                      <p class="card-text">
-                          ${element}
-                      </p>
-  
-                    <button id="${index}" onclick=
-                      "deleteNote(this.id)"
-                      class="btn btn-primary">
-                      Delete Note
-                  </button>
-              </div>
-          </div>`;
-      });
+    const noteContents = notes.map(notes => notes.content)
+      
+      noteContents.forEach(function(element) { addHTML(element)});
   
       let notesElm = document.getElementById("notes");
   
@@ -205,6 +234,8 @@ const deleteNote = () => {
 }
 
 connect({});
+
+
 
 //addnote
 //getnote.

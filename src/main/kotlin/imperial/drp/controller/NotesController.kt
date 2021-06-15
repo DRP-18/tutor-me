@@ -79,13 +79,10 @@ class NotesController {
     @MessageMapping("/notes.getNotes")
     fun getAllNotes(@Payload message: SimpleMessage) {
 
-        println("ABCDEFG");
-        println(message.message)
-        val listOfNotes = mutableListOf<Note>()
+        val userId = message.message.toLong()
+        val listOfNotes = noteRepository!!.findByUserId(userId)
 
-        listOfNotes.add(Note(1, "hello world"))
-        listOfNotes.add(Note(1, "goodbye world"))
-        messageSender.convertAndSend("/topic/notes-${1}-receiveNotes", listOfNotes)
+        messageSender.convertAndSend("/topic/notes-${userId}-receiveNotes", listOfNotes)
 //
 //        '/notes-' + userId + '-receiveNotes'
 
