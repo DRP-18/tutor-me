@@ -36,11 +36,11 @@ class NotesController {
     @Transactional
     @MessageMapping("/notes.addNote")
     fun saveNote(@Payload note: NoteMessage) {
-//        println("Chat message received ${chatMessage.content} ${chatMessage.sender} ${chatMessage.recipient} ${chatMessage.time}")
-        val userId = note.sender.toLong();
-        val content = note.content
+        println("Note message received ${note.content} ${note.sender}")
 
-        noteRepository!!.save(content)
+        val noteToSave = Note(note.sender.toLong(), note.content)
+        noteRepository!!.save(noteToSave)
+
 //        val sender = personRepository!!.findById(userId).get()
 //        val noteContentList = mutableListOf<String>()
 //

@@ -114,6 +114,11 @@ class DrpController {
         return "videoCallsPage/index"
     }
 
+    @RequestMapping("/notes_page")
+    fun notesPage(): String {
+        return "notes_page"
+    }
+
     fun getUserType(person: Person): String {
         return (
                 when (person) {

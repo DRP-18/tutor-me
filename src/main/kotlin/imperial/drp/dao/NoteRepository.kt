@@ -1,10 +1,10 @@
 package imperial.drp.dao
 
 
+import imperial.drp.entity.Note
 import org.springframework.data.repository.CrudRepository
 
-interface NoteRepository : CrudRepository<String, Long> {
-    fun findByContent(content: String): List<Long>
+interface NoteRepository : CrudRepository<Note, Long> {
 
-    fun findAllById(id: Long): List<String>
+    fun findByUserId(userId: Long): List<Note>
 }

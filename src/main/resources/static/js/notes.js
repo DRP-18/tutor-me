@@ -1,8 +1,8 @@
 // 'use strict'
 
-// let stompClient;
+let stompClient;
 const userId = getCookie("user_id")
-// let username; // Name of current user
+let username; // Name of current user
 // let allMessages; // All the messages that this user has had before
 
 function getCookie(name) {
@@ -69,7 +69,8 @@ const connect = (event) => {
   // subscriebe is what we hear back on
   // send is what we are sending.
   const onConnected = () => {
-    console.log("got here 1)")
+    console.log("got here")
+
     // stompClient.subscribe('/notes-' + userId + '-allNotes', saveNote)
     document.getElementById("addButton").addEventListener("click", addNote)
     
@@ -94,16 +95,18 @@ const connect = (event) => {
   const addNote = () => {
     const addText = document.getElementById("addText");
     const noteContent = addText.value.trim()
+
+    console.log("adding a new note with context" + noteContent)
     
   if (noteContent !== null) {
         const noteMessage = {
           content: noteContent,
           sender: username
         }
-        stompClient.send("/notes.addNote", {}, JSON.stringify(noteMessage))
+        stompClient.send("/app/notes.addNote", {}, JSON.stringify(noteMessage))
         noteContent.value = ''
 
-        console.log("adding a new note")
+        console.log("adding a new note" + noteMessage)
     }
     // let notes = localStorage.getItem("notes");
 
@@ -196,6 +199,8 @@ const deleteNote = () => {
 
     showNotes();
 }
+
+connect({});
 
 //addnote
 //getnote.
