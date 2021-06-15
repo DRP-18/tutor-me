@@ -26,8 +26,6 @@ class WebrtcController {
     init {
         val ACCOUNT_SID = getenv("TWILIO_ACCOUNT_SID")
         val AUTH_TOKEN = getenv("TWILIO_AUTH_TOKEN")
-        println("ACCOUNT SID  START: ${ACCOUNT_SID.take(5)}")
-        println("AUTH TOKEN  START: ${AUTH_TOKEN.take(5)}")
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN)
         iceServers = Token.creator().create().iceServers
     }
