@@ -9,6 +9,7 @@ import imperial.drp.entity.*
 import imperial.drp.model.ChatMessage
 import imperial.drp.model.NoteMessage
 import imperial.drp.model.SimpleMessage
+import imperial.drp.model.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
@@ -86,7 +87,7 @@ class NotesController {
 //
 //        '/notes-' + userId + '-receiveNotes'
 
-    //        val userId = notes[1].sender.toLong()
+        //        val userId = notes[1].sender.toLong()
 //        val person = personRepository!!.findById(userId).get()
 //        val convs = conversationRepository!!.findAllByUser1OrUser2(person, person)
 //        val recentChatsMap = mutableMapOf<String, List<Message>>()
@@ -118,4 +119,20 @@ class NotesController {
 
 //        '/notes-' + userId + '-receiveNotes'
     }
+
+    @Transactional
+    @MessageMapping("/notes.deleteNote")
+    fun deleteNote(@Payload message: UserDetail) {
+
+        val noteId = message.status.toLong()
+        val noteToDelete = noteRepository!!.findById(noteId).get()
+
+        noteRepository.delete(noteToDelete)
+
+        val userId = message.name.toLong()
+        val listOfNotes = noteRepository.findByUserId(userId)
+
+        messageSender.convertAndSend("/topic/notes-${userId}-receiveNotes", listOfNotes)
+    }
+
 }
