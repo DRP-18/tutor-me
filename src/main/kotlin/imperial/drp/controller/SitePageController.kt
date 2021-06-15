@@ -23,4 +23,9 @@ class SitePageController {
     fun task(): String {
         return "task"
     }
+
+    @RequestMapping("/calendar")
+    fun calendar(): String {
+        return "calendar"
+    }
 }

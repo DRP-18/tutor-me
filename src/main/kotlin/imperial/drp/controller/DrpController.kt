@@ -146,14 +146,6 @@ class DrpController {
         return "redirect"
     }
 
-//    @GetMapping("/signup")
-//    fun signupGet(
-//        response: HttpServletResponse,
-//        model: Model
-//    ): String {
-//        return "signup"
-//    }
-
     @PostMapping("/signup")
     fun signupPost(
         @RequestParam(value = "username") username: String,
