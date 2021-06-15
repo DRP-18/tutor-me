@@ -7,6 +7,7 @@ import imperial.drp.dao.TaskRepository
 import imperial.drp.dto.PostResponseDto
 import imperial.drp.dto.TaskMapItemDto
 import imperial.drp.entity.*
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -22,6 +23,8 @@ import kotlin.collections.ArrayList
 
 @Controller
 class DrpController {
+    private val log = LoggerFactory.getLogger(DrpController::class.java)
+
     @Autowired
     private val taskRepository: TaskRepository? = null
 
@@ -197,6 +200,7 @@ class DrpController {
         return "redirect"
     }
 
+    @Synchronized
     @PostMapping("/addtutee")
     fun addtutee(
         @CookieValue(value = "user_id") userId: Long,
@@ -211,11 +215,17 @@ class DrpController {
                 if (matchingPersons.isNotEmpty()) {
                     val person = matchingPersons[0]
                     if (person is Tutee) {
-                        user.tutees!!.add(person)
-                        personRepository.save(user)
-                        person.tutors!!.add(user)
-                        personRepository.save(person)
-                        return ResponseEntity(PostResponseDto(), HttpStatus.OK)
+                        if (!user.tutees!!.contains(person)) {
+                            user.tutees!!.add(person)
+                            personRepository.save(user)
+                            person.tutors!!.add(user)
+                            personRepository.save(person)
+                            return ResponseEntity(PostResponseDto(), HttpStatus.OK)
+                        }
+                        return ResponseEntity(
+                            PostResponseDto(error = "the person is already your tutee"),
+                            HttpStatus.FORBIDDEN
+                        )
                     }
                     return ResponseEntity(
                         PostResponseDto(error = "the person you try to add isn't a tutee"),
