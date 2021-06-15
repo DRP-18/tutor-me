@@ -8,6 +8,7 @@ import imperial.drp.dao.PersonRepository
 import imperial.drp.entity.*
 import imperial.drp.model.ChatMessage
 import imperial.drp.model.NoteMessage
+import imperial.drp.model.SimpleMessage
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
@@ -75,8 +76,20 @@ class NotesController {
     }
 
     @Transactional
-    fun getAllNotes(@Payload notes: List<String>) {
-//        val userId = notes[1].sender.toLong()
+    @MessageMapping("/notes.getNotes")
+    fun getAllNotes(@Payload message: SimpleMessage) {
+
+        println("ABCDEFG");
+        println(message.message)
+        val listOfNotes = mutableListOf<Note>()
+
+        listOfNotes.add(Note(1, "hello world"))
+        listOfNotes.add(Note(1, "goodbye world"))
+        messageSender.convertAndSend("/topic/notes-${1}-receiveNotes", listOfNotes)
+//
+//        '/notes-' + userId + '-receiveNotes'
+
+    //        val userId = notes[1].sender.toLong()
 //        val person = personRepository!!.findById(userId).get()
 //        val convs = conversationRepository!!.findAllByUser1OrUser2(person, person)
 //        val recentChatsMap = mutableMapOf<String, List<Message>>()

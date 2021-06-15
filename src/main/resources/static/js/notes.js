@@ -74,7 +74,10 @@ const connect = (event) => {
     // stompClient.subscribe('/notes-' + userId + '-allNotes', saveNote)
     document.getElementById("addButton").addEventListener("click", addNote)
     
-    stompClient.subscribe('/notes-' + userId + '-receiveNotes', receiveNotes)
+    stompClient.subscribe('/topic/notes-' + userId + '-receiveNotes', receiveNotesAndDisplay)
+    
+    stompClient.send('/app/notes.getNotes', {}, JSON.stringify({message: userId}))
+
     // stompClient.subscribe('/notes-' + userId + '-deleteNote', deleteNote)
 
     // Sent to populate allUsersDetails object
@@ -129,18 +132,18 @@ const connect = (event) => {
 
 const receiveNotesAndDisplay = (payload) => {
 
-  console.log("Displaying notes.")
+  console.log("Displaying notes" + payload.body)
     const notes = JSON.parse(payload.body)
 
-      if (notes == null){
-       notesObj = [];
-      } else {
-       notesObj = JSON.parse(notes);
-      }
+      // if (notes == null){
+      //  notesObj = [];
+      // } else {
+      //  notesObj = JSON.parse(notes);
+      // }
   
       let html = "";
   
-      notesObj.forEach(function(element, index) {
+      notes.forEach(function(element, index) {
           html += `<div class="noteCard my-2 mx-2 card"
               style="width: 18rem;">
                   <div class="card-body">
@@ -162,11 +165,12 @@ const receiveNotesAndDisplay = (payload) => {
   
       let notesElm = document.getElementById("notes");
   
-      if (notesObj.length != 0) notesElm.innerHTML = html;
-       else
+      if (notes.length != 0) {
+        notesElm.innerHTML = html;
+      } else {
           notesElm.innerHTML = `Nothing to show!
           Use "Add a Note" section above to add notes.`;
-  
+    }
   }
   
     // console.log("received message " + message)
