@@ -478,4 +478,34 @@ class DrpController {
         }
         return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
     }
+
+    @GetMapping("/taskinfo")
+    fun taskinfo(
+        @CookieValue(value = "user_id") userId: Long,
+        @RequestParam(value = "task_id") taskId: Long,
+        response: HttpServletResponse,
+        model: Model
+    ): ResponseEntity<Task> {
+        var userOpt = personRepository!!.findById(userId)
+        if (userOpt.isPresent) {
+            var user = userOpt.get()
+            var taskOpt = taskRepository!!.findById(taskId)
+            if (taskOpt.isPresent) {
+                var task = taskOpt.get()
+                if (task.tutor == user || task.tutee == user) {
+                    return ResponseEntity(task, HttpStatus.OK)
+                }
+                return ResponseEntity(
+                    null,
+                    HttpStatus.FORBIDDEN
+                )
+            }
+            return ResponseEntity(
+                null,
+                HttpStatus.FORBIDDEN
+            )
+        }
+        return ResponseEntity(null, HttpStatus.FORBIDDEN)
+    }
+
 }
