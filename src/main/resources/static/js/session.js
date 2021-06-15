@@ -12,7 +12,7 @@ function getCookie(name) {
 
 function addSession(name, startDate, endDate) {
   console.log(
-      "inside addsession with-" + name + "-" + startDate + "-" + endDate)
+      "inside addsess on with-" + name + "-" + startDate + "-" + endDate)
   console.log(new Date(startDate).toLocaleString())
 
   console.log(new Date(startDate).toLocaleDateString())
@@ -28,6 +28,22 @@ function addSession(name, startDate, endDate) {
   }))
 
   fetch("/addSession", {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      tutor: username,
+      tutees: name,
+      dateTime: startDate,
+      duration: 5
+    })
+  }).then(rsp => console.log(rsp))
+}
+
+function removeSession(name, startDate, endDate) {
+  console.log("removing a session")
+  fetch("/removeSession", {
     method: 'POST',
     headers: {
       "Content-Type": "application/json",
@@ -71,6 +87,8 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     eventClick: function (arg) {
       if (confirm('Are you sure you want to delete this event?')) {
+        const formattedTime = arg.event.start.toString().slice(0, 24)
+        removeSession(arg.event.title, formattedTime, arg.event.end)
         arg.event.remove()
       }
     },

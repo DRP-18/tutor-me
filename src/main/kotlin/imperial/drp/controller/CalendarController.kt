@@ -30,6 +30,8 @@ class CalendarController {
     @Autowired
     private val sessionRepository: SessionRepository? = null
 
+    val sdf = SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss")
+
     @RequestMapping("/calendar")
     fun calendar(): String {
 //        val tutor = personRepository!!.findById(1).get() as Tutor
@@ -45,21 +47,12 @@ class CalendarController {
     @PostMapping("/addSession")
     fun addSession(@RequestBody message: SessionMessage,
                    response: HttpServletResponse): ResponseEntity<PostResponseDto> {
-        println("This is the session message: ")
-        println(message.tutor)
-        println(message.tutees)
-        println(message.dateTime)
-        println(message.duration)
-
         val tutorOpt = personRepository!!.findById(message.tutor.toLong())
         if (tutorOpt.isPresent) {
             val tutor = tutorOpt.get() as Tutor
             val tutee = personRepository!!.findByName(message.tutees)
             if (tutee.isNotEmpty() || tutee[0] !is Tutee) {
                 if (tutor.tutees?.contains(tutee[0])!!) {
-//                    val sdf = SimpleDateFormat("dd/MM/yyyy, HH:mm:ss")
-                    val sdf = SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss")
-
                     val startTime = GregorianCalendar()
                     startTime.time = sdf.parse(message.dateTime)
                     val tutees = mutableListOf<Tutee>()
@@ -76,8 +69,25 @@ class CalendarController {
             return ResponseEntity(PostResponseDto("No tutee with name ${message.tutees} is found"), HttpStatus.NOT_FOUND)
         }
         return ResponseEntity(PostResponseDto("Not a tutor, only tutors can organise session"), HttpStatus.NOT_FOUND)
-
     }
 
+
+    @PostMapping("/removeSession")
+    fun removeSession(@RequestBody message: SessionMessage,
+                      response: HttpServletResponse): ResponseEntity<PostResponseDto> {
+        val tutorOpt = personRepository!!.findById(message.tutor.toLong())
+        if (tutorOpt.isPresent) {
+            val tutor = tutorOpt.get() as Tutor
+            val startTime = GregorianCalendar()
+            startTime.time = sdf.parse(message.dateTime)
+            val session = sessionRepository!!.findByTutorAndDateTime(tutor, startTime)
+            if (session.isNotEmpty()) {
+                sessionRepository.delete(session[0])
+                return ResponseEntity(PostResponseDto(), HttpStatus.OK)
+            }
+            return ResponseEntity(PostResponseDto("Session does not exist"), HttpStatus.NOT_FOUND)
+        }
+        return ResponseEntity(PostResponseDto("Not a tutor, only tutors can organise session"), HttpStatus.NOT_FOUND)
+    }
 
 }
