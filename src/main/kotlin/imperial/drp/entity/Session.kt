@@ -1,14 +1,13 @@
 package imperial.drp.entity
 
-import java.time.LocalTime
 import java.util.*
 import javax.persistence.*
 
 @Entity
 class Session(
         @field:ManyToOne var tutor: Tutor? = null,
-        @field:Column(columnDefinition = "TIMESTAMP WITH TIME ZONE") var dateTime: Calendar? = null,
-        @field:Column(columnDefinition = "TIME") var duration: LocalTime? = null,
+        @field:Column(columnDefinition = "TIMESTAMP WITH TIME ZONE") var startTime: Calendar? = null,
+        @field:Column(columnDefinition = "TIMESTAMP WITH TIME ZONE") var endTime: Calendar? = null,
         @field:ManyToMany var tutees: MutableList<Tutee> = mutableListOf()
 ) {
     @Id
@@ -22,8 +21,8 @@ class Session(
         other as Session
 
         if (tutor?.id != other.tutor?.id) return false
-        if (dateTime != other.dateTime) return false
-        if (duration != other.duration) return false
+        if (startTime != other.startTime) return false
+        if (endTime != other.endTime) return false
         if (tutees.size != other.tutees.size) return false
         for (i in 0..(tutees.size - 1)) {
             if (!tutees[i].equals(other.tutees[i])) return false
@@ -34,8 +33,8 @@ class Session(
 
     override fun hashCode(): Int {
         var result = tutor?.hashCode() ?: 0
-        result = 31 * result + (dateTime?.hashCode() ?: 0)
-        result = 31 * result + (duration?.hashCode() ?: 0)
+        result = 31 * result + (startTime?.hashCode() ?: 0)
+        result = 31 * result + (endTime?.hashCode() ?: 0)
         result = 31 * result + tutees.hashCode()
         result = 31 * result + (id?.hashCode() ?: 0)
         return result

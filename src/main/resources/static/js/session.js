@@ -1,7 +1,9 @@
 let username; // Name of current user
 let sessions;
-let calendar;
+var calendar;
 let events = [];
+let selectedEvent;
+let formattedTime;
 const HTTP_SUCCESS = 200;
 username = getCookie("user_id")
 
@@ -17,9 +19,9 @@ function updateCalendarWithEvents(data) {
   console.log("inside update")
   for (var i = 0; i < data.length; i++) {
     console.log(data[i])
-    // const momentDate = moment(data[i].dateTime, 'EEE MMM dd HH:mm:ss Z YYYY')
+    // const momentDate = moment(data[i].startTime, 'EEE MMM dd HH:mm:ss Z YYYY')
     // const date = momentDate.toDate()
-    const date = new Date(data[i].dateTime)
+    const date = new Date(data[i].startTime)
     console.log("date ", date)
     calendar.addEvent({
       title: data[i].tutees,
@@ -31,8 +33,8 @@ function updateCalendarWithEvents(data) {
   console.log("Finished update")
 }
 
-function addSession(name, startDate, arg) {
-  console.log("adding a session " + startDate)
+function addSession(name, startDate, endDate, arg) {
+  console.log("adding a session " + startDate + "-" + endDate)
   fetch("/addSession", {
     method: 'POST',
     headers: {
@@ -41,15 +43,15 @@ function addSession(name, startDate, arg) {
     body: JSON.stringify({
       tutor: username,
       tutees: name,
-      dateTime: startDate,
-      duration: 5
+      startTime: startDate,
+      endTime: endDate
     })
   }).then(rsp => {
     if (rsp.ok) {
       calendar.addEvent({
         title: name,
-        start: arg.start,
-        end: arg.end,
+        startStr: startDate,
+        endStr: endDate,
         allDay: false
       })
     } else {
@@ -68,8 +70,8 @@ function removeSession(name, startDate, arg) {
     body: JSON.stringify({
       tutor: username,
       tutees: name,
-      dateTime: startDate,
-      duration: 5
+      startTime: startDate,
+      endTime: 5
     })
   }).then(rsp => {
     console.log(rsp)
@@ -93,40 +95,53 @@ async function getSessions() {
   sessions = await response.json()
   console.log("after json")
   updateCalendarWithEvents(sessions)
-  // .then(rsp => rsp.json())
-  // .then(data => {
-  //   sessions = data
-  //   updateCalendarWithEvents(data)
-  // })
-  // .catch(err => console.log(err))
+}
 
+function addSessionWithModalInfo() {
+  const name = document.getElementById("tuteeNameModal").value
+  const startDate = document.getElementById("startDateModal").value
+  const endDate = document.getElementById("endDateModal").value
+  addSession(name, startDate, endDate, selectedEvent)
+  $('#addSessionModal').modal('hide');
+}
+
+// converts "24/06/2021, 12:34:56"
+// to "2021-06-24T12:34"
+function convertLocalToCorrectFormat(time) {
+  const year = time.slice(6, 10)
+  const month = time.slice(3, 5)
+  const day = time.slice(0, 2)
+  const timePart = time.slice(12, 17)
+  return year + '-' + month + '-' + day + 'T' + timePart
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  console.log("after get sessions")
   var calendarEl = document.getElementById('calendar');
   calendar = new FullCalendar.Calendar(calendarEl, {
     headerToolbar: {
       left: "prev,next today",
       center: "title",
-      initialView: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+      right: 'dayGridMonth,dayGridWeek,dayGridDay,listWeek'
     },
     navLinks: true, // can click day/week names to navigate views
     editable: true,
     selectable: true,
     selectMirror: true,
     businessHours: true,
+    dayMaxEvents: true, // allow "more" link when too many events
     select: function (arg) {
-      const formattedTime = arg.start.toString().slice(0, 24)
-      const title = prompt('Event Title:');
-      if (title) {
-        addSession(title, formattedTime, arg)
-      }
+      formattedTime = arg.start.toISOString().slice(0, 16)
+      selectedEvent = arg
+      const startDate = document.getElementById("startDateModal")
+      const endDate = document.getElementById("endDateModal")
+      startDate.value = convertLocalToCorrectFormat(arg.start.toLocaleString())
+      endDate.value = convertLocalToCorrectFormat(arg.end.toLocaleString())
+      $('#addSessionModal').modal('show');
       calendar.unselect()
     }
   });
   calendar.render();
-  getSessions()
+  getSessions();
 });
 
 
