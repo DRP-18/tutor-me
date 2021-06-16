@@ -60,7 +60,7 @@ class CalendarController {
                     if (alreadyExistingSesh.isNotEmpty()) {
                         for (sesh: Session in alreadyExistingSesh) {
                             if (sesh.equals(session)) {
-                                return ResponseEntity(PostResponseDto("Session already exists"), HttpStatus.METHOD_NOT_ALLOWED)
+                                return ResponseEntity(PostResponseDto("Session at this time already exists with ${message.tutees}"), HttpStatus.METHOD_NOT_ALLOWED)
                             }
                         }
                     }
@@ -71,7 +71,7 @@ class CalendarController {
             }
             return ResponseEntity(PostResponseDto("No tutee with name ${message.tutees} was found"), HttpStatus.METHOD_NOT_ALLOWED)
         }
-        return ResponseEntity(PostResponseDto("Not a tutor, only tutors can organise session"), HttpStatus.METHOD_NOT_ALLOWED)
+        return ResponseEntity(PostResponseDto("Not a tutor, only tutors can organise sessions"), HttpStatus.METHOD_NOT_ALLOWED)
     }
 
 
@@ -79,7 +79,7 @@ class CalendarController {
     fun removeSession(@RequestBody message: SessionMessage,
                       response: HttpServletResponse): ResponseEntity<PostResponseDto> {
         val tutorOpt = personRepository!!.findById(message.tutor.toLong())
-        if (tutorOpt.isPresent) {
+        if (tutorOpt.isPresent && tutorOpt.get() is Tutor) {
             val tutor = tutorOpt.get() as Tutor
             val startTime = GregorianCalendar()
             startTime.time = sdf.parse(message.startTime)
@@ -92,7 +92,7 @@ class CalendarController {
             }
             return ResponseEntity(PostResponseDto("Session does not exist"), HttpStatus.METHOD_NOT_ALLOWED)
         }
-        return ResponseEntity(PostResponseDto("Not a tutor, only tutors can organise session"), HttpStatus.METHOD_NOT_ALLOWED)
+        return ResponseEntity(PostResponseDto("Not a tutor, only tutors can organise sessions"), HttpStatus.METHOD_NOT_ALLOWED)
     }
 
     @PostMapping("/getSessions")

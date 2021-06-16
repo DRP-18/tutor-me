@@ -1,9 +1,10 @@
 let username; // Name of current user
 let sessions;
-var calendar;
+let calendar;
 let events = [];
 let selectedEvent;
 let formattedTime;
+let TIME_TO_SHOW_ERROR = 5000; // in milliseconds
 username = getCookie("user_id")
 
 function getCookie(name) {
@@ -18,12 +19,13 @@ function updateCalendarWithEvents(data) {
   console.log("inside update")
   for (var i = 0; i < data.length; i++) {
     console.log(data[i])
-    const date = new Date(data[i].startTime)
-    console.log("date ", date)
+    const startDate = new Date(data[i].startTime)
+    const endDate = new Date(data[i].endTime)
+    console.log("startDate ", startDate)
     calendar.addEvent({
       title: data[i].tutees,
-      start: date,
-      end: date,
+      start: startDate,
+      end: endDate,
       allDay: false
     })
   }
@@ -47,17 +49,20 @@ function addSession(name, startDate, endDate, arg) {
     if (rsp.ok) {
       calendar.addEvent({
         title: name,
-        startStr: startDate,
-        endStr: endDate,
+        start: startDate,
+        end: endDate,
         allDay: false
-      })
+      });
     } else {
-      rsp.json().then(err => console.log(err.error))
+      rsp.json().then(err => {
+        console.log(err.error)
+        displayError(err.error)
+      })
     }
   })
 }
 
-function removeSession(name, startDate, arg) {
+function removeSession(name, startDate, endDate, event) {
   console.log("removing a session")
   fetch("/removeSession", {
     method: 'POST',
@@ -68,17 +73,29 @@ function removeSession(name, startDate, arg) {
       tutor: username,
       tutees: name,
       startTime: startDate,
-      endTime: 5
+      endTime: endDate
     })
   }).then(rsp => {
     console.log(rsp)
-    arg.event.remove()
+    if (rsp.ok) {
+      event.remove()
+    } else {
+      rsp.json().then(err => {
+        console.log(err.error)
+        displayError(err.error)
+      })
+    }
   })
-  .catch(err => console.log(err))
+}
+
+function displayError(err) {
+  document.getElementById("calendarErrorMsg").innerText = err;
+  $('#calendarErrorMsg').fadeIn('slow', function () {
+    $('#calendarErrorMsg').delay(TIME_TO_SHOW_ERROR).fadeOut();
+  });
 }
 
 async function getSessions() {
-  console.log("inside get session")
   let response = await fetch("/getSessions", {
     method: 'POST',
     headers: {
@@ -88,9 +105,7 @@ async function getSessions() {
       message: username
     })
   })
-  console.log("after fetch")
   sessions = await response.json()
-  console.log("after json")
   updateCalendarWithEvents(sessions)
 }
 
@@ -135,7 +150,18 @@ document.addEventListener('DOMContentLoaded', function () {
       endDate.value = convertLocalToCorrectFormat(arg.end.toLocaleString())
       $('#addSessionModal').modal('show');
       calendar.unselect()
-    }
+    },
+    eventClick: function (arg) {
+      if (confirm('Are you sure you want to delete this event?')) {
+        const startDate = convertLocalToCorrectFormat(
+            arg.event.start.toLocaleString())
+        let endDate = startDate
+        if (arg.event.end != null) {
+          endDate = convertLocalToCorrectFormat(arg.event.end.toLocaleString())
+        }
+        removeSession(arg.event.title, startDate, endDate, arg.event)
+      }
+    },
   });
   calendar.render();
   getSessions();

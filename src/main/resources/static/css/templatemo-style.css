@@ -1199,13 +1199,13 @@ section.buttons .container-fluid {
 /* Header */
 
 #header {
-    display: -moz-flex;
-    display: -webkit-flex;
-    display: -ms-flex;
-    display: flex;
-    position: relative;
-    background-color: #535ba0;
-    margin: -100px -100px 100px -100px;
+  display: -moz-flex;
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  position: relative;
+  background-color: #535ba0;
+  margin: -100px -100px 30px -100px;
 }
 
 #header .logo {
