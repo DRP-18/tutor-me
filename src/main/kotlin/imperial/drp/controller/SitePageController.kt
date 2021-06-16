@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 class SitePageController {
 
     @Autowired
-    private val taskRepository: TaskRepository? = null
-
-    @Autowired
     private val personRepository: PersonRepository? = null
 
     @Autowired
@@ -25,14 +22,7 @@ class SitePageController {
     @Autowired
     private val messageRepository: MessageRepository? = null
 
-    @Autowired
-    private val sessionRepository: SessionRepository? = null
-
-    // @RequestMapping("/")
-    // fun homePage() : String {
-    //     return "homepage"
-    // }
-
+    // Redirects call page to local host 3000 for testing purposes
 //        @RequestMapping("/calls_page")
 //    fun videoCallPage(@CookieValue(value = "user_id", required = false) userId: String, response: HttpServletResponse) {
 //        response.setHeader("Location", "http://localhost:3000/")

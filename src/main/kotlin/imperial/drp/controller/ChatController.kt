@@ -119,10 +119,10 @@ class ChatController {
     fun sendMessage(@Payload chatMessage: ChatMessage) {
         println("Chat message received ${chatMessage.content} ${chatMessage.sender} ${chatMessage.recipient} ${chatMessage.time}")
         val sender = personRepository!!.findById(chatMessage.sender.toLong()).get()
-        val recipient = personRepository!!.findById(chatMessage.recipient.toLong()).get()
+        val recipient = personRepository.findById(chatMessage.recipient.toLong()).get()
         val convList = mutableListOf<Conversation>()
         convList.addAll(conversationRepository!!.findAllByUser1AndUser2(sender, recipient))
-        convList.addAll(conversationRepository!!.findAllByUser1OrUser2(recipient, sender))
+        convList.addAll(conversationRepository.findAllByUser1OrUser2(recipient, sender))
         lateinit var conv: Conversation
         var convSet = false
         for (conversation in convList) {
@@ -141,25 +141,4 @@ class ChatController {
         messageRepository!!.save(message)
         messageSender.convertAndSend("/topic/chat-${chatMessage.recipient}-receiveMessage", message)
     }
-
-
-//    @MessageMapping("/chat.newUser")
-//    @SendTo("/topic/chat")
-//    fun newUser(@Payload chatMessage: ChatMessage, headerAccessor: SimpMessageHeaderAccessor): ChatMessage {
-//        headerAccessor.sessionAttributes?.put("username", chatMessage.sender)
-//        return chatMessage
-//    }
-//
-//
-//
-//    @MessageMapping("/chat.existingUser")
-//    fun existingUser(@Payload chatMessage: ChatMessage) {
-//        val id = chatMessage.sender.toLong()
-//        var userOptional = personRepository!!.findById(id)
-//        var user = ""
-//        if (userOptional.isPresent) {
-//            user = userOptional.get().name!!
-//        }
-//        sender.convertAndSend("/topic/chat-${chatMessage.sender}", ChatMessage(chatMessage.content, user, chatMessage.time))
-//    }
 }

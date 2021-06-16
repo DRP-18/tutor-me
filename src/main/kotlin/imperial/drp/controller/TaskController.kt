@@ -411,9 +411,11 @@ class TaskController {
             if (user is Tutor) {
                 var tuteeOpt = personRepository.findById(tuteeId)
                 if (tuteeOpt.isPresent) {
-                    var tutee = tuteeOpt.get()
+                    var tutee = tuteeOpt.get() as Tutee
                     user.tutees!!.remove(tutee)
                     personRepository.save(user)
+                    tutee.tutors!!.remove(user)
+                    personRepository.save(tutee)
                     return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                 }
                 return ResponseEntity(

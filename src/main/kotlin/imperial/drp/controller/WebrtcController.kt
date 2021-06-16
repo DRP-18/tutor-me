@@ -45,16 +45,12 @@ class WebrtcController {
 
     @MessageMapping("/video.endCall")
     fun endCall(@Payload message: SimpleMessage) {
-        println("The disconnecting message is $message")
-        println("The disconnecting message 2 ${message.message}")
-
-
+        println("The disconnecting message is ${message.message}")
         sender.convertAndSend("/topic/video/${message.message}/endCall", object {})
     }
 
     @MessageMapping("/video.getAllUsers")
     fun getAllUsers(@Payload message: SimpleMessage) {
-
         val people = mutableMapOf<Long, String>()
         personRepository!!.findAll().forEach {
             people.put(it.id!!, it.name!!)
