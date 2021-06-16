@@ -1,5 +1,8 @@
 let username; // Name of current user
-
+let sessions;
+let calendar;
+let events = [];
+const HTTP_SUCCESS = 200;
 username = getCookie("user_id")
 
 function getCookie(name) {
@@ -10,23 +13,25 @@ function getCookie(name) {
   }
 }
 
-function addSession(name, startDate, endDate) {
-  console.log(
-      "inside addsess on with-" + name + "-" + startDate + "-" + endDate)
-  console.log(new Date(startDate).toLocaleString())
+function updateCalendarWithEvents(data) {
+  console.log("inside update")
+  for (var i = 0; i < data.length; i++) {
+    console.log(data[i])
+    const momentDate = moment(data[i].dateTime, 'EEE MMM dd HH:mm:ss Z YYYY')
+    const date = momentDate.toDate()
+    console.log("date ", date)
+    events.push({
+      title: data[i].tutees,
+      start: date,
+      end: date,
+      allDay: false
+    })
+  }
+  console.log("Finished update")
+}
 
-  console.log(new Date(startDate).toLocaleDateString())
-  console.log(new Date(startDate).toUTCString())
-
-  console.log("array " + JSON.stringify([name]))
-  console.log("message " + JSON.stringify({
-    tutor: username,
-    tutees: name,
-    // tutees: JSON.stringify([name]),
-    dateTime: startDate,
-    duration: 5
-  }))
-
+function addSession(name, startDate, arg) {
+  console.log("adding a session")
   fetch("/addSession", {
     method: 'POST',
     headers: {
@@ -38,10 +43,21 @@ function addSession(name, startDate, endDate) {
       dateTime: startDate,
       duration: 5
     })
-  }).then(rsp => console.log(rsp))
+  }).then(rsp => {
+    if (rsp.ok) {
+      calendar.addEvent({
+        title: name,
+        start: arg.start,
+        end: arg.end,
+        allDay: false
+      })
+    } else {
+      rsp.json().then(err => console.log(err.error))
+    }
+  })
 }
 
-function removeSession(name, startDate, endDate) {
+function removeSession(name, startDate, arg) {
   console.log("removing a session")
   fetch("/removeSession", {
     method: 'POST',
@@ -54,12 +70,42 @@ function removeSession(name, startDate, endDate) {
       dateTime: startDate,
       duration: 5
     })
-  }).then(rsp => console.log(rsp))
+  }).then(rsp => {
+    console.log(rsp)
+    arg.event.remove()
+  })
+  .catch(err => console.log(err))
+}
+
+async function getSessions() {
+  console.log("inside get session")
+  let response = await fetch("/getSessions", {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      message: username
+    })
+  })
+  console.log("after fetch")
+  sessions = await response.json()
+  console.log("after json")
+  updateCalendarWithEvents(sessions)
+  // .then(rsp => rsp.json())
+  // .then(data => {
+  //   sessions = data
+  //   updateCalendarWithEvents(data)
+  // })
+  // .catch(err => console.log(err))
+
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  getSessions()
+  console.log("after get sessions")
   var calendarEl = document.getElementById('calendar');
-  var calendar = new FullCalendar.Calendar(calendarEl, {
+  calendar = new FullCalendar.Calendar(calendarEl, {
     headerToolbar: {
       left: "prev,next today",
       center: "title",
@@ -74,24 +120,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const formattedTime = arg.start.toString().slice(0, 24)
       const title = prompt('Event Title:');
       if (title) {
-        calendar.addEvent({
-          title: title,
-          start: arg.start,
-          end: arg.end,
-          allDay: false
-        })
+        addSession(title, formattedTime, arg)
       }
-      console.log("Clicked on event")
-      addSession(title, formattedTime, arg.end)
       calendar.unselect()
     },
-    eventClick: function (arg) {
-      if (confirm('Are you sure you want to delete this event?')) {
-        const formattedTime = arg.event.start.toString().slice(0, 24)
-        removeSession(arg.event.title, formattedTime, arg.event.end)
-        arg.event.remove()
-      }
-    },
+    events: events
   });
   calendar.render();
 });

@@ -23,7 +23,8 @@ const onConnected = () => {
   stompClient.subscribe('/topic/chat-' + userId + '-allUserDetails',
       saveUsersDetails)
   stompClient.subscribe('/topic/chat-' + userId + '-allMessages', saveMessages)
-  document.getElementById("sendMessage").addEventListener("click", sendMessage)
+  document.getElementById(
+      "sendMessage").addEventListener("click", sendMessage)
   stompClient.subscribe('/topic/chat-' + userId + '-receiveMessage',
       receiveMessage)
 

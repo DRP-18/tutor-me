@@ -14,6 +14,32 @@ class Session(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long? = null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Session
+
+        if (tutor?.id != other.tutor?.id) return false
+        if (dateTime != other.dateTime) return false
+        if (duration != other.duration) return false
+        if (tutees.size != other.tutees.size) return false
+        for (i in 0..(tutees.size - 1)) {
+            if (!tutees[i].equals(other.tutees[i])) return false
+        }
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = tutor?.hashCode() ?: 0
+        result = 31 * result + (dateTime?.hashCode() ?: 0)
+        result = 31 * result + (duration?.hashCode() ?: 0)
+        result = 31 * result + tutees.hashCode()
+        result = 31 * result + (id?.hashCode() ?: 0)
+        return result
+    }
 }
 
 ///addSession
