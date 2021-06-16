@@ -71,8 +71,10 @@ class TaskController {
 //    }
 
 
-
-
+    @RequestMapping("/notes_page")
+    fun notesPage(): String {
+        return "notes_page"
+    }
 
     fun getUserType(person: Person): String {
         return (
@@ -149,7 +151,6 @@ class TaskController {
         return "redirect"
     }
 
-    @Synchronized
     @PostMapping("/addtutee")
     fun addtutee(
             @CookieValue(value = "user_id") userId: Long,
