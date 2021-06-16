@@ -30,6 +30,8 @@ class ChatController {
     @Autowired
     lateinit var messageSender: SimpMessageSendingOperations
 
+    val jsonObject = ObjectMapper()
+
     @Transactional
     @MessageMapping("/chat.getMessages")
     fun getAllMessage(@Payload chatMessage: ChatMessage) {
@@ -56,7 +58,6 @@ class ChatController {
         }
 
         println("about to send messages back $recentChatsMap")
-        val jsonObject = ObjectMapper()
         val json = jsonObject.writeValueAsString(recentChatsMap)
         println("jsoned ${json}")
         messageSender.convertAndSend("/topic/chat-${chatMessage.sender}-allMessages", object {
@@ -96,7 +97,6 @@ class ChatController {
         if (person is Tutee) {
             addUserDetailsOfPerson(person.tutors!!, userDetails)
         }
-        val jsonObject = ObjectMapper()
         val json = jsonObject.writeValueAsString(userDetails)
         println("jsoned ${json}")
         messageSender.convertAndSend("/topic/chat-${chatMessage.sender}-allUserDetails", object {
