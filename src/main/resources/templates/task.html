@@ -2,12 +2,87 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   <title>Task</title>
+
+  <link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
-<form action="/file" method="post" enctype="multipart/form-data">
-  <input type="file" name="file">
-  <button type="submit">Submit</button>
-</form>
+<div id="main">
+  <section v-cloak>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12 col-md-12">
+          <div v-if="taskInfo.task != undefined">
+            <div class="d-flex justify-content-between">
+              <h1>{{taskInfo.task.content}}</h1>
+              <form action="/deletetask" method="post"
+                    v-on:submit.prevent="deleteTask('form-deletetask-' + taskInfo.task.id)"
+                    v-bind:id="'form-deletetask-' + taskInfo.task.id">
+                <input type="hidden" name="task_id" v-bind:value="taskInfo.task.id"/>
+                <button class="btn btn-danger">Delete</button>
+              </form>
+            </div>
+            <div>
+              Status:
+              <span v-if="!taskInfo.task.done">&#9744;</span>
+              <span v-if="taskInfo.task.done">&#9745;</span>
+            </div>
+            <div>Start Time: {{formatTime(taskInfo.task.startTime)}}</div>
+            <div>End Time: {{formatTime(taskInfo.task.endTime)}}</div>
+          </div>
+          <div v-if="taskInfo.files != undefined">
+            <table class="table">
+              <thead>
+              <tr>
+                <th scope="col">FILENAME</th>
+                <th scope="col">UPLOADER</th>
+                <th scope="col">UPLOAD TIME</th>
+                <th scope="col">ACTIONS</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="file in taskInfo.files">
+                <td class="align-middle">{{file.filename}}</td>
+                <td class="align-middle">{{file.uploader.name}}</td>
+                <td class="align-middle">{{formatTime(file.uploadTime)}}</td>
+                <td class="align-middle">
+                  <div class="d-flex">
+                    <a class="btn btn-primary"
+                       v-bind:href="'/file/' + file.id + '/' + file.filename"
+                       role="button" style="margin: 8px 0;">DOWNLOAD</a>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            <form action="/uploadtaskfile" method="post" enctype="multipart/form-data">
+              <input type="file" name="file">
+              <input type="hidden" name="task_id" v-bind:value="taskId">
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+          <div class="text-center" v-if="taskInfo.task == undefined || taskInfo.files == undefined">
+            <div class="spinner-border" role="status">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="/assets/jquery/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/browser.min.js"></script>
+<script src="/js/breakpoints.min.js"></script>
+<script src="/js/transition.js"></script>
+<script src="/js/owl-carousel.js"></script>
+<script src="/js/custom.js"></script>
+<script src="/js/vue.js"></script>
+
+<script src="/js/taskpage.js"></script>
 </body>
 </html>

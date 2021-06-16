@@ -1,2 +1,6 @@
 server:
   port: "${port:8080}"
+spring:
+  datasource:
+    hikari:
+      auto-commit: false
