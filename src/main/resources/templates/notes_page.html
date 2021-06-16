@@ -1,81 +1,189 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+
+  <title>Tutor-Me</title>
+
+  <!-- Bootstrap core CSS -->
+  <link
+          href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Additional CSS Files -->
+  <link rel="stylesheet" href="/css/fontawesome.css">
+  <link rel="stylesheet" href="/css/templatemo-style.css">
+  <link
+          rel="stylesheet" href="/css/owl.css">
+
+  <!-- CSS for popup login -->
+  <link rel="stylesheet" href="/css/modelstyles.css">
+
+
+
   <link rel="stylesheet" href=
-      "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity=
-            "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+                "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
         crossorigin="anonymous">
 
   <script src=
-              "https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity=
-              "sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+                  "https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity=
+                  "sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
           crossorigin="anonymous">
   </script>
 
   <script src=
-              "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+                  "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
           integrity=
-              "sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+                  "sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
           crossorigin="anonymous">
   </script>
 
   <script src=
-              "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+                  "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
           integrity=
-              "sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+                  "sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
           crossorigin="anonymous">
   </script>
-
 
 </head>
 
-<body>
-<!--<nav class="navbar navbar-expand-lg-->
-<!--				navbar-light bg-success">-->
-<!--  <a class="navbar-brand" href="#">-->
-<!--    <p style="font-size: 30px;">-->
-<!--      THE NOTES TAKER-->
-<!--    </p>-->
+<body
+        class="is-preload">
 
-<!--  </a>-->
-<!--</nav>-->
+<!-- Wrapper -->
+<div
+        id="wrapper">
 
-<div class="container my-3">
-  <h1>Take your Notes here</h1>
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">
-        Add a Note
+  <!-- Main -->
+  <div id="main">
+    <div
+            class="inner">
 
-      </h5>
-      <div class="form-group">
+      <!-- Header -->
+      <header id="header">
+        <div class="logo">
+          <a href="/">Tutor-Me</a>
+        </div>
+      </header>
+
+
+
+      <div class="container my-3">
+        <h1>Take your Notes here</h1>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">
+              Add a Note
+
+            </h5>
+            <div class="form-group">
 					<textarea class="form-control"
-                    id="addText" rows="3">
+                              id="addText" rows="3">
 					</textarea>
+            </div>
+            <button class="btn btn-primary"
+                    id="addButton" style=
+                            "background-color:green">
+              Add Note
+            </button>
+          </div>
+        </div>
+        <hr>
+        <h1>Your Notes</h1>
+        <hr>
+
+        <div id="notes" class=
+                "row container-fluid">
+        </div>
       </div>
-      <button class="btn btn-primary"
-              id="addButton" style=
-                  "background-color:green">
-        Add Note
-      </button>
+
+      <script
+              src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+      <script
+              src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+      <script src="/js/notes.js"></script>
+
+
+
+
+
+
     </div>
   </div>
-  <hr>
-  <h1>Your Notes</h1>
-  <hr>
 
-  <div id="notes" class=
-      "row container-fluid">
+  <!-- Sidebar -->
+  <div id="sidebar">
+
+    <div
+            class="inner">
+
+      <!-- Search Box -->
+      <section id="search" class="alt">
+        <form method="get" action="#">
+          <input type="text" name="search" id="search" placeholder="Search..."/>
+        </form>
+      </section>
+
+      <!-- Menu -->
+      <nav id="menu">
+        <ul>
+          <li>
+            <a href="/">Homepage</a>
+          </li>
+          <li>
+            <a href="/chats_page">Chats</a>
+          </li>
+          <li>
+            <a href="/calls_page">Calls</a>
+          </li>
+          <li>
+            <a href="/calendar">Calendar</a>
+          </li>
+          <li><a href="/notes_page">Notes</a></li>
+          <!--                    <li>-->
+          <!--                      <span class="opener">Dropdown One</span>-->
+          <!--                      <ul>-->
+          <!--                        <li><a href="#">First Sub Menu</a></li>-->
+          <!--                        <li><a href="#">Second Sub Menu</a></li>-->
+          <!--                        <li><a href="#">Third Sub Menu</a></li>-->
+          <!--                      </ul>-->
+          <!--                    </li>-->
+          <!--                    <li>-->
+          <!--            <span class="opener">Dropdown Two</span>-->
+          <!--            <ul>-->
+          <!--              <li><a href="#">Sub Menu #1</a></li>-->
+          <!--              <li><a href="#">Sub Menu #2</a></li>-->
+          <!--              <li><a href="#">Sub Menu #3</a></li>-->
+          <!--            </ul>-->
+          <!--          </li>-->
+          <!--          <li>-->
+          <!--            <a href="https://www.google.com">External Link</a>-->
+          <!--          </li>-->
+        </ul>
+      </nav>
+
+      <!-- Footer -->
+      <!--      <footer id="footer">-->
+      <!--        <br>DRP project by-->
+      <!--        </p>-->
+      <!--      </footer>-->
+
+    </div>
   </div>
 </div>
-
-<script
-src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
-<script
-src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script src="/js/notes.js"></script>
 </body>
-
-</html>
+</html><!-- Scripts --><!-- Bootstrap core JavaScript -->
+<script src="/assets/jquery/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/browser.min.js"></script>
+<script src="/js/breakpoints.min.js"></script>
+<script src="/js/transition.js"></script>
+<script src="/js/owl-carousel.js"></script>
+<script src="/js/custom.js"></script>
