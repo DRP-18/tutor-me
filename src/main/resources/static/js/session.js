@@ -17,10 +17,11 @@ function updateCalendarWithEvents(data) {
   console.log("inside update")
   for (var i = 0; i < data.length; i++) {
     console.log(data[i])
-    const momentDate = moment(data[i].dateTime, 'EEE MMM dd HH:mm:ss Z YYYY')
-    const date = momentDate.toDate()
+    // const momentDate = moment(data[i].dateTime, 'EEE MMM dd HH:mm:ss Z YYYY')
+    // const date = momentDate.toDate()
+    const date = new Date(data[i].dateTime)
     console.log("date ", date)
-    events.push({
+    calendar.addEvent({
       title: data[i].tutees,
       start: date,
       end: date,
@@ -31,7 +32,7 @@ function updateCalendarWithEvents(data) {
 }
 
 function addSession(name, startDate, arg) {
-  console.log("adding a session")
+  console.log("adding a session " + startDate)
   fetch("/addSession", {
     method: 'POST',
     headers: {
@@ -102,7 +103,6 @@ async function getSessions() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  getSessions()
   console.log("after get sessions")
   var calendarEl = document.getElementById('calendar');
   calendar = new FullCalendar.Calendar(calendarEl, {
@@ -123,10 +123,10 @@ document.addEventListener('DOMContentLoaded', function () {
         addSession(title, formattedTime, arg)
       }
       calendar.unselect()
-    },
-    events: events
+    }
   });
   calendar.render();
+  getSessions()
 });
 
 

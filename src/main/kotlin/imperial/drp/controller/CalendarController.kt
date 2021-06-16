@@ -117,12 +117,22 @@ class CalendarController {
             sessions.forEach {
                 listSessions.add(SessionMessage(it.tutor!!.id.toString(),
                         it.tutees[0].id.toString(),
-                        it.dateTime?.time.toString(),
+                        convertDate("EEE MMM dd HH:mm:ss Z yyyy",
+                                "EEE MMM dd yyyy HH:mm:ss",
+                                it.dateTime?.time.toString()),
                         it.duration.toString()))
             }
             println("Sent back sessions")
             return jsonObject.writeValueAsString(listSessions)
         }
         return ""
+    }
+
+    private fun convertDate(inputPattern: String, outputPattern: String, providedDate: String): String {
+        val sdf = SimpleDateFormat(inputPattern)
+        val date = sdf.parse(providedDate)
+        sdf.applyPattern(outputPattern)
+        return sdf.format(date)
+
     }
 }
