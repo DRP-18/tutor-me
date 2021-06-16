@@ -4,7 +4,6 @@ var calendar;
 let events = [];
 let selectedEvent;
 let formattedTime;
-const HTTP_SUCCESS = 200;
 username = getCookie("user_id")
 
 function getCookie(name) {
@@ -19,8 +18,6 @@ function updateCalendarWithEvents(data) {
   console.log("inside update")
   for (var i = 0; i < data.length; i++) {
     console.log(data[i])
-    // const momentDate = moment(data[i].startTime, 'EEE MMM dd HH:mm:ss Z YYYY')
-    // const date = momentDate.toDate()
     const date = new Date(data[i].startTime)
     console.log("date ", date)
     calendar.addEvent({

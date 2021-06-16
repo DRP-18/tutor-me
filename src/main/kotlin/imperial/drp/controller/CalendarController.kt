@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.servlet.http.HttpServletResponse
@@ -42,9 +39,9 @@ class CalendarController {
     fun addSession(@RequestBody message: SessionMessage,
                    response: HttpServletResponse): ResponseEntity<PostResponseDto> {
         val tutorOpt = personRepository!!.findById(message.tutor.toLong())
-        if (tutorOpt.isPresent) {
+        if (tutorOpt.isPresent && tutorOpt.get() is Tutor) {
             val tutor = tutorOpt.get() as Tutor
-            val tutee = personRepository!!.findByName(message.tutees)
+            val tutee = personRepository.findByName(message.tutees)
             if (tutee.isNotEmpty() && tutee[0] is Tutee) {
                 if (tutor.tutees?.contains(tutee[0])!!) {
                     val startTime = GregorianCalendar()
@@ -67,7 +64,7 @@ class CalendarController {
                             }
                         }
                     }
-                    sessionRepository!!.save(session)
+                    sessionRepository.save(session)
                     return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                 }
                 return ResponseEntity(PostResponseDto("${message.tutees} is not one of your tutees"), HttpStatus.METHOD_NOT_ALLOWED)
@@ -100,26 +97,55 @@ class CalendarController {
 
     @PostMapping("/getSessions")
     @ResponseBody
-    fun getSessions(@RequestBody message: SimpleMessage,
+    fun getSessions(@CookieValue(value = "user_type") user_type: String,
+                    @RequestBody message: SimpleMessage,
                     response: HttpServletResponse): String {
         val tutorOpt = personRepository!!.findById(message.message.toLong())
-        if (tutorOpt.isPresent) {
-            val sessions = sessionRepository!!.findByTutor(tutorOpt.get() as Tutor)
-            val listSessions = mutableListOf<SessionMessage>()
-            sessions.forEach {
-                listSessions.add(SessionMessage(it.tutor!!.id.toString(),
-                        it.tutees[0].name!!,
-                        convertDate("EEE MMM dd HH:mm:ss Z yyyy",
-                                "EEE MMM dd yyyy HH:mm:ss",
-                                it.startTime?.time.toString()),
-                        convertDate("EEE MMM dd HH:mm:ss Z yyyy",
-                                "EEE MMM dd yyyy HH:mm:ss",
-                                it.endTime?.time.toString())))
+        val sessions = mutableListOf<Session>()
+        val listSessions = mutableListOf<SessionMessage>()
+        val isTutor = (user_type == "tutor")
+        if (isTutor) {
+            if (tutorOpt.isEmpty) {
+                return ""
             }
-            println("Sent back sessions")
-            return jsonObject.writeValueAsString(listSessions)
+            sessions.addAll(sessionRepository!!.findByTutor(tutorOpt.get() as Tutor))
+        } else {
+            val tuteeOpt = personRepository!!.findById(message.message.toLong())
+            if (tuteeOpt.isEmpty) {
+                return ""
+            }
+            val tutee = tuteeOpt.get() as Tutee
+            for (tutor in tutee.tutors!!) {
+                val tutorSessions = sessionRepository!!.findByTutor(tutor)
+                for (session in tutorSessions) {
+                    if (session.tutees.contains(tutee)) {
+                        sessions.add(session)
+                    }
+                }
+            }
         }
-        return ""
+        var myName = ""
+        var theirName = ""
+        sessions.forEach {
+            if (isTutor) {
+                myName = it.tutor!!.name.toString()
+                theirName = it.tutees[0].name!!
+            } else {
+                theirName = it.tutor!!.name.toString()
+                myName = it.tutees[0].name!!
+            }
+            listSessions.add(SessionMessage(myName,
+                    theirName,
+                    convertDate("EEE MMM dd HH:mm:ss Z yyyy",
+                            "EEE MMM dd yyyy HH:mm:ss",
+                            it.startTime?.time.toString()),
+                    convertDate("EEE MMM dd HH:mm:ss Z yyyy",
+                            "EEE MMM dd yyyy HH:mm:ss",
+                            it.endTime?.time.toString())))
+        }
+        println("Sent back sessions")
+        return jsonObject.writeValueAsString(listSessions)
+
     }
 
     private fun convertDate(inputPattern: String, outputPattern: String, providedDate: String): String {
