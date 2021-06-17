@@ -103,6 +103,7 @@ const addNote = () => {
     };
     stompClient.send("/app/notes.addNote", {}, JSON.stringify(noteMessage))
   }
+}
 
   const getNewNoteId = (payload) => {
     const addText = document.getElementById("addText");
@@ -131,7 +132,7 @@ const addNote = () => {
     notesElm.value = ''
 
   };
-}
+
 
 const receiveNotesAndDisplay = (payload) => {
 
