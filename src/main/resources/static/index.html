@@ -35,6 +35,7 @@
 
   gtag('config', 'G-YSVVP3FGRQ');
 
+
   </script>
 </head>
 
@@ -253,26 +254,27 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="task in tasks.list">
+                <tr v-for="taskItem in tasks.list">
                   <td class="align-middle">
                     <div class="form-check">
-                      <span v-if="!task.done">&#9744;</span>
-                      <span v-if="task.done">&#9745;</span>
+                      <span v-if="!taskItem.task.done">&#9744;</span>
+                      <span v-if="taskItem.task.done">&#9745;</span>
+                      <span v-if="taskItem.hasAttachment" title="This task has files attached">&#128196;</span>
                     </div>
                   </td>
-                  <td class="align-middle">{{formatTime(task.startTime)}}</td>
-                  <td class="align-middle">{{formatTime(task.endTime)}}</td>
-                  <td class="align-middle">{{task.tutor.name}}</td>
-                  <td class="align-middle">{{task.content}}</td>
+                  <td class="align-middle">{{formatTime(taskItem.task.startTime)}}</td>
+                  <td class="align-middle">{{formatTime(taskItem.task.endTime)}}</td>
+                  <td class="align-middle">{{taskItem.task.tutor.name}}</td>
+                  <td class="align-middle">{{taskItem.task.content}}</td>
                   <td class="align-middle">
                     <div class="d-flex">
-                      <a class="btn btn-info" v-bind:href="'/task/' + task.id"
+                      <a class="btn btn-info" v-bind:href="'/task/' + taskItem.task.id"
                          role="button" style="margin: 8px 0;">DETAILS</a>
-                      <form action="/donetask" method="post" v-if="!task.done"
-                            v-on:submit.prevent="doneTask('form-donetask-' + task.id)"
-                            v-bind:id="'form-donetask-' + task.id">
+                      <form action="/donetask" method="post" v-if="!taskItem.task.done"
+                            v-on:submit.prevent="doneTask('form-donetask-' + taskItem.task.id)"
+                            v-bind:id="'form-donetask-' + taskItem.task.id">
                         <input type="hidden" name="task_id"
-                               v-bind:value="task.id"/>
+                               v-bind:value="taskItem.task.id"/>
                         <button class="btn btn-success">Done</button>
                       </form>
                     </div>
