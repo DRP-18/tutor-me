@@ -43,7 +43,7 @@ const addHTML = (element, id) => {
   editBox.style.display = 'none'
 
   const deleteButton = document.createElement('button');
-  deleteButton.id = (id);
+  deleteButton.id = "Delete " + id;
   deleteButton.onclick = function () {
     deleteNote(id)
   };
@@ -61,13 +61,14 @@ const addHTML = (element, id) => {
   editButton.innerText = ('Edit Note');
 
   const saveButton = document.createElement('button');
-  saveButton.id = (id);
+  saveButton.id = "Save " + id;
   saveButton.onclick = function () {
     saveNote(id)
   };
   saveButton.classList.add("btn");
   saveButton.classList.add("btn-primary");
   saveButton.innerText = ('Save Note');
+  // saveButton.style.display = 'none'
 
   console.log("putting it togetehr");
   innerNote.appendChild(header);
@@ -75,6 +76,7 @@ const addHTML = (element, id) => {
   innerNote.appendChild(editBox)
   innerNote.appendChild(editButton);
   innerNote.appendChild(deleteButton);
+  innerNote.appendChild(saveButton)
 
   note.appendChild(innerNote);
 
@@ -148,6 +150,7 @@ const addNote = () => {
 
     // addHTML(noteContent)
     addHTML(noteContent, noteId);
+    document.getElementById("Save " + noteId).style.display = 'none'
 
     if (notes.length == 0) {
       notesElm.innerHTML = `Nothing to show!
@@ -207,11 +210,17 @@ const editNote = (noteId) => {
   var elem = document.getElementById("Paragraph " + noteId);
   elem.style.display = 'none'
 
-
   var editBox = document.getElementById("editNoteBox " + noteId);
   editBox.style.display = 'block'
   editBox.innerText = elem.innerText
 
+  var saveButton = document.getElementById("Save " + noteId);
+  saveButton.style.display = 'block'
+
+  var deleteButton = document.getElementById("Delete " + noteId);
+  deleteButton.style.display = 'none'
+
+ 
   //text = elem.content
 
   // console.log(noteId);
@@ -238,6 +247,21 @@ const editNote = (noteId) => {
 };
 const saveNote = (noteId) => {
 
+  var elem = document.getElementById("Paragraph " + noteId);
+  elem.style.display = 'block'
+
+  var editBox = document.getElementById("editNoteBox " + noteId);
+  var editedText = editBox.value.trim();
+  editBox.style.display = 'none'
+  elem.innerText = editedText 
+
+  var deleteButton = document.getElementById("Delete " + noteId);
+  deleteButton.style.display = 'block'
+
+  var saveButton = document.getElementById("Save " + noteId);
+  saveButton.style.display = 'none'
+
+  // update database
 }
 
 connect({});
