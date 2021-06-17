@@ -1,11 +1,12 @@
-let username; // Name of current user
 let sessions;
 let calendar;
 let events = [];
 let selectedEvent;
 let formattedTime;
 let TIME_TO_SHOW_ERROR = 5000; // in milliseconds
-username = getCookie("user_id")
+const username = getCookie("user_id");
+const userType = getCookie("user_type");
+const isTutee = (userType === "tutee");
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;
@@ -16,12 +17,12 @@ function getCookie(name) {
 }
 
 function updateCalendarWithEvents(data) {
-  console.log("inside update")
+  console.log("inside update");
   for (var i = 0; i < data.length; i++) {
-    console.log(data[i])
-    const startDate = new Date(data[i].startTime)
-    const endDate = new Date(data[i].endTime)
-    console.log("startDate ", startDate)
+    console.log(data[i]);
+    const startDate = new Date(data[i].startTime);
+    const endDate = new Date(data[i].endTime);
+    console.log("startDate ", startDate);
     calendar.addEvent({
       title: data[i].tutees,
       start: startDate,
@@ -33,7 +34,7 @@ function updateCalendarWithEvents(data) {
 }
 
 function addSession(name, startDate, endDate, arg) {
-  console.log("adding a session " + startDate + "-" + endDate)
+  console.log("adding a session " + startDate + "-" + endDate);
   fetch("/addSession", {
     method: 'POST',
     headers: {
@@ -55,7 +56,7 @@ function addSession(name, startDate, endDate, arg) {
       });
     } else {
       rsp.json().then(err => {
-        console.log(err.error)
+        console.log(err.error);
         displayError(err.error)
       })
     }
@@ -63,7 +64,7 @@ function addSession(name, startDate, endDate, arg) {
 }
 
 function removeSession(name, startDate, endDate, event) {
-  console.log("removing a session")
+  console.log("removing a session");
   fetch("/removeSession", {
     method: 'POST',
     headers: {
@@ -76,20 +77,20 @@ function removeSession(name, startDate, endDate, event) {
       endTime: endDate
     })
   }).then(rsp => {
-    console.log(rsp)
+    console.log(rsp);
     if (rsp.ok) {
       event.remove()
     } else {
       rsp.json().then(err => {
-        console.log(err.error)
+        console.log(err.error);
         displayError(err.error)
       })
     }
   })
 }
 
-function displayError(err) {
-  document.getElementById("calendarErrorMsg").innerText = err;
+function displayError(errMsg) {
+  document.getElementById("calendarErrorMsg").innerText = errMsg;
   $('#calendarErrorMsg').fadeIn('slow', function () {
     $('#calendarErrorMsg').delay(TIME_TO_SHOW_ERROR).fadeOut();
   });
@@ -104,26 +105,26 @@ async function getSessions() {
     body: JSON.stringify({
       message: username
     })
-  })
-  sessions = await response.json()
+  });
+  sessions = await response.json();
   updateCalendarWithEvents(sessions)
 }
 
 function addSessionWithModalInfo() {
-  const name = document.getElementById("tuteeNameModal").value
-  const startDate = document.getElementById("startDateModal").value
-  const endDate = document.getElementById("endDateModal").value
-  addSession(name, startDate, endDate, selectedEvent)
+  const name = document.getElementById("tuteeNameModal").value;
+  const startDate = document.getElementById("startDateModal").value;
+  const endDate = document.getElementById("endDateModal").value;
+  addSession(name, startDate, endDate, selectedEvent);
   $('#addSessionModal').modal('hide');
 }
 
 // converts "24/06/2021, 12:34:56"
 // to "2021-06-24T12:34"
 function convertLocalToCorrectFormat(time) {
-  const year = time.slice(6, 10)
-  const month = time.slice(3, 5)
-  const day = time.slice(0, 2)
-  const timePart = time.slice(12, 17)
+  const year = time.slice(6, 10);
+  const month = time.slice(3, 5);
+  const day = time.slice(0, 2);
+  const timePart = time.slice(12, 17);
   return year + '-' + month + '-' + day + 'T' + timePart
 }
 
@@ -142,24 +143,34 @@ document.addEventListener('DOMContentLoaded', function () {
     businessHours: true,
     dayMaxEvents: true, // allow "more" link when too many events
     select: function (arg) {
-      formattedTime = arg.start.toISOString().slice(0, 16)
-      selectedEvent = arg
-      const startDate = document.getElementById("startDateModal")
-      const endDate = document.getElementById("endDateModal")
-      startDate.value = convertLocalToCorrectFormat(arg.start.toLocaleString())
-      endDate.value = convertLocalToCorrectFormat(arg.end.toLocaleString())
-      $('#addSessionModal').modal('show');
+      if (isTutee) {
+        displayError("Not a tutor, only tutors can organise sessions")
+      } else {
+        formattedTime = arg.start.toISOString().slice(0, 16);
+        selectedEvent = arg;
+        const startDate = document.getElementById("startDateModal");
+        const endDate = document.getElementById("endDateModal");
+        startDate.value = convertLocalToCorrectFormat(
+            arg.start.toLocaleString());
+        endDate.value = convertLocalToCorrectFormat(arg.end.toLocaleString());
+        $('#addSessionModal').modal('show');
+      }
       calendar.unselect()
     },
     eventClick: function (arg) {
-      if (confirm('Are you sure you want to delete this event?')) {
-        const startDate = convertLocalToCorrectFormat(
-            arg.event.start.toLocaleString())
-        let endDate = startDate
-        if (arg.event.end != null) {
-          endDate = convertLocalToCorrectFormat(arg.event.end.toLocaleString())
+      if (isTutee) {
+        displayError("Not a tutor, only tutors can delete sessions")
+      } else {
+        if (confirm('Are you sure you want to delete this event?')) {
+          const startDate = convertLocalToCorrectFormat(
+              arg.event.start.toLocaleString());
+          let endDate = startDate;
+          if (arg.event.end != null) {
+            endDate = convertLocalToCorrectFormat(
+                arg.event.end.toLocaleString())
+          }
+          removeSession(arg.event.title, startDate, endDate, arg.event)
         }
-        removeSession(arg.event.title, startDate, endDate, arg.event)
       }
     },
   });
