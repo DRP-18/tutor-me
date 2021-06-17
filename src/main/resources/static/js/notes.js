@@ -261,7 +261,14 @@ const saveNote = (noteId) => {
   var saveButton = document.getElementById("Save " + noteId);
   saveButton.style.display = 'none'
 
+  if (editedText !== null) {
+    const noteMessage = {
+      content: editedText,
+      sender: noteId
+    };
+    stompClient.send("/app/notes.editNote", {}, JSON.stringify(noteMessage))
   // update database
+  }
 }
 
 connect({});
