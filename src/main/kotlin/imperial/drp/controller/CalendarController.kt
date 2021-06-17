@@ -98,7 +98,7 @@ class CalendarController {
     @PostMapping("/getSessions")
     @ResponseBody
     fun getSessions(@CookieValue(value = "user_type") user_type: String,
-                    @RequestBody message: SimpleMessage,
+                    @RequestBody message: SimpleMessage, //I'm already giving you used_id as a cookie
                     response: HttpServletResponse): String {
         val tutorOpt = personRepository!!.findById(message.message.toLong())
         val sessions = mutableListOf<Session>()
@@ -134,6 +134,7 @@ class CalendarController {
                 theirName = it.tutor!!.name.toString()
                 myName = it.tutees[0].name!!
             }
+            //Why would you do this to me? :(
             listSessions.add(SessionMessage(myName,
                     theirName,
                     convertDate("EEE MMM dd HH:mm:ss Z yyyy",
