@@ -3,8 +3,25 @@ var vm = new Vue({
   data: {
     user: {},
     tasks: {},
+
   },
   methods: {
+    getTodayString: function() {
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const yyyy = today.getFullYear();
+      return yyyy + "-" + mm + "-" + dd + "T00:00";
+    },
+    getTomorrowString: function() {
+      const today = new Date();
+      today.setDate(today.getDate() + 1);
+      const tomorrow = today;
+      const dd = String(tomorrow.getDate()).padStart(2, '0');
+      const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+      const yyyy = tomorrow.getFullYear();
+      return yyyy + "-" + mm + "-" + dd + "T00:00";
+    },
     formatTime: function (time) {
       return new Date(time).toLocaleString();
     },
