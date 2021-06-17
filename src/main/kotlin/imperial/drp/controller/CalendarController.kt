@@ -27,7 +27,6 @@ class CalendarController {
     @Autowired
     private val sessionRepository: SessionRepository? = null
 
-    //Just why - there's already 2 date formats below
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
     val jsonObject = ObjectMapper()
 
@@ -99,7 +98,7 @@ class CalendarController {
     @PostMapping("/getSessions")
     @ResponseBody
     fun getSessions(@CookieValue(value = "user_type") user_type: String,
-                    @RequestBody message: SimpleMessage, //I'm already giving you used_id as a cookie
+                    @RequestBody message: SimpleMessage,
                     response: HttpServletResponse): String {
         val tutorOpt = personRepository!!.findById(message.message.toLong())
         val sessions = mutableListOf<Session>()
@@ -135,7 +134,6 @@ class CalendarController {
                 theirName = it.tutor!!.name.toString()
                 myName = it.tutees[0].name!!
             }
-            //Why would you do this to me? :(
             listSessions.add(SessionMessage(myName,
                     theirName,
                     convertDate("EEE MMM dd HH:mm:ss Z yyyy",
