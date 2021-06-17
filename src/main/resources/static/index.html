@@ -184,7 +184,7 @@
                     <td class="align-middle">
                       <div class="d-flex">
                         <a class="btn btn-info" v-bind:href="'/task/' + task.id"
-                           role="button" style="margin: 8px 0;">DETAILS</a>
+                           role="button" style="margin: 8px 0;">FILES</a>
                         <form action="/deletetask" method="post"
                               v-on:submit.prevent="deleteTask('form-deletetask-' + task.id)"
                               v-bind:id="'form-deletetask-' + task.id">
@@ -269,7 +269,7 @@
                   <td class="align-middle">
                     <div class="d-flex">
                       <a class="btn btn-info" v-bind:href="'/task/' + taskItem.task.id"
-                         role="button" style="margin: 8px 0;">DETAILS</a>
+                         role="button" style="margin: 8px 0;">FILES</a>
                       <form action="/donetask" method="post" v-if="!taskItem.task.done"
                             v-on:submit.prevent="doneTask('form-donetask-' + taskItem.task.id)"
                             v-bind:id="'form-donetask-' + taskItem.task.id">
