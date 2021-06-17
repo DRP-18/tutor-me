@@ -33,22 +33,50 @@ const addHTML = (element, id) => {
   header.innerText = ('Note ' + (++index));
 
   const paragraph = document.createElement('p');
+  paragraph.id = "Paragraph " + id
   paragraph.classList.add("card-text");
   paragraph.innerText = (element);
 
-  const button = document.createElement('button');
-  button.id = (id);
-  button.onclick = function () {
+  const editBox = document.createElement("textarea");
+  editBox.classList.add("form-control")
+  editBox.id = "editNoteBox " + id
+  editBox.style.display = 'none'
+
+  const deleteButton = document.createElement('button');
+  deleteButton.id = "Delete " + id;
+  deleteButton.onclick = function () {
     deleteNote(id)
   };
-  button.classList.add("btn");
-  button.classList.add("btn-primary");
-  button.innerText = ('Delete Note');
+  deleteButton.classList.add("btn");
+  deleteButton.classList.add("btn-primary");
+  deleteButton.innerText = ('Delete Note');
+
+  const editButton = document.createElement('button');
+  editButton.id = (id);
+  editButton.onclick = function () {
+    editNote(id)
+  };
+  editButton.classList.add("btn");
+  editButton.classList.add("btn-primary");
+  editButton.innerText = ('Edit Note');
+
+  const saveButton = document.createElement('button');
+  saveButton.id = "Save " + id;
+  saveButton.onclick = function () {
+    saveNote(id)
+  };
+  saveButton.classList.add("btn");
+  saveButton.classList.add("btn-primary");
+  saveButton.innerText = ('Save Note');
+  // saveButton.style.display = 'none'
 
   console.log("putting it togetehr");
   innerNote.appendChild(header);
   innerNote.appendChild(paragraph);
-  innerNote.appendChild(button);
+  innerNote.appendChild(editBox)
+  innerNote.appendChild(editButton);
+  innerNote.appendChild(deleteButton);
+  innerNote.appendChild(saveButton)
 
   note.appendChild(innerNote);
 
@@ -122,6 +150,7 @@ const addNote = () => {
 
     // addHTML(noteContent)
     addHTML(noteContent, noteId);
+    document.getElementById("Save " + noteId).style.display = 'none'
 
     if (notes.length == 0) {
       notesElm.innerHTML = `Nothing to show!
@@ -174,6 +203,73 @@ const deleteNote = (noteId) => {
 
   return false;
 };
+
+// Function to edit a note
+const editNote = (noteId) => {
+  // //get notes from database
+  var elem = document.getElementById("Paragraph " + noteId);
+  elem.style.display = 'none'
+
+  var editBox = document.getElementById("editNoteBox " + noteId);
+  editBox.style.display = 'block'
+  editBox.innerText = elem.innerText
+
+  var saveButton = document.getElementById("Save " + noteId);
+  saveButton.style.display = 'block'
+
+  var deleteButton = document.getElementById("Delete " + noteId);
+  deleteButton.style.display = 'none'
+
+ 
+  //text = elem.content
+
+  // console.log(noteId);
+  // stompClient.send('/app/notes.deleteNote', {},
+  //     JSON.stringify({name: userId, status: noteId}));
+
+  // // var button = document.getElementById(noteId)
+  // // button.parentNode.removeChild(button);
+
+  // return false;
+
+  // const addText = document.getElementById("addText");
+  // const noteContent = addText.value.trim();
+
+  // console.log("adding a new note with context" + noteContent);
+
+  // if (noteContent !== null) {
+  //   const noteMessage = {
+  //     content: noteContent,
+  //     sender: username
+  //   };
+  //   stompClient.send("/app/notes.addNote", {}, JSON.stringify(noteMessage))
+  // }
+};
+const saveNote = (noteId) => {
+
+  var elem = document.getElementById("Paragraph " + noteId);
+  elem.style.display = 'block'
+
+  var editBox = document.getElementById("editNoteBox " + noteId);
+  var editedText = editBox.value.trim();
+  editBox.style.display = 'none'
+  elem.innerText = editedText 
+
+  var deleteButton = document.getElementById("Delete " + noteId);
+  deleteButton.style.display = 'block'
+
+  var saveButton = document.getElementById("Save " + noteId);
+  saveButton.style.display = 'none'
+
+  if (editedText !== null) {
+    const noteMessage = {
+      content: editedText,
+      sender: noteId
+    };
+    stompClient.send("/app/notes.editNote", {}, JSON.stringify(noteMessage))
+  // update database
+  }
+}
 
 connect({});
 

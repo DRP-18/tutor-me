@@ -52,4 +52,16 @@ class NotesController {
         noteRepository.delete(noteToDelete)
     }
 
+    @Transactional
+    @MessageMapping("/notes.editNote")
+    fun editNote(@Payload note: NoteMessage) {
+
+        val updatedText = note.content
+        val noteId = note.sender.toLong()
+
+        val noteInDB = noteRepository!!.findById(noteId).get()
+        noteInDB.content = updatedText
+        noteRepository.save(noteInDB)
+    }
+
 }
