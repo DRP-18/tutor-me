@@ -198,10 +198,12 @@
                     <td class="align-middle"><input v-bind:form="'form-addtask-' + key"
                                                     type="datetime-local" class="form-control"
                                                     name="start_time"
+                                                    v-bind:value="getTodayString()"
                                                     placeholder="e.g., 2018-06-12T19:30"></td>
                     <td class="align-middle"><input v-bind:form="'form-addtask-' + key"
                                                     type="datetime-local" class="form-control"
                                                     name="end_time"
+                                                    v-bind:value="getTomorrowString()"
                                                     placeholder="e.g., 2018-06-12T19:30"></td>
                     <td class="align-middle"><input v-bind:form="'form-addtask-' + key" type="text"
                                                     class="form-control"
