@@ -1,6 +1,5 @@
 package imperial.drp.entity
 
-import java.io.Serializable
 import java.util.*
 import javax.persistence.*
 
@@ -9,7 +8,7 @@ class Message(
         @field:ManyToOne var conversation: Conversation? = null,
         @field:ManyToOne var sender: Person? = null,
         var message: String? = null,
-        @field:Column(columnDefinition = "TIMESTAMP WITH TIME ZONE") var time: Calendar? = null
+        @field:Column(columnDefinition = "TIMESTAMP WITH TIME ZONE") var time: Date = Date()
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

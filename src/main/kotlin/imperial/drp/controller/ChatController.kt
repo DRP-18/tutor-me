@@ -12,6 +12,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.messaging.simp.SimpMessageSendingOperations
 import org.springframework.stereotype.Controller
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.transaction.Transactional
 
@@ -30,7 +31,12 @@ class ChatController {
     @Autowired
     lateinit var messageSender: SimpMessageSendingOperations
 
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
     val jsonObject = ObjectMapper()
+
+    init {
+        jsonObject.dateFormat = sdf
+    }
 
     @Transactional
     @MessageMapping("/chat.getMessages")
@@ -137,7 +143,7 @@ class ChatController {
             conv = Conversation(sender, recipient)
             conversationRepository.save(conv)
         }
-        val message = Message(conv, sender, chatMessage.content, GregorianCalendar())
+        val message = Message(conv, sender, chatMessage.content, Date())
         messageRepository!!.save(message)
         messageSender.convertAndSend("/topic/chat-${chatMessage.recipient}-receiveMessage", message)
     }
