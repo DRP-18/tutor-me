@@ -27,6 +27,7 @@ class CalendarController {
     @Autowired
     private val sessionRepository: SessionRepository? = null
 
+    //Just why - there's already 2 date formats below
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
     val jsonObject = ObjectMapper()
 
