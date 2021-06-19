@@ -15,8 +15,15 @@
     <!-- Bootstrap core CSS     -->
     <link
         href="assets/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- Bootstrp for chat box -->
     <link
         href="assets/css/bootstrapV4.min.css" rel="stylesheet"/>
+
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+          crossorigin="anonymous">
 
     <!-- Animation library for notifications   -->
     <link
@@ -157,7 +164,7 @@
 
                     <div class="card">
                         <div class="row g-0">
-                            <div class="col-12 col-lg-5 col-xl-3 border-right">
+                            <div class="col-12 col-lg-5 col-xl-2 border-right">
 
                                 <div class="px-4 d-none d-md-block">
                                     <div class="d-flex align-items-center">
@@ -193,12 +200,12 @@
                                         <div class="flex-grow-1 ml-3">
                                             William Harris
                                             <div class="small"><span
-                                                class="fas fa-circle chat-online"></span> Online
+                                                class="fas fa-circle chat-offline"></span> Online
                                             </div>
                                         </div>
                                     </div>
                                 </a>
-                                <a href="#" class="list-group-item list-group-item-action border-0">
+                                <!-- <a href="#" class="list-group-item list-group-item-action border-0">
                                     <div class="d-flex align-items-start">
                                         <img
                                             src="https://bootdey.com/img/Content/avatar/avatar3.png"
@@ -281,11 +288,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                </a>
+                                </a> -->
 
                                 <hr class="d-block d-lg-none mt-1 mb-0">
                             </div>
-                            <div class="col-12 col-lg-7 col-xl-9">
+                            <div class="col-12 col-lg-7 col-xl-10">
                                 <div class="py-2 px-4 border-bottom d-none d-lg-block">
                                     <div class="d-flex align-items-center py-1">
                                         <div class="position-relative">
@@ -337,8 +344,69 @@
                                     </div>
                                 </div>
 
-                                <div class="position-relative">
+                                <div class="position-relative chat">
                                     <div class="chat-messages p-4">
+                                        <div class="col-inside-lg decor-default">
+                                            <div class="chat-body">
+
+
+                                                <div class="chat-message-right pb-4">
+                                                    <!-- <div>
+                                                        <img
+                                                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
+                                                            class="rounded-circle mr-1" alt="Chris Wood"
+                                                            width="40" height="40">
+                                                        <div class="text-muted small text-nowrap mt-2">2:33
+                                                            am
+                                                        </div>
+                                                    </div> -->
+                                                    <div class="answer right">
+                                                        <div class="avatar">
+                                                            <img
+                                                                src="https://bootdey.com/img/Content/avatar/avatar2.png">
+                                                            <div class="status offline"></div>
+                                                        </div>
+                                                        <div class="text">
+                                                            Lorem ipsum dolor amet, consectetur
+                                                            adipisicing elit Lorem ipsum dolor amet,
+                                                            consectetur adipisicing elit Lorem ipsum
+                                                            dolor amet, consectetur adiping elit
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="chat-message-left pb-4">
+                                                    <!-- <div>
+                                                        <img
+                                                            src="https://bootdey.com/img/Content/avatar/avatar3.png"
+                                                            class="rounded-circle mr-1" alt="Sharon Lessman"
+                                                            width="40" height="40">
+                                                        <div class="text-muted small text-nowrap mt-2">2:34
+                                                            am
+                                                        </div>
+                                                    </div> -->
+                                                    <div class="answer left">
+                                                        <div class="avatar">
+                                                            <img
+                                                                src="https://bootdey.com/img/Content/avatar/avatar1.png">
+                                                            <div class="status offline"></div>
+                                                        </div>
+                                                        <div class="text">
+                                                            Lorem ipsum dolor amet, consectetur
+                                                            adipisicing elit Lorem ipsum dolor amet,
+                                                            consectetur adipisicing elit Lorem ipsum
+                                                            dolor amet, consectetur adiping elit
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- <div class="chat-messages p-4">
 
                                         <div class="chat-message-right pb-4">
                                             <div>
@@ -350,7 +418,7 @@
                                                     am
                                                 </div>
                                             </div>
-                                            <div
+                                            <div class="chat-message-right-text"
                                                 class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
                                                 <div class="font-weight-bold mb-1">You</div>
                                                 Lorem ipsum dolor sit amet, vis erat denique in,
@@ -567,7 +635,7 @@
                                             </div>
                                         </div>
 
-                                    </div>
+                                    </div> -->
                                 </div>
 
                                 <div class="flex-grow-0 py-3 px-4 border-top">
