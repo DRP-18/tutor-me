@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+
+  <title>Tutor me</title>
+
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+        name='viewport'/>
+  <meta
+      name="viewport" content="width=device-width"/>
+
+  <!-- Bootstrap core CSS     -->
+  <link
+      href="/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <!-- Bootstrp for chat box -->
+  <link
+      href="/css/bootstrapV4.min.css" rel="stylesheet"/>
+
+  <link rel="stylesheet"
+        href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+        integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+        crossorigin="anonymous">
+
+  <!-- Animation library for notifications   -->
+  <link
+      href="/css/animate.min.css" rel="stylesheet"/>
+
+  <!--  Light Bootstrap Table core CSS    -->
+  <link
+      href="/css/light-bootstrap-dashboard.css?v=1.4.0" rel="stylesheet"/>
+
+
+  <!--  CSS for Demo Purpose, don't include it in your project     -->
+  <link
+      href="/css/demo.css" rel="stylesheet"/>
+
+  <link
+      href="/css/chat-styles.css" rel="stylesheet"/>
+
+  <!--     Fonts and icons     -->
+  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"
+        rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet'
+        type='text/css'>
+  <link href="/css/pe-icon-7-stroke.css" rel="stylesheet"/>
+
+</head>
+<body>
+
+<div class="wrapper">
+  <div
+      class="sidebar" data-color="purple" data-image="/img/sidebar-5.jpg">
+
+    <!--
+            Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"
+            Tip 2: you can also add an image using data-image tag
+        -->
+
+    <div class="sidebar-wrapper">
+      <div class="logo">
+        <a href="http://www.creative-tim.com" class="simple-text">
+          Tutor Me
+        </a>
+      </div>
+
+      <ul class="nav">
+        <li>
+          <a href="/">
+            <i class="pe-7s-home"></i>
+            <p>Home</p>
+          </a>
+        </li>
+        <li>
+          <a href="/calls">
+            <i class="pe-7s-video"></i>
+            <p>Calls</p>
+          </a>
+        </li>
+        <li class="active">
+          <a href="/chats">
+            <i class="pe-7s-chat"></i>
+            <p>Chats</p>
+          </a>
+        </li>
+
+        <li>
+          <a href="/calendar">
+            <i class="pe-7s-date"></i>
+            <p>Calendar</p>
+          </a>
+        </li>
+        <li>
+          <a href="/homework">
+            <i class="pe-7s-note"></i>
+            <p>Homework</p>
+          </a>
+        </li>
+        <li>
+          <a href="/notes">
+            <i class="pe-7s-notebook"></i>
+            <p>Notes</p>
+          </a>
+        </li>
+
+        <li>
+          <a href="/user">
+            <i class="pe-7s-user"></i>
+            <p>User Profile</p>
+          </a>
+        </li>
+        <li>
+          <a href="/notifications">
+            <i class="pe-7s-bell"></i>
+            <p>Notifications</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="main-panel">
+    <nav class="navbar navbar-default navbar-fixed">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse"
+                  data-target="#navigation-example-2">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Chats</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown">
+                <p>
+                  New Conversation
+                  <b class="caret"></b>
+                </p>
+
+              </a>
+              <ul class="dropdown-menu" id="newMessageOptions">
+                <li><a href="#" th:each="emptyConv : ${emptyChatList}"
+                       th:text="${emptyConv.name}"
+                       th:attr="onclick=|newConversation('${emptyConv.id}', true)|"
+                       th:id="'newChat'+${emptyConv.id}"
+                ></a></li>
+              </ul>
+            </li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/user">
+                <p>Account</p>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <p>Log out</p>
+              </a>
+            </li>
+            <li class="separator hidden-lg"></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+
+    <!-- <div class="content">
+        <div class="container-fluid"> -->
+    <div class="bootstrapV4">
+      <main class="content">
+        <div class="container-fluid p-0">
+
+          <div class="card">
+            <div class="row g-0">
+              <div class="col-12 col-lg-5 col-xl-2 border-right" id="chatSideBar">
+
+                <div th:each="personMessages : ${recentChatsMap}"
+                     th:attr="onclick=|clickOnSideBarMessage('${personMessages.key.id}')|">
+                  <a href="#" class="list-group-item list-group-item-action border-0">
+                    <div class="badge bg-success float-right"
+                         th:id="'unread-'+${personMessages.key.id}">5
+                    </div>
+                    <div class="d-flex align-items-start">
+                      <img
+                          src="https://bootdey.com/img/Content/avatar/avatar5.png"
+                          class="rounded-circle mr-1"
+                          width="40" height="40">
+                      <div class="flex-grow-1 ml-3" th:text="${personMessages.key.name}">
+                        <div class="small"><span
+                            class="fas fa-circle chat-online"></span> Online
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+                <hr class="d-block d-lg-none mt-1 mb-0">
+              </div>
+              <div class="col-12 col-lg-7 col-xl-10">
+                <div class="py-2 px-4 border-bottom d-none d-lg-block">
+                  <div class="d-flex align-items-center py-1">
+                    <div class="position-relative">
+                      <img
+                          src="https://bootdey.com/img/Content/avatar/avatar3.png"
+                          class="rounded-circle mr-1" alt="Sharon Lessman"
+                          width="40" height="40">
+                    </div>
+                    <div class="flex-grow-1 pl-3">
+                      <strong id="currentChatTopBarName"></strong>
+                      <div class="text-muted small" id="currentChatTopBarStatus"><em></em></div>
+                    </div>
+                    <div>
+                      <button class="btn btn-primary btn-lg mr-1 px-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                             height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round"
+                             class="feather feather-phone feather-lg">
+                          <path
+                              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                      </button>
+                      <button
+                          class="btn btn-info btn-lg mr-1 px-3 d-none d-md-inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                             height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round"
+                             class="feather feather-video feather-lg">
+                          <polygon
+                              points="23 7 16 12 23 17 23 7"></polygon>
+                          <rect x="1" y="5" width="15" height="14" rx="2"
+                                ry="2"></rect>
+                        </svg>
+                      </button>
+                      <button class="btn btn-light border btn-lg px-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                             height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round"
+                             class="feather feather-more-horizontal feather-lg">
+                          <circle cx="12" cy="12" r="1"></circle>
+                          <circle cx="19" cy="12" r="1"></circle>
+                          <circle cx="5" cy="12" r="1"></circle>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="position-relative chat">
+                  <div class="chat-messages p-4">
+                    <div class="col-inside-lg decor-default">
+                      <div class="chat-body" id="chatPanel">
+
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex-grow-0 py-3 px-4 border-top">
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="messageBox"
+                           placeholder="Type your message">
+                    <button id="sendMessage" class="btn btn-primary">Send</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <!-- </div>
+</div> -->
+  </div>
+</div>
+
+
+</body>
+
+<!--   Core JS Files   -->
+<script src="/js/jquery.3.2.1.min.js" type="text/javascript"></script>
+<script src="/js/bootstrap.min.js" type="text/javascript"></script>
+
+<!--  Charts Plugin -->
+<script src="/js/chartist.min.js"></script>
+
+<!--  Notifications Plugin    -->
+<script src="/js/bootstrap-notify.js"></script>
+
+<!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+<script src="/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script type="text/javascript" src="https://momentjs.com/downloads/moment.min.js"></script>
+<script src="/js/nicescroll.js"></script>
+<script src="/js/chatScript.js"></script>
+
+<script type="text/javascript"></script>
+
+</html>
