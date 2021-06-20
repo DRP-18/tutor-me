@@ -76,12 +76,25 @@ const onUsernameReceived = (payload) => {
   for (const [k, v] of Object.entries(message.data)) {
     if (k == userID) {
       name = v;
+      delete users[k]
       break
     }
   }
   me = userID;
   theirName = name;
   console.log(Object.keys(users))
+
+  for (const [k, v] of Object.entries(users)) {
+    const newConvDropDown = document.getElementById('newConvDropDown')
+    const li = document.createElement('li')
+    const aTag = document.createElement('a')
+    aTag.onclick = function () {
+      callUser(k)
+    };
+    aTag.innerText = v
+    li.appendChild(aTag)
+    newConvDropDown.appendChild(li)
+  }
 };
 
 const saveIceCandidates = (payload) => {
@@ -101,10 +114,13 @@ const incomingCall = (payload) => {
     signal: message.signal
   };
   console.log("incoming call " + message)
+  const callNotification = document.getElementById('callNotification')
+  callNotification.innerText = "Incoming call from " + message.callerName
 };
 
 // acceptCall
 const answerCall = () => {
+  document.getElementById('callNotification').innerText = ""
   callAccepted = true;
   /*simple peer library usage */
   /* Initiator is who starts call
