@@ -34,7 +34,7 @@ class SitePageController {
 //        println("redirected, this was the cookie $userId")
 //    }
 
-    @RequestMapping(path = ["/", "index"])
+    @RequestMapping(path = ["/", "index", "dashboard"])
     fun homepage(): String {
         return "dashboard"
     }
@@ -99,9 +99,13 @@ class SitePageController {
         }
     }
 
+    @RequestMapping("/calls")
+    fun videoCallPage(): String {
+        return "calls"
+    }
 
     @RequestMapping("/calls_page")
-    fun videoCallPage(): String {
+    fun videoCallPage2(): String {
         return "videoCallsPage/index"
     }
 

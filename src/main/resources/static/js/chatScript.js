@@ -357,7 +357,5 @@ const getAvatarColor = (messageSender) => {
 };
 
 window.onload = function () {
-  const messageControls = document.getElementById('message-controls');
-  // messageControls.addEventListener('submit', sendMessage, true)
   connect({})
 };

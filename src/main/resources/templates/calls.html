@@ -42,8 +42,7 @@
 <body>
 
 <div class="wrapper">
-  <div
-      class="sidebar" data-color="purple" data-image="/img/sidebar-5.jpg">
+  <div class="sidebar" data-color="purple" data-image="/img/sidebar-5.jpg">
 
     <!--
             Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"
@@ -148,7 +147,30 @@
 
     <div class="content">
       <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-6">
+            <video playsInline muted id="myVideo" autoPlay/>
+          </div>
 
+          <div class="col-md-6">
+            <button id="callJayme" type="button" onclick="callUser(1)">Call Jayme</button>
+            <button id="callKrishan" type="button" onclick="callUser(30)">Call Krishan</button>
+            <button id="accept" type="button" onclick="answerCall()">Accept Call</button>
+            <button id="end" type="button" onclick="leaveCall()">End Call</button>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <video playsInline id="theirVideo" autoPlay/>
+
+          </div>
+
+          <div class="col-md-8">
+
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -167,12 +189,15 @@
 <!--  Notifications Plugin    -->
 <script src="/js/bootstrap-notify.js"></script>
 
-<!--  Google Maps Plugin    -->
-<script type="text/javascript"
-        src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
-
 <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
 <script src="/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
+
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/simplepeer.min.js"></script>
+<script src="/js/videoCall.js"></script>
 
 <script type="text/javascript">
 
