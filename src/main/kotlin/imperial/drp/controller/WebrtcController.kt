@@ -74,12 +74,6 @@ class WebrtcController {
         })
     }
 
-    @MessageMapping("/video.disconnect")
-    fun disconnect(@Payload message: SimpleMessage) {
-        println("The disconnecting message is $message")
-        sender.convertAndSend("/topic/video/${message.message}/endCall", object {})
-    }
-
     @MessageMapping("/video.callUser")
     fun callUser(@Payload message: CallingMessage) {
         println("User message: ${message.callee}, ${message.caller}")

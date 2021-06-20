@@ -151,11 +151,18 @@
           <div class="row">
             <div class="col-md-6 col-md-offset-3 text-center">
               <h3 id="callNotification"></h3>
-              <h5>Control Panel</h5>
+              <h5>Select a person to call</h5>
             </div>
           </div>
           <div class="row">
             <div class="col-md-2 col-md-offset-3">
+              <button class="btn btn-success btn-block" id="accept" type="button"
+                      style="display: none"
+                      onclick="answerCall()">Accept Call
+              </button>
+              <!--              <button class="btn btn-default btn-block" onclick="demo.showNotification('bottom','center')">Bottom Center</button>-->
+            </div>
+            <div class="col-md-2">
               <div class="dropdown">
                 <button class="dropdown-toggle btn btn-default btn-block" data-toggle="dropdown"
                         type="button">
@@ -170,35 +177,30 @@
               <!--              <button class="btn btn-default btn-block" onclick="demo.showNotification('bottom','left')">Bottom Left</button>-->
             </div>
             <div class="col-md-2">
-              <button class="btn btn-success btn-block" id="accept" type="button"
-                      onclick="answerCall()">Accept Call
-              </button>
-              <!--              <button class="btn btn-default btn-block" onclick="demo.showNotification('bottom','center')">Bottom Center</button>-->
-            </div>
-            <div class="col-md-2">
-              <button class="btn btn-danger btn-block" id="end" type="button" onclick="leaveCall()">
+              <button class="btn btn-danger btn-block" id="end" type="button" onclick="leaveCall()"
+                      style="display: none">
                 End Call
               </button>
               <!--              <button class="btn btn-default btn-block" onclick="demo.showNotification('bottom','right')">Bottom Right</button>-->
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-2 col-md-offset-3">
-              <button class="btn btn-default btn-block"
-                      onclick="demo.showNotification('top','left')">Top Left
-              </button>
-            </div>
-            <div class="col-md-2">
-              <button class="btn btn-default btn-block"
-                      onclick="demo.showNotification('top','center')">Top Center
-              </button>
-            </div>
-            <div class="col-md-2">
-              <button class="btn btn-default btn-block"
-                      onclick="demo.showNotification('top','right')">Top Right
-              </button>
-            </div>
-          </div>
+          <!--          <div class="row">-->
+          <!--            <div class="col-md-2 col-md-offset-3">-->
+          <!--              <button class="btn btn-default btn-block"-->
+          <!--                      onclick="demo.showNotification('top','left')">Top Left-->
+          <!--              </button>-->
+          <!--            </div>-->
+          <!--            <div class="col-md-2">-->
+          <!--              <button class="btn btn-default btn-block"-->
+          <!--                      onclick="demo.showNotification('top','center')">Top Center-->
+          <!--              </button>-->
+          <!--            </div>-->
+          <!--            <div class="col-md-2">-->
+          <!--              <button class="btn btn-default btn-block"-->
+          <!--                      onclick="demo.showNotification('top','right')">Top Right-->
+          <!--              </button>-->
+          <!--            </div>-->
+          <!--          </div>-->
         </div>
 
 
