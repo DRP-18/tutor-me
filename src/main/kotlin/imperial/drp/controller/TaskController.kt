@@ -95,11 +95,22 @@ class TaskController {
                 })
     }
 
+    @GetMapping("/login")
+    fun loginGet(): String {
+        return "login"
+    }
+
+    @GetMapping("/loginIFrame")
+    fun loginGetIFrame(): String {
+        return "loginIFrame"
+    }
+
+
     @PostMapping("/login")
     fun login(
-        @RequestParam(value = "username") username: String,
-        response: HttpServletResponse,
-        model: Model
+            @RequestParam(value = "username") username: String,
+            response: HttpServletResponse,
+            model: Model
     ): String {
         val matchingUsers = personRepository!!.findByName(username)
         if (matchingUsers.isNotEmpty()) {
