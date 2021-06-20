@@ -179,4 +179,4 @@ window.onload = function () {
 
 refreshTitle();
 refreshTasks();
-setInterval(refreshTasks, 5000);
+setInterval(refreshTasks, 20000);

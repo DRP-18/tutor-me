@@ -119,8 +119,9 @@ class TaskController {
             response.addCookie(cookie)
             val userType = getUserType(matchingUsers[0])
             response.addCookie(Cookie("user_type", userType))
+            return "dashboard"
         }
-        return "redirect"
+        return "login"
     }
 
     @PostMapping("/signup")
@@ -151,8 +152,9 @@ class TaskController {
                 response.addCookie(cookie)
                 response.addCookie(typeCookie)
             }
+            return "dashboard"
         }
-        return "redirect"
+        return "login"
     }
 
     @RequestMapping("/logout")
@@ -163,7 +165,7 @@ class TaskController {
         val cookie2 = Cookie("user_type", null)
         cookie2.maxAge = 0
         response.addCookie(cookie2)
-        return "redirect"
+        return "login"
     }
 
     @PostMapping("/addtutee")

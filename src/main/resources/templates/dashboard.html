@@ -134,7 +134,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="/logout">
                                 <p>Log out</p>
                             </a>
                         </li>
@@ -428,10 +428,6 @@
 <!--  Notifications Plugin    -->
 <script src="/js/bootstrap-notify.js"></script>
 
-<!--  Google Maps Plugin    -->
-<script type="text/javascript"
-        src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
-
 <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
 <script src="/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
 
@@ -439,19 +435,20 @@
 <script src="/js/demo.js"></script>
 
 <script type="text/javascript">
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            return parts.pop().split(';').shift();
+        }
+    }
+
     $(document).ready(function () {
 
         demo.initChartist();
-
-        // $.notify({
-        // icon: 'pe-7s-gift',
-        // message: "Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for every web developer."
-
-        // },{
-        //     type: 'info',
-        //     timer: 4000
-        // });
-
+        if (getCookie("user_id") == null) {
+            window.location.replace("/login")
+        }
     });
 </script>
 

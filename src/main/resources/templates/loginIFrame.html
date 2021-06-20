@@ -14,11 +14,11 @@
 <div class="container">
   <div class="forms-container">
     <div class="signin-signup">
-      <form action="#" class="sign-in-form">
+      <form action="/login" id="loginForm" method="post" class="sign-in-form" target="_top">
         <h2 class="title">Sign in</h2>
         <div class="input-field">
           <i class="fas fa-user-graduate"></i>
-          <input type="text" placeholder="Username"/>
+          <input type="text" placeholder="Username" name="username" required/>
         </div>
         <!--            <div class="input-field">-->
         <!--              <i class="fas fa-lock"></i>-->
@@ -43,7 +43,7 @@
         <!--            </div>-->
 
       </form>
-      <form action="#" class="sign-up-form">
+      <form action="/signup" id="signUpForm" method="post" class="sign-up-form">
         <h2 class="title">Sign up</h2>
         <div class="input-field">
           <i class="fas fa-user-graduate"></i>
@@ -106,6 +106,24 @@
   </div>
 </div>
 
+<script src="/js/jquery.3.2.1.min.js"></script>
+
 <script src="/js/loginIFrame.js"></script>
 </body>
+<script>
+  // $('#loginForm').submit(function(e) {
+  //   setTimeout(function () { closeWin();  }, 1000)
+  // });
+  // $('#signUpForm').submit(function(e) {
+  //   e.preventDefault(); // don't submit multiple times
+  //   this.submit(); // use the native submit method of the form element
+  //   closeWin()
+  // });
+  //
+  // function closeWin() {
+  //   const someIframe = window.parent.document.getElementById('loginFrame');
+  //   someIframe.parentNode.removeChild(someIframe);
+  // }
+</script>
+
 </html>
