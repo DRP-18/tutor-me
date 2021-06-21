@@ -49,6 +49,11 @@ class SitePageController {
         return "notes"
     }
 
+    @RequestMapping("/user")
+    fun userProfilePage(): String {
+        return "user"
+    }
+
     @RequestMapping("/task/{task_id}")
     fun task(@PathVariable("task_id") taskId: Long): String {
         return "task"
