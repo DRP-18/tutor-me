@@ -44,6 +44,11 @@ class SitePageController {
         return "homework"
     }
 
+    @RequestMapping("/notes")
+    fun notesPage(): String {
+        return "notes"
+    }
+
     @RequestMapping("/task/{task_id}")
     fun task(@PathVariable("task_id") taskId: Long): String {
         return "task"
