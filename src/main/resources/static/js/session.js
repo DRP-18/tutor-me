@@ -128,54 +128,6 @@ function convertLocalToCorrectFormat(time) {
   return year + '-' + month + '-' + day + 'T' + timePart
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  var calendarEl = document.getElementById('calendar');
-  calendar = new FullCalendar.Calendar(calendarEl, {
-    headerToolbar: {
-      left: "prev,next today",
-      center: "title",
-      right: 'dayGridMonth,dayGridWeek,dayGridDay,listWeek'
-    },
-    navLinks: true, // can click day/week names to navigate views
-    editable: true,
-    selectable: true,
-    selectMirror: true,
-    businessHours: true,
-    dayMaxEvents: true, // allow "more" link when too many events
-    select: function (arg) {
-      if (isTutee) {
-        displayError("Not a tutor, only tutors can organise sessions")
-      } else {
-        formattedTime = arg.start.toISOString().slice(0, 16);
-        selectedEvent = arg;
-        const startDate = document.getElementById("startDateModal");
-        const endDate = document.getElementById("endDateModal");
-        startDate.value = convertLocalToCorrectFormat(
-            arg.start.toLocaleString());
-        endDate.value = convertLocalToCorrectFormat(arg.end.toLocaleString());
-        $('#addSessionModal').modal('show');
-      }
-      calendar.unselect()
-    },
-    eventClick: function (arg) {
-      if (isTutee) {
-        displayError("Not a tutor, only tutors can delete sessions")
-      } else {
-        if (confirm('Are you sure you want to delete this event?')) {
-          const startDate = convertLocalToCorrectFormat(
-              arg.event.start.toLocaleString());
-          let endDate = startDate;
-          if (arg.event.end != null) {
-            endDate = convertLocalToCorrectFormat(
-                arg.event.end.toLocaleString())
-          }
-          removeSession(arg.event.title, startDate, endDate, arg.event)
-        }
-      }
-    },
-  });
-  calendar.render();
-  getSessions();
-});
+
 
 

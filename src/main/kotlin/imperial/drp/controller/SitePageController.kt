@@ -35,7 +35,12 @@ class SitePageController {
 //    }
 
     @RequestMapping(path = ["/", "index", "dashboard"])
-    fun homepage(): String {
+    fun homepage(
+            @CookieValue(value = "user_id", required = false) userId: Long?,
+            model: Model): String {
+        if (userId != null) {
+            model.addAttribute("name", personRepository!!.findById(userId).get().name)
+        }
         return "dashboard"
     }
 
