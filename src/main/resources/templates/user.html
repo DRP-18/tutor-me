@@ -32,6 +32,8 @@
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet'
         type='text/css'>
   <link href="/css/pe-icon-7-stroke.css" rel="stylesheet"/>
+
+  <link rel="stylesheet" type="text/css" href="/css/image-picker.css">
 </head>
 <body>
 
@@ -148,92 +150,46 @@
                 <h4 class="title">Edit Profile</h4>
               </div>
               <div class="content">
-                <form>
-                  <div class="row">
-                    <div class="col-md-5">
-                      <div class="form-group">
-                        <label>Company (disabled)</label>
-                        <input type="text" class="form-control" disabled placeholder="Company"
-                               value="Creative Code Inc.">
-                      </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="form-group">
-                        <label>Username</label>
-                        <input type="text" class="form-control" placeholder="Username"
-                               value="michael23">
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <div class="form-group">
-                        <label for="exampleInputEmail">Email address</label>
-                        <input type="email" class="form-control" placeholder="Email">
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>First Name</label>
-                        <input type="text" class="form-control" placeholder="Company" value="Mike">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Last Name</label>
-                        <input type="text" class="form-control" placeholder="Last Name"
-                               value="Andrew">
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" class="form-control" placeholder="Home Address"
-                               value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09">
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-4">
-                      <div class="form-group">
-                        <label>City</label>
-                        <input type="text" class="form-control" placeholder="City" value="Mike">
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <div class="form-group">
-                        <label>Country</label>
-                        <input type="text" class="form-control" placeholder="Country"
-                               value="Andrew">
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <div class="form-group">
-                        <label>Postal Code</label>
-                        <input type="number" class="form-control" placeholder="ZIP Code">
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label>About Me</label>
-                        <textarea rows="5" class="form-control"
-                                  placeholder="Here can be your description" value="Mike">Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.</textarea>
-                      </div>
-                    </div>
-                  </div>
-
-                  <button type="submit" class="btn btn-info btn-fill pull-right">Update Profile
-                  </button>
-                  <div class="clearfix"></div>
-                </form>
+                <div class="picker">
+                  <select class='image-picker'>
+                    <option data-img-src='/img/avatars/1.png' data-img-class="first"
+                            data-img-alt="Page 1" value='1'> Page 1
+                    </option>
+                    <option data-img-src='/img/avatars/2.png' data-img-alt="Avatar 2" value='2'>
+                      Page 2
+                    </option>
+                    <option data-img-src='/img/avatars/3.png' data-img-alt="Avatar 3" value='3'>
+                      Page 3
+                    </option>
+                    <option data-img-src='/img/avatars/4.png' data-img-alt="Avatar 4" value='4'>
+                      Page 4
+                    </option>
+                    <option data-img-src='/img/avatars/5.png' data-img-alt="Avatar 5" value='5'>
+                      Page 5
+                    </option>
+                    <option data-img-src='/img/avatars/6.png' data-img-alt="Avatar 6" value='6'>
+                      Page 6
+                    </option>
+                    <option data-img-src='/img/avatars/7.png' data-img-alt="Avatar 7" value='7'>
+                      Page 7
+                    </option>
+                    <option data-img-src='/img/avatars/8.png' data-img-alt="Avatar 8" value='8'>
+                      Page 8
+                    </option>
+                    <option data-img-src='/img/avatars/9.png' data-img-alt="Avatar 9" value='9'>
+                      Page 9
+                    </option>
+                    <option data-img-src='/img/avatars/10.png' data-img-alt="Avatar 10" value='10'>
+                      Page 10
+                    </option>
+                    <option data-img-src='/img/avatars/11.png' data-img-alt="Avatar 11" value='11'>
+                      Page 11
+                    </option>
+                    <option data-img-src='/img/avatars/12.png' data-img-alt="Avatar 12"
+                            data-img-class="last" value='12'> Page 12
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -247,7 +203,7 @@
               <div class="content">
                 <div class="author">
                   <a href="#">
-                    <img class="avatar border-gray" src="/img/faces/face-3.jpg" alt="..."/>
+                    <img class="avatar border-gray" src="/img/avatars/1.png" alt="..."/>
 
                     <h4 class="title">Mike Andrew<br/>
                       <small>michael24</small>
@@ -281,6 +237,7 @@
 
 </body>
 
+
 <!--   Core JS Files   -->
 <script src="/js/jquery.3.2.1.min.js" type="text/javascript"></script>
 <script src="/js/bootstrap.min.js" type="text/javascript"></script>
@@ -296,5 +253,15 @@
 
 <!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
 <script src="/js/demo.js"></script>
+
+<script src="/js/image-picker.min.js" type="text/javascript"></script>
+
+
+<script>
+  jQuery("select.image-picker").imagepicker({
+    hide_select: false,
+  });
+
+</script>
 
 </html>
