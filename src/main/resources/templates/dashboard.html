@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8"/>
   <link rel="icon" type="image/png" href="/img/favicon.ico">
@@ -193,7 +193,8 @@
 
     <div class="content">
       <div class="container-fluid">
-        <h1 style="text-align: center">Welcome, Person!</h1>
+        <h1 style="text-align: center;margin-top: 0px;margin-bottom: 30px;" th:if="${name}!=null"
+            th:text="'Welcome ' + ${name} + '!'"></h1>
 
 
         <div class="row">

@@ -72,6 +72,7 @@ class TaskController {
             response.addCookie(cookie)
             val userType = getUserType(matchingUsers[0])
             response.addCookie(Cookie("user_type", userType))
+            model.addAttribute("name", matchingUsers[0].name)
             return "dashboard"
         }
         return "login"
