@@ -33,53 +33,6 @@ class TaskController {
     @Autowired
     private val personRepository: PersonRepository? = null
 
-//    @RequestMapping("/")
-//    fun app(@CookieValue(value = "user_id", required = false) userId: Long?, model: Model): String {
-//        if (userId != null) {
-//            val userOpt = personRepository!!.findById(userId)
-//            if (userOpt.isPresent) {
-//                val user = userOpt.get()
-//                model.addAttribute("username", user.name!!)
-//                model.addAttribute("nowTime", Calendar.getInstance())
-//                model.addAttribute("userType", getUserType(user))
-//                when (user) {
-//                    is Tutor -> {
-//                        val tasks =
-//                            taskRepository!!.findByTutorOrderByStartTimeAsc(
-//                                personRepository.findByName(
-//                                    user.name!!
-//                                )[0]
-//                            )
-//                        val tuteeTasksMap = TreeMap<Tutee, MutableList<Task>>()
-//                        user.tutees!!.forEach {
-//                            tuteeTasksMap[it] = ArrayList()
-//                        }
-//                        tasks.forEach {
-//                            tuteeTasksMap[it.tutee!!]!!.add(it)
-//                        }
-//                        model.addAttribute("tuteeTasksMap", tuteeTasksMap)
-//                    }
-//                    is Tutee -> {
-//                        val tasks =
-//                            taskRepository!!.findByTuteeOrderByStartTimeAsc(
-//                                personRepository.findByName(
-//                                    user.name!!
-//                                )[0]
-//                            )
-//                        model.addAttribute("tasks", tasks)
-//                    }
-//                }
-//            }
-//        }
-//        return "homepage"
-//    }
-
-
-    @RequestMapping("/notes_page")
-    fun notesPage(): String {
-        return "notes_page"
-    }
-
     fun getUserType(person: Person): String {
         return (
                 when (person) {
@@ -95,11 +48,22 @@ class TaskController {
                 })
     }
 
+    @GetMapping("/login")
+    fun loginGet(): String {
+        return "login"
+    }
+
+    @GetMapping("/loginIFrame")
+    fun loginGetIFrame(): String {
+        return "loginIFrame"
+    }
+
+
     @PostMapping("/login")
     fun login(
-        @RequestParam(value = "username") username: String,
-        response: HttpServletResponse,
-        model: Model
+            @RequestParam(value = "username") username: String,
+            response: HttpServletResponse,
+            model: Model
     ): String {
         val matchingUsers = personRepository!!.findByName(username)
         if (matchingUsers.isNotEmpty()) {
@@ -108,8 +72,9 @@ class TaskController {
             response.addCookie(cookie)
             val userType = getUserType(matchingUsers[0])
             response.addCookie(Cookie("user_type", userType))
+            return "dashboard"
         }
-        return "redirect"
+        return "login"
     }
 
     @PostMapping("/signup")
@@ -140,8 +105,9 @@ class TaskController {
                 response.addCookie(cookie)
                 response.addCookie(typeCookie)
             }
+            return "dashboard"
         }
-        return "redirect"
+        return "login"
     }
 
     @RequestMapping("/logout")
@@ -152,7 +118,7 @@ class TaskController {
         val cookie2 = Cookie("user_type", null)
         cookie2.maxAge = 0
         response.addCookie(cookie2)
-        return "redirect"
+        return "login"
     }
 
     @PostMapping("/addtutee")

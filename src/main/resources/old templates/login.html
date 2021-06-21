@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Tutor Me</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"
+        id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style type=text/css>
+    body {
+      padding-top: 15px;
+      font-size: 12px
+    }
+
+    .main {
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .login-or {
+      position: relative;
+      font-size: 18px;
+      color: #aaa;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    /* .span-or {
+      display: block;
+      position: absolute;
+      left: 50%;
+      top: -2px;
+      margin-left: -25px;
+      background-color: #fff;
+      width: 50px;
+      text-align: center;
+    }
+
+    .hr-or {
+      background-color: #cdcdcd;
+      height: 1px;
+      margin-top: 0px !important;
+      margin-bottom: 0px !important;
+    } */
+
+    h3 {
+      text-align: center;
+      line-height: 300%;
+    }
+
+  </style>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YSVVP3FGRQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-YSVVP3FGRQ');
+
+  </script>
+</head>
+
+<body>
+<nav class="navbar navbar-light bg-light justify-content-between">
+  <a class="navbar-brand">Tutor Me</a>
+</nav>
+<!-- <div class="container-fluid">
+  <form action="/login" method="post">
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" name="username" placeholder="Username">
+      <button class="btn btn-outline-secondary" type="submit">Login</button>
+      <a class="btn btn-primary" href="/signup" role="button">Sign Up</a>
+    </div>
+  </form>
+</div> -->
+
+
+<div class="container">
+  <div class="row">
+
+    <div class="main">
+
+      <h3>Please Log In, or <a href="/signup">Sign Up</a></h3>
+
+      <form role="form" action="/login" method="post">
+        <div class="form-group">
+          <label for="inputUsername">Username </label>
+          <input type="text" class="form-control" id="inputUsername" name="username"
+                 placeholder="Username">
+        </div>
+
+        <div class="checkbox pull-right">
+          <label>
+            <input type="checkbox">
+            Remember me </label>
+        </div>
+        <button type="submit" class="btn btn btn-primary">
+          Log In
+        </button>
+      </form>
+
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
+

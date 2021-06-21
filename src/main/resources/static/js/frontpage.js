@@ -6,14 +6,14 @@ var vm = new Vue({
 
   },
   methods: {
-    getTodayString: function() {
+    getTodayString: function () {
       const today = new Date();
       const dd = String(today.getDate()).padStart(2, '0');
       const mm = String(today.getMonth() + 1).padStart(2, '0');
       const yyyy = today.getFullYear();
       return yyyy + "-" + mm + "-" + dd + "T00:00";
     },
-    getTomorrowString: function() {
+    getTomorrowString: function () {
       const today = new Date();
       today.setDate(today.getDate() + 1);
       const tomorrow = today;
@@ -179,4 +179,4 @@ window.onload = function () {
 
 refreshTitle();
 refreshTasks();
-setInterval(refreshTasks, 5000);
+setInterval(refreshTasks, 20000);

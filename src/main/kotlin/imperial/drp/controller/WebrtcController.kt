@@ -6,6 +6,8 @@ import com.twilio.type.IceServer
 import imperial.drp.DrpApplication
 import imperial.drp.dao.PersonRepository
 import imperial.drp.entity.Person
+import imperial.drp.entity.Tutee
+import imperial.drp.entity.Tutor
 import imperial.drp.model.CallingMessage
 import imperial.drp.model.CallingMessageWithName
 import imperial.drp.model.SimpleMessage
@@ -15,6 +17,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.messaging.simp.SimpMessageSendingOperations
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.CookieValue
 import java.lang.System.getenv
 import java.util.*
 
@@ -50,20 +53,25 @@ class WebrtcController {
     }
 
     @MessageMapping("/video.getAllUsers")
-    fun getAllUsers(@Payload message: SimpleMessage) {
+    fun getAllUsers(
+            @Payload message: SimpleMessage) {
         val people = mutableMapOf<Long, String>()
-        personRepository!!.findAll().forEach {
-            people.put(it.id!!, it.name!!)
+        val personOpt = personRepository!!.findById(message.message.toLong())
+        if (personOpt.isPresent) {
+            val person = personOpt.get()
+            if (person is Tutor) {
+                for (tutee in person.tutees!!) {
+                    people.put(tutee.id!!, tutee.name!!)
+                }
+            } else if (person is Tutee) {
+                for (tutor in person.tutors!!) {
+                    people.put(tutor.id!!, tutor.name!!)
+                }
+            }
         }
         sender.convertAndSend("/topic/video/${message.message}/username", object {
             val data = people
         })
-    }
-
-    @MessageMapping("/video.disconnect")
-    fun disconnect(@Payload message: SimpleMessage) {
-        println("The disconnecting message is $message")
-        sender.convertAndSend("/topic/video/${message.message}/endCall", object {})
     }
 
     @MessageMapping("/video.callUser")

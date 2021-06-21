@@ -1,129 +1,199 @@
-'use strict'
+'use strict';
 
 let stompClient;
-const userId = getCookie("user_id")
+const userId = getCookie("user_id");
 let username; // Name of current user
 let allMessages; // All the messages that this user has had before
 let allUsersDetails; // All ids, user names and further user detail
 let currentSelectedChat; // Id of person currently talking to
-let notChattedPeople = {} // All the ids of people this user hasnt chatted with
+let notChattedPeople = {}; // All the ids of people this user hasnt chatted with
 
 const connect = (event) => {
 
-  username = getCookie("user_id")
+  username = getCookie("user_id");
 
   if (username != null) {
-    const socket = new SockJS('/textChat-chat')
-    stompClient = Stomp.over(socket)
+    const socket = new SockJS('/textChat-chat');
+    stompClient = Stomp.over(socket);
     stompClient.connect({}, onConnected, onError)
   }
-}
+};
 
 const onConnected = () => {
+  console.log("Running");
   stompClient.subscribe('/topic/chat-' + userId + '-allUserDetails',
-      saveUsersDetails)
-  stompClient.subscribe('/topic/chat-' + userId + '-allMessages', saveMessages)
+      saveUsersDetails);
+  stompClient.subscribe('/topic/chat-' + userId + '-allMessages', saveMessages);
   document.getElementById(
-      "sendMessage").addEventListener("click", sendMessage)
+      "sendMessage").addEventListener("click", sendMessage);
   stompClient.subscribe('/topic/chat-' + userId + '-receiveMessage',
-      receiveMessage)
+      receiveMessage);
 
   // Sent to populate allUsersDetails object
   stompClient.send("/app/chat.getUsersDetails", {},
       JSON.stringify({sender: userId}))
 
   // stompClient.subscribe('/topic/chat-' + userId, saveUsername)
-}
+};
 
 const onError = (error) => {
   console.log("Something went wrong")
-}
+};
 
 //Receives the reply of all messages sent by user, parses it and populates allMessages
 const saveMessages = (payload) => {
-  const message = JSON.parse(payload.body)
+  const message = JSON.parse(payload.body);
   // Receives a map of all the messages sent
   // With empty bodies if conversations haven't been started yet.
-  allMessages = JSON.parse(message.messages)
-  console.log("Got all of the messages " + allMessages + '-' + message)
+  allMessages = JSON.parse(message.messages);
+  console.log("Got all of the messages " + allMessages + '-' + message);
   // Saves the uninitiated conversations in a seperate object
-  const newMessageOptions = document.getElementById("newMessageOptions")
+  const newMessageOptions = document.getElementById("newMessageOptions");
   // Adds people we havent chatted to to notChattedPeople,
   // and creates dropdown box entries for new conversations option
   for (const [k, v] of Object.entries(allMessages)) {
-    console.log(k + " " + v)
+    console.log(k + " " + v);
     if (v.length === 0) {
-      const option = document.createElement('a');
-      option.setAttribute('onclick', 'newConversation(' + k + ', true)')
-      option.innerText = allUsersDetails[k].name
-      option.classList.add("dropdown-item")
-      option.id = "newChat" + k.toString()
-      newMessageOptions.appendChild(option)
-      notChattedPeople[k] = v
+      // const option = document.createElement('a');
+      // option.setAttribute('onclick', 'newConversation(' + k + ', true)')
+      // option.innerText = allUsersDetails[k].name
+      // option.classList.add("dropdown-item")
+      // option.id = "newChat" + k.toString()
+      // newMessageOptions.appendChild(option)
+      notChattedPeople[k] = v;
       delete allMessages[k]
     }
   }
-}
+};
 
 const saveUsersDetails = (payload) => {
-  const message = JSON.parse(payload.body)
-  allUsersDetails = JSON.parse(message.details)
-  console.log("Got all details " + allUsersDetails + '-' + message)
+  const message = JSON.parse(payload.body);
+  allUsersDetails = JSON.parse(message.details);
+  console.log("Got all details " + allUsersDetails + '-' + message);
 
   // Sent to populate the allMessages object
   stompClient.send("/app/chat.getMessages", {},
       JSON.stringify({sender: userId}))
-}
+};
 
 // Creates a new sidebar entry for chat and removes from new conversations dropdown box
 function newConversation(newId, openMessage) {
-  console.log("Adding new chat for " + newId)
+  console.log("Adding new chat for " + newId);
   allMessages[newId] = notChattedPeople[newId];
-  delete notChattedPeople[newId]
-  const newMessageOptions = document.getElementById("newMessageOptions")
-  const newIdOption = document.getElementById("newChat" + newId.toString())
-  newMessageOptions.removeChild(newIdOption)
-  addSideBarEntry(newId)
+  delete notChattedPeople[newId];
+  // const newMessageOptions = document.getElementById("newMessageOptions")
+  const newIdOption = document.getElementById("newChat" + newId.toString());
+  newIdOption.parentNode.removeChild(newIdOption);
+  addSideBarEntry(newId);
   if (openMessage) {
     clickOnSideBarMessage(newId)
   }
+  $(".chat").niceScroll();
 }
 
 // Creates a new side bar element for provided user
 function addSideBarEntry(newId) {
-  const entry = document.createElement('div')
-  entry.classList.add("friend-drawer")
-  entry.classList.add("friend-drawer--onhover")
+  const sideBar = document.getElementById("chatSideBar")
+  const entry = document.createElement('div');
   entry.onclick = function () {
     clickOnSideBarMessage(newId)
-  }
-  const nameDiv = document.createElement('div')
-  nameDiv.classList.add("text")
-  const name = document.createElement('h6')
-  name.innerText = allUsersDetails[newId].name
-  nameDiv.appendChild(name)
-  entry.appendChild(nameDiv)
-  const sidebar = document.getElementById("sideBarMessages")
-  sidebar.appendChild(entry)
-  sidebar.appendChild(document.createElement('hr'))
+  };
+  const aDiv = document.createElement('a');
+  aDiv.classList.add("list-group-item");
+  aDiv.classList.add("list-group-item-action");
+  aDiv.classList.add("border-0");
+
+  const div = document.createElement('div');
+  div.classList.add("badge");
+  div.classList.add("bg-success");
+  div.classList.add("float-right");
+  div.id = "unread-" + newId;
+  div.innerText = "5";
+  aDiv.appendChild(div);
+
+  const div2 = document.createElement('div');
+  div2.classList.add("d-flex");
+  div2.classList.add("align-items-start");
+
+  const imgTag = document.createElement('img');
+  imgTag.src = "https://bootdey.com/img/Content/avatar/avatar5.png";
+  imgTag.classList.add("rounded-circle");
+  imgTag.classList.add("mr-1");
+  imgTag.width = "40";
+  imgTag.height = "40";
+  div2.appendChild(imgTag);
+
+  const div3 = document.createElement('div')
+  div3.classList.add("flex-grow-1")
+  div3.classList.add("ml-3")
+  div3.innerText = allUsersDetails[newId].name;
+
+  const div4 = document.createElement('div')
+  div4.classList.add("small")
+
+  const span = document.createElement('div')
+  span.classList.add("fas")
+  span.classList.add("fa-circle")
+  span.classList.add("chat-online")
+  div4.appendChild(span)
+  // div4.innerText = "Online"
+
+  div3.appendChild(div4)
+  div2.appendChild(div3)
+
+  aDiv.appendChild(div2)
+  entry.appendChild(aDiv)
+  sideBar.appendChild(entry)
+  // const nameDiv = document.createElement('div');
+  // nameDiv.classList.add("text");
+  // const name = document.createElement('h6');
+  // name.innerText = allUsersDetails[newId].name;
+  // nameDiv.appendChild(name);
+  // entry.appendChild(nameDiv);
+  // const sidebar = document.getElementById("sideBarMessages");
+  // sidebar.appendChild(entry);
+  // sidebar.appendChild(document.createElement('hr'));
+  //
+  //
+  //
+  // const sideBar = document.getElementById('chatSideBar');
+  // const newConvEntry = "<div onclick=clickOnSideBarMessage(newId)>\n"
+  //     + "                  <a href=\"#\" class=\"list-group-item list-group-item-action border-0\">\n"
+  //     + "                    <div class=\"badge bg-success float-right\"\n"
+  //     + "                         id=\"'unread-'+newId\">5\n"
+  //     + "                    </div>\n"
+  //     + "                    <div class=\"d-flex align-items-start\">\n"
+  //     + "                      <img\n"
+  //     + "                          src=\"https://bootdey.com/img/Content/avatar/avatar5.png\"\n"
+  //     + "                          class=\"rounded-circle mr-1\"\n"
+  //     + "                          width=\"40\" height=\"40\">\n"
+  //     + "                      <div class=\"flex-grow-1 ml-3\">allUsersDetails[newId].name"
+  //     + "                        <div class=\"small\"><span\n"
+  //     + "                            class=\"fas fa-circle chat-online\"></span> Online\n"
+  //     + "                        </div>\n"
+  //     + "                      </div>\n"
+  //     + "                    </div>\n"
+  //     + "                  </a>\n"
+  //     + "                </div>";
+  // sideBar.appendChild()
 }
 
 // Opens up the clicked users chats page, to update the top bar information
 // and display their associated chats
 function clickOnSideBarMessage(clickedId) {
-  console.log("clicked on side bar " + clickedId)
-  currentSelectedChat = clickedId
+  console.log("clicked on side bar " + clickedId);
+  currentSelectedChat = clickedId;
   //Change the name and status at top of page
   document.getElementById(
-      "currentChatTopBarName").innerText = allUsersDetails[clickedId].name
+      "currentChatTopBarName").innerText = allUsersDetails[clickedId].name;
   document.getElementById(
-      "currentChatTopBarStatus").innerText = allUsersDetails[clickedId].status
+      "currentChatTopBarStatus").innerText = allUsersDetails[clickedId].status;
 
   //Update the displayed messages
   let messageDiv;
-  const chatPanel = document.getElementById("chatPanel")
-  chatPanel.innerHTML = ""
-  const messageList = allMessages[clickedId.toString()]
+  const chatPanel = document.getElementById("chatPanel");
+  chatPanel.innerHTML = "";
+  const messageList = allMessages[clickedId.toString()];
   if (messageList != null) {
     messageList.slice().reverse().forEach(function (message) {
       if (message.sender.id != clickedId) {
@@ -136,7 +206,7 @@ function clickOnSideBarMessage(clickedId) {
   }
 
   // Remove the unread notifications text
-  const unreadSidebar = document.getElementById("unread-" + clickedId)
+  const unreadSidebar = document.getElementById("unread-" + clickedId);
   if (unreadSidebar.innerText !== "") {
     unreadSidebar.innerText = ""
   }
@@ -148,34 +218,56 @@ function clickOnSideBarMessage(clickedId) {
 //sender: This has {id: sender_id, name: sender_name}/
 //time: message sent time
 function addSendingMessageToChatPanel(messageContent) {
-  const rowDiv = document.createElement('div')
-  rowDiv.classList.add("row")
-  rowDiv.classList.add("no-gutters")
-  const colDiv = document.createElement('div')
-  colDiv.classList.add("col-md-3")
-  colDiv.classList.add("offset-md-9")
-  const messageDiv = document.createElement('div')
-  messageDiv.classList.add("chat-bubble")
-  messageDiv.classList.add("chat-bubble--right")
-  messageDiv.innerText = messageContent
-  colDiv.appendChild(messageDiv)
-  rowDiv.appendChild(colDiv)
-  return rowDiv
+  const chatMsgDiv = document.createElement('div');
+  chatMsgDiv.classList.add("chat-message-right");
+  chatMsgDiv.classList.add("pb-4");
+  const ansRightDiv = document.createElement('div');
+  ansRightDiv.classList.add("answer");
+  ansRightDiv.classList.add("right");
+
+  const {avatarDiv, textDiv} = addAvatarAndMessage(messageContent, true);
+
+  ansRightDiv.appendChild(avatarDiv);
+  ansRightDiv.appendChild(textDiv);
+  chatMsgDiv.appendChild(ansRightDiv);
+  return chatMsgDiv
+}
+
+function addAvatarAndMessage(messageContent, sender) {
+  const avatarDiv = document.createElement('div');
+  avatarDiv.classList.add("avatar");
+  const imgTag = document.createElement('img');
+  if (sender) {
+    imgTag.src = "https://bootdey.com/img/Content/avatar/avatar1.png";
+  } else {
+    imgTag.src = "https://bootdey.com/img/Content/avatar/avatar2.png";
+  }
+  const onlineDiv = document.createElement('div');
+  onlineDiv.classList.add("status");
+  onlineDiv.classList.add("offline");
+  avatarDiv.appendChild(imgTag);
+  avatarDiv.appendChild(onlineDiv);
+
+  const textDiv = document.createElement('div');
+  textDiv.classList.add("text");
+  textDiv.innerText = messageContent;
+  return {avatarDiv, textDiv};
 }
 
 function addReceivingMessageToChatPanel(messageContent) {
-  const rowDiv = document.createElement('div')
-  rowDiv.classList.add("row")
-  rowDiv.classList.add("no-gutters")
-  const colDiv = document.createElement('div')
-  colDiv.classList.add("col-md-3")
-  const messageDiv = document.createElement('div')
-  messageDiv.classList.add("chat-bubble")
-  messageDiv.classList.add("chat-bubble--left")
-  messageDiv.innerText = messageContent
-  colDiv.appendChild(messageDiv)
-  rowDiv.appendChild(colDiv)
-  return rowDiv
+  const chatMsgDiv = document.createElement('div');
+  chatMsgDiv.classList.add("chat-message-left");
+  chatMsgDiv.classList.add("pb-4");
+  const ansRightDiv = document.createElement('div');
+  ansRightDiv.classList.add("answer");
+  ansRightDiv.classList.add("left");
+
+  const {avatarDiv, textDiv} = addAvatarAndMessage(messageContent, false);
+
+  ansRightDiv.appendChild(avatarDiv);
+  ansRightDiv.appendChild(textDiv);
+  chatMsgDiv.appendChild(ansRightDiv);
+  return chatMsgDiv
 }
 
 function getCookie(name) {
@@ -188,84 +280,82 @@ function getCookie(name) {
 
 const saveUsername = (data) => {
   const message = JSON.parse(data.body);
-  username = message.sender
-  console.log(username)
+  username = message.sender;
+  console.log(username);
 
-  console.log(JSON.stringify({sender: username, type: 'CONNECT'}))
+  console.log(JSON.stringify({sender: username, type: 'CONNECT'}));
   stompClient.send("/app/chat.newUser",
       {},
       JSON.stringify({sender: username, type: 'CONNECT'})
   )
-}
+};
 
 const sendMessage = () => {
-  const messageInput = document.getElementById("messageBox")
-  const messageContent = messageInput.value.trim()
+  const messageInput = document.getElementById("messageBox");
+  const messageContent = messageInput.value.trim();
   if (messageContent !== null) {
     const chatMessage = {
       content: messageContent,
       sender: username,
       recipient: currentSelectedChat,
       time: moment().calendar()
-    }
-    console.log("sending message " + chatMessage)
-    stompClient.send("/app/chat.send", {}, JSON.stringify(chatMessage))
-    messageInput.value = ''
-    const chatPanel = document.getElementById("chatPanel")
-    chatPanel.append(addSendingMessageToChatPanel(messageContent))
+    };
+    console.log("sending message " + chatMessage);
+    stompClient.send("/app/chat.send", {}, JSON.stringify(chatMessage));
+    messageInput.value = '';
+    const chatPanel = document.getElementById("chatPanel");
+    chatPanel.append(addSendingMessageToChatPanel(messageContent));
+
     allMessages[currentSelectedChat].push(
         {sender: {id: userId}, message: messageContent})
   }
-}
+};
 
 const receiveMessage = (payload) => {
-  const message = JSON.parse(payload.body)
-  console.log("received message " + message)
-  allMessages[message.sender.id].push(message)
+  const message = JSON.parse(payload.body);
+  console.log("received message " + message);
+  allMessages[message.sender.id].push(message);
   if (message.sender.id == currentSelectedChat) {
-    const chatPanel = document.getElementById("chatPanel")
-    chatPanel.append(addReceivingMessageToChatPanel(message.message))
+    const chatPanel = document.getElementById("chatPanel");
+    chatPanel.append(addReceivingMessageToChatPanel(message.message));
     console.log("add message to panel")
   } else {
     if (message.sender.id in notChattedPeople) {
       newConversation(message.sender.id, false)
     }
-    sendNotification(message)
+    sendNotification(message);
     console.log("sending notification")
   }
-}
+};
 
 const sendNotification = (message) => {
-  const startingMessage = "Unread: "
+  const startingMessage = "Unread: ";
   const messagePreLength = startingMessage.length; // Length of message before number
-  const unreadSidebar = document.getElementById("unread-" + message.sender.id)
+  const unreadSidebar = document.getElementById("unread-" + message.sender.id);
   if (unreadSidebar.innerText === "") {
     unreadSidebar.innerText = startingMessage + "1"
   } else {
     const alreadyUnseenMessages = unreadSidebar.innerText.slice(
-        messagePreLength)
+        messagePreLength);
     unreadSidebar.innerText = startingMessage + (parseInt(alreadyUnseenMessages)
         + 1).toString()
   }
-}
+};
 
 const hashCode = (str) => {
-  let hash = 0
+  let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash)
   }
   return hash
-}
+};
 
 const getAvatarColor = (messageSender) => {
-  const colours = ['#2196F3', '#32c787', '#1BC6B4', '#A1B4C4']
-  const index = Math.abs(hashCode(messageSender) % colours.length)
+  const colours = ['#2196F3', '#32c787', '#1BC6B4', '#A1B4C4'];
+  const index = Math.abs(hashCode(messageSender) % colours.length);
   return colours[index]
-}
+};
 
 window.onload = function () {
-  const messageControls = document.getElementById('message-controls')
-  // messageControls.addEventListener('submit', sendMessage, true)
   connect({})
-
-}
+};

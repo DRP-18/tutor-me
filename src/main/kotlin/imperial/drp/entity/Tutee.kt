@@ -2,11 +2,12 @@ package imperial.drp.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.ManyToMany
 
 @Entity
 class Tutee(name: String? = null,
-            @JsonIgnore @field:ManyToMany var tutors: MutableList<Tutor>? = mutableListOf()
+            @JsonIgnore @field:ManyToMany(fetch = FetchType.EAGER) var tutors: MutableList<Tutor>? = mutableListOf()
 ) : Person(name) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

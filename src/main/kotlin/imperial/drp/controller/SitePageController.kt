@@ -3,6 +3,9 @@ package imperial.drp.controller
 import imperial.drp.dao.*
 import imperial.drp.entity.Message
 import imperial.drp.entity.Person
+import imperial.drp.entity.Tutee
+import imperial.drp.entity.Tutor
+import imperial.drp.model.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -31,12 +34,32 @@ class SitePageController {
 //        println("redirected, this was the cookie $userId")
 //    }
 
+    @RequestMapping(path = ["/", "index", "dashboard"])
+    fun homepage(): String {
+        return "dashboard"
+    }
+
+    @RequestMapping("/homework")
+    fun homeworkPage(): String {
+        return "homework"
+    }
+
+    @RequestMapping("/notes")
+    fun notesPage(): String {
+        return "notes"
+    }
+
+    @RequestMapping("/user")
+    fun userProfilePage(): String {
+        return "user"
+    }
+
     @RequestMapping("/task/{task_id}")
     fun task(@PathVariable("task_id") taskId: Long): String {
         return "task"
     }
 
-    @RequestMapping("/chats_page")
+    @RequestMapping("/chats")
     fun textChatPage(
             @CookieValue(value = "user_id", required = false) userId: Long?,
             model: Model
@@ -47,9 +70,8 @@ class SitePageController {
             println("$person ${person.name} ${person.id}")
             val convs = conversationRepository!!.findAllByUser1OrUser2(person, person)
             println("Conversations $convs")
+            val recentChatsMap = mutableMapOf<Person, List<Message>>()
             if (convs.isNotEmpty()) {
-                val recentChatsMap = mutableMapOf<Person, List<Message>>()
-
                 for (conv in convs) {
                     var otherUser = conv.user1
                     if (conv.user1!!.id == userId) {
@@ -63,15 +85,37 @@ class SitePageController {
                     println("After sorting $messages")
                     recentChatsMap[otherUser!!] = messages
                 }
-                model.addAttribute("recentChatsMap", recentChatsMap)
             }
+            model.addAttribute("recentChatsMap", recentChatsMap)
+            val emptyChatList = mutableListOf<Person>()
+            if (person is Tutor) {
+                addEmptyConversations(person.tutees!!, recentChatsMap.keys, emptyChatList)
+            }
+            if (person is Tutee) {
+                addEmptyConversations(person.tutors!!, recentChatsMap.keys, emptyChatList)
+            }
+            model.addAttribute("emptyChatList", emptyChatList)
+
         }
-        return "chats_page"
+        return "chats"
     }
 
+    private fun addEmptyConversations(people: List<Person>, existingChatKeys: MutableSet<Person>, emptyChatList: MutableList<Person>) {
+        for (person in people) {
+            if (person !in existingChatKeys) {
+                val user = personRepository!!.findById(person.id!!).get()
+                emptyChatList.add(user)
+            }
+        }
+    }
+
+    @RequestMapping("/calls")
+    fun videoCallPage(): String {
+        return "calls"
+    }
 
     @RequestMapping("/calls_page")
-    fun videoCallPage(): String {
+    fun videoCallPage2(): String {
         return "videoCallsPage/index"
     }
 
