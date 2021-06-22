@@ -34,6 +34,8 @@ const saveDetails = () => {
   initalStatus = status
   initialAvatar = avatar
   document.getElementById("updateProfile").disabled = true
+  document.getElementById("nameUnderProfilePic").innerText = initalName
+  document.getElementById("statusUnderProfilePic").innerText = initalStatus
 };
 
 function enableUpdate() {
@@ -42,8 +44,7 @@ function enableUpdate() {
   const avatar = document.getElementById("profilePic").alt;
   const updateBtn = document.getElementById("updateProfile")
   updateBtn.disabled = !((avatar !== initialAvatar) || (status !== initalStatus)
-      || (name
-          !== initalName))
+      || (name !== initalName))
 }
 
 function removeTutee(id) {

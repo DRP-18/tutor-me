@@ -4,6 +4,7 @@ let username; // Name of current user
 let index = 0; // global note index
 let html = "";
 let nothingTag = true;
+let numberOfNotes = 0;
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;
@@ -120,6 +121,8 @@ const addNote = () => {
     };
     stompClient.send("/app/notes.addNote", {}, JSON.stringify(noteMessage))
   }
+
+  numberOfNotes++;
 };
 
 const getNewNoteId = (payload) => {
@@ -139,14 +142,14 @@ const getNewNoteId = (payload) => {
 
   // addNoteToPage(noteContent)
   addNoteToPage(noteContent, noteId);
-  document.getElementById("Save " + noteId).style.display = 'none';
+  addText.value = ""
 
-  if (notes.length == 0) {
-    notesElm.innerHTML = `Nothing to show!
-      Use "Add a Note" section above to add notes.`;
-    notesElm.style.textAlign = 'center'
-    nothingTag = true;
-  }
+  // if (notes.length == 0) {
+  //   notesElm.innerHTML = `Nothing to show!
+  //     Use "Add a Note" section above to add notes.`;
+  //   notesElm.style.textAlign = 'center'
+  //   nothingTag = true;
+  // }
 
   notesElm.value = ''
 
@@ -170,6 +173,8 @@ const receiveNotesAndDisplay = (payload) => {
 
   //add noteid to addhtml function
 
+  numberOfNotes = notes.length
+
   if (notes.length == 0) {
     notesElm.innerHTML = `Nothing to show!
           Use "Add a Note" section above to add notes.`;
@@ -180,12 +185,17 @@ const receiveNotesAndDisplay = (payload) => {
 // Function to delete a note
 const deleteNote = (noteId) => {
   //get notes from database
+  numberOfNotes--;
   const elem = document.getElementById("Note " + noteId);
   elem.parentNode.removeChild(elem);
 
   console.log(noteId);
   stompClient.send('/app/notes.deleteNote', {},
       JSON.stringify({name: userId, status: noteId}));
+  if (numberOfNotes == 0) {
+    document.getElementById("notes").innerHTML = `Nothing to show!
+          Use "Add a Note" section above to add notes.`;
+  }
   return false;
 };
 
