@@ -93,7 +93,7 @@ class ChatController {
                     otherUser = conv.user2
                 }
                 val user = personRepository.findById(otherUser!!.id!!).get()
-                val detail = UserDetail(user.name!!, user.status)
+                val detail = UserDetail(user.name!!, user.status, user.avatar.toString())
                 userDetails[otherUser.id!!.toString()] = detail
             }
         }
@@ -104,7 +104,6 @@ class ChatController {
             addUserDetailsOfPerson(person.tutors!!, userDetails)
         }
         val json = jsonObject.writeValueAsString(userDetails)
-        println("jsoned ${json}")
         messageSender.convertAndSend("/topic/chat-${chatMessage.sender}-allUserDetails", object {
             val details = json
         })

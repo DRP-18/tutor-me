@@ -106,6 +106,7 @@ class SitePageController {
                 addEmptyConversations(person.tutors!!, recentChatsMap.keys, emptyChatList)
             }
             model.addAttribute("emptyChatList", emptyChatList)
+            model.addAttribute("person", person)
         }
         return "chats"
     }

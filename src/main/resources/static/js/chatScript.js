@@ -116,7 +116,7 @@ function addSideBarEntry(newId) {
   div2.classList.add("align-items-start");
 
   const imgTag = document.createElement('img');
-  imgTag.src = "https://bootdey.com/img/Content/avatar/avatar5.png";
+  imgTag.src = '/img/avatars/' + allUsersDetails[newId].avatar + '.png';
   imgTag.classList.add("rounded-circle");
   imgTag.classList.add("mr-1");
   imgTag.width = "40";
@@ -144,38 +144,6 @@ function addSideBarEntry(newId) {
   aDiv.appendChild(div2)
   entry.appendChild(aDiv)
   sideBar.appendChild(entry)
-  // const nameDiv = document.createElement('div');
-  // nameDiv.classList.add("text");
-  // const name = document.createElement('h6');
-  // name.innerText = allUsersDetails[newId].name;
-  // nameDiv.appendChild(name);
-  // entry.appendChild(nameDiv);
-  // const sidebar = document.getElementById("sideBarMessages");
-  // sidebar.appendChild(entry);
-  // sidebar.appendChild(document.createElement('hr'));
-  //
-  //
-  //
-  // const sideBar = document.getElementById('chatSideBar');
-  // const newConvEntry = "<div onclick=clickOnSideBarMessage(newId)>\n"
-  //     + "                  <a href=\"#\" class=\"list-group-item list-group-item-action border-0\">\n"
-  //     + "                    <div class=\"badge bg-success float-right\"\n"
-  //     + "                         id=\"'unread-'+newId\">5\n"
-  //     + "                    </div>\n"
-  //     + "                    <div class=\"d-flex align-items-start\">\n"
-  //     + "                      <img\n"
-  //     + "                          src=\"https://bootdey.com/img/Content/avatar/avatar5.png\"\n"
-  //     + "                          class=\"rounded-circle mr-1\"\n"
-  //     + "                          width=\"40\" height=\"40\">\n"
-  //     + "                      <div class=\"flex-grow-1 ml-3\">allUsersDetails[newId].name"
-  //     + "                        <div class=\"small\"><span\n"
-  //     + "                            class=\"fas fa-circle chat-online\"></span> Online\n"
-  //     + "                        </div>\n"
-  //     + "                      </div>\n"
-  //     + "                    </div>\n"
-  //     + "                  </a>\n"
-  //     + "                </div>";
-  // sideBar.appendChild()
 }
 
 // Opens up the clicked users chats page, to update the top bar information
@@ -188,6 +156,8 @@ function clickOnSideBarMessage(clickedId) {
       "currentChatTopBarName").innerText = allUsersDetails[clickedId].name;
   document.getElementById(
       "currentChatTopBarStatus").innerText = allUsersDetails[clickedId].status;
+  document.getElementById("currentUserPic").src = '/img/avatars/'
+      + allUsersDetails[clickedId].avatar + '.png'
 
   //Update the displayed messages
   let messageDiv;
