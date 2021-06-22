@@ -1,6 +1,9 @@
 'use strict';
 let stompClient;
 const userId = getCookie("user_id");
+var initalName = document.getElementById("nameUnderProfilePic").innerText
+var initalStatus = document.getElementById("statusUnderProfilePic").innerText
+var initialAvatar = document.getElementById("profilePic").alt
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;
@@ -27,7 +30,21 @@ const saveDetails = () => {
         userId: userId, name: name,
         status: status, avatar: avatar
       }));
+  initalName = name
+  initalStatus = status
+  initialAvatar = avatar
+  document.getElementById("updateProfile").disabled = true
 };
+
+function enableUpdate() {
+  const name = document.getElementById("newName").value.trim();
+  const status = document.getElementById("newStatus").value.trim();
+  const avatar = document.getElementById("profilePic").alt;
+  const updateBtn = document.getElementById("updateProfile")
+  updateBtn.disabled = !((avatar !== initialAvatar) || (status !== initalStatus)
+      || (name
+          !== initalName))
+}
 
 document.getElementById("updateProfile").addEventListener("click", saveDetails);
 if (userId != null) {
@@ -35,3 +52,6 @@ if (userId != null) {
   stompClient = Stomp.over(socket);
   stompClient.connect({}, onConnected, onError)
 }
+
+document.getElementById("newName").onchange = enableUpdate
+document.getElementById("newStatus").onchange = enableUpdate

@@ -59,7 +59,9 @@ class SitePageController {
             @CookieValue(value = "user_id", required = false) userId: Long?,
             model: Model
     ): String {
-        model.addAttribute("person", personRepository!!.findById(userId!!).get())
+        if (userId != null) {
+            model.addAttribute("person", personRepository!!.findById(userId!!).get())
+        }
         return "user"
     }
 

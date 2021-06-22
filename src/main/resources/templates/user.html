@@ -153,11 +153,12 @@
                           </div>
                         </div>
 
-                        <h4 class="title" th:text="${person.name}"><br/>
+                        <h4 id="nameUnderProfilePic" class="title" th:text="${person.name}"><br/>
                         </h4>
                       </a>
                     </div>
-                    <p class="description text-center" th:text="${person.status}"></p>
+                    <p id="statusUnderProfilePic" class="description text-center"
+                       th:text="${person.status}"></p>
                   </div>
                   <hr>
                   <div class="text-center">
@@ -198,7 +199,8 @@
                     </div>
                     <div class="row">
                       <div class="col-md-12 text-center">
-                        <button id="updateProfile" type="submit" class="btn btn-default btn-fill">
+                        <button id="updateProfile" type="submit" class="btn btn-default btn-fill"
+                                disabled>
                           Update Profile
                         </button>
                       </div>
@@ -216,91 +218,139 @@
                   <div class="content">
                     <div class="picker">
                       <select class='image-picker'>
-                        <option data-img-src='/img/avatars/1.png' data-img-class="first"
-                                data-img-alt="Page 1" value='1'> Avatar 1
+                        <option
+                            th:selected="${person.avatar} == 1"
+                            data-img-src='/img/avatars/1.png' data-img-class="first"
+                            data-img-alt="Page 1" value='1'> Avatar 1
                         </option>
-                        <option data-img-src='/img/avatars/2.png' data-img-alt="Avatar 2" value='2'>
+                        <option
+                            th:selected="${person.avatar} == 2"
+                            data-img-src='/img/avatars/2.png' data-img-alt="Avatar 2" value='2'>
                           Avatar 2
                         </option>
-                        <option data-img-src='/img/avatars/3.png' data-img-alt="Avatar 3" value='3'>
+                        <option
+                            th:selected="${person.avatar} == 3"
+                            data-img-src='/img/avatars/3.png' data-img-alt="Avatar 3" value='3'>
                           Avatar 3
                         </option>
-                        <option data-img-src='/img/avatars/4.png' data-img-alt="Avatar 4" value='4'>
+                        <option
+                            th:selected="${person.avatar} == 4"
+                            data-img-src='/img/avatars/4.png' data-img-alt="Avatar 4" value='4'>
                           Avatar 4
                         </option>
-                        <option data-img-src='/img/avatars/5.png' data-img-alt="Avatar 5" value='5'>
+                        <option
+                            th:selected="${person.avatar} == 5"
+                            data-img-src='/img/avatars/5.png' data-img-alt="Avatar 5" value='5'>
                           Avatar 5
                         </option>
-                        <option data-img-src='/img/avatars/6.png' data-img-alt="Avatar 6" value='6'>
+                        <option
+                            th:selected="${person.avatar} == 6"
+                            data-img-src='/img/avatars/6.png' data-img-alt="Avatar 6" value='6'>
                           Avatar 6
                         </option>
-                        <option data-img-src='/img/avatars/7.png' data-img-alt="Avatar 7" value='7'>
+                        <option
+                            th:selected="${person.avatar} == 7"
+                            data-img-src='/img/avatars/7.png' data-img-alt="Avatar 7" value='7'>
                           Avatar 7
                         </option>
-                        <option data-img-src='/img/avatars/8.png' data-img-alt="Avatar 8" value='8'>
+                        <option
+                            th:selected="${person.avatar} == 8"
+                            data-img-src='/img/avatars/8.png' data-img-alt="Avatar 8" value='8'>
                           Avatar 8
                         </option>
-                        <option data-img-src='/img/avatars/9.png' data-img-alt="Avatar 9" value='9'>
+                        <option
+                            th:selected="${person.avatar} == 9"
+                            data-img-src='/img/avatars/9.png' data-img-alt="Avatar 9" value='9'>
                           Avatar 9
                         </option>
-                        <option data-img-src='/img/avatars/10.png' data-img-alt="Avatar 10"
-                                value='10'>
+                        <option
+                            th:selected="${person.avatar} == 10"
+                            data-img-src='/img/avatars/10.png' data-img-alt="Avatar 10"
+                            value='10'>
                           Avatar 10
                         </option>
-                        <option data-img-src='/img/avatars/11.png' data-img-alt="Avatar 11"
-                                value='11'>
+                        <option
+                            th:selected="${person.avatar} == 11"
+                            data-img-src='/img/avatars/11.png' data-img-alt="Avatar 11"
+                            value='11'>
                           Avatar 11
                         </option>
-                        <option data-img-src='/img/avatars/12.png' data-img-alt="Avatar 12"
-                                value='12'>
+                        <option
+                            th:selected="${person.avatar} == 12"
+                            data-img-src='/img/avatars/12.png' data-img-alt="Avatar 12"
+                            value='12'>
                           Avatar 12
                         </option>
-                        <option data-img-src='/img/avatars/13.png' data-img-alt="Avatar 13"
-                                value='13'>
+                        <option
+                            th:selected="${person.avatar} == 13"
+                            data-img-src='/img/avatars/13.png' data-img-alt="Avatar 13"
+                            value='13'>
                           Avatar 13
                         </option>
-                        <option data-img-src='/img/avatars/14.png' data-img-alt="Avatar 14"
-                                value='14'>
+                        <option
+                            th:selected="${person.avatar} == 14"
+                            data-img-src='/img/avatars/14.png' data-img-alt="Avatar 14"
+                            value='14'>
                           Avatar 14
                         </option>
-                        <option data-img-src='/img/avatars/15.png' data-img-alt="Avatar 15"
-                                value='15'>
+                        <option
+                            th:selected="${person.avatar} == 15"
+                            data-img-src='/img/avatars/15.png' data-img-alt="Avatar 15"
+                            value='15'>
                           Avatar 15
                         </option>
-                        <option data-img-src='/img/avatars/16.png' data-img-alt="Avatar 16"
-                                value='16'>
+                        <option
+                            th:selected="${person.avatar} == 16"
+                            data-img-src='/img/avatars/16.png' data-img-alt="Avatar 16"
+                            value='16'>
                           Avatar 16
                         </option>
-                        <option data-img-src='/img/avatars/17.png' data-img-alt="Avatar 17"
-                                value='17'>
+                        <option
+                            th:selected="${person.avatar} == 17"
+                            data-img-src='/img/avatars/17.png' data-img-alt="Avatar 17"
+                            value='17'>
                           Avatar 17
                         </option>
-                        <option data-img-src='/img/avatars/18.png' data-img-alt="Avatar 18"
-                                value='18'>
+                        <option
+                            th:selected="${person.avatar} == 18"
+                            data-img-src='/img/avatars/18.png' data-img-alt="Avatar 18"
+                            value='18'>
                           Avatar 18
                         </option>
-                        <option data-img-src='/img/avatars/19.png' data-img-alt="Avatar 19"
-                                value='19'>
+                        <option
+                            th:selected="${person.avatar} == 19"
+                            data-img-src='/img/avatars/19.png' data-img-alt="Avatar 19"
+                            value='19'>
                           Avatar 19
                         </option>
-                        <option data-img-src='/img/avatars/20.png' data-img-alt="Avatar 20"
-                                value='20'>
+                        <option
+                            th:selected="${person.avatar} == 20"
+                            data-img-src='/img/avatars/20.png' data-img-alt="Avatar 20"
+                            value='20'>
                           Avatar 20
                         </option>
-                        <option data-img-src='/img/avatars/21.png' data-img-alt="Avatar 21"
-                                value='21'>
+                        <option
+                            th:selected="${person.avatar} == 21"
+                            data-img-src='/img/avatars/21.png' data-img-alt="Avatar 21"
+                            value='21'>
                           Avatar 21
                         </option>
-                        <option data-img-src='/img/avatars/22.png' data-img-alt="Avatar 22"
-                                value='22'>
+                        <option
+                            th:selected="${person.avatar} == 22"
+                            data-img-src='/img/avatars/22.png' data-img-alt="Avatar 22"
+                            value='22'>
                           Avatar 22
                         </option>
-                        <option data-img-src='/img/avatars/23.png' data -img-alt="Avatar 23"
-                                value='23'>
+                        <option
+                            th:selected="${person.avatar} == 23"
+                            data-img-src='/img/avatars/23.png' data -img-alt="Avatar 23"
+                            value='23'>
                           Avatar 23
                         </option>
-                        <option data-img-src='/img/avatars/24.png' data-img-alt="Avatar 24"
-                                data-img-class="last" value='24'> Avatar 24
+                        <option
+                            th:selected="${person.avatar} == 24"
+                            data-img-src='/img/avatars/24.png' data-img-alt="Avatar 24"
+                            data-img-class="last" value='24'> Avatar 24
                         </option>
                       </select>
                     </div>
@@ -389,6 +439,7 @@
       $("#profilePic").attr('src', imgPath)
       const avatarId = imgPath.substring(13, imgPath.length).split('.')[0]
       $("#profilePic").attr('alt', avatarId)
+      enableUpdate()
 
     }
 
