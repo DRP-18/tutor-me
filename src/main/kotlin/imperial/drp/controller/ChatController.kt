@@ -103,6 +103,7 @@ class ChatController {
         if (person is Tutee) {
             addUserDetailsOfPerson(person.tutors!!, userDetails)
         }
+        userDetails[person.id!!.toString()] = UserDetail(person.name!!, person.status, person.avatar.toString())
         val json = jsonObject.writeValueAsString(userDetails)
         messageSender.convertAndSend("/topic/chat-${chatMessage.sender}-allUserDetails", object {
             val details = json

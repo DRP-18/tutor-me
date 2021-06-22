@@ -7,6 +7,7 @@ let allMessages; // All the messages that this user has had before
 let allUsersDetails; // All ids, user names and further user detail
 let currentSelectedChat; // Id of person currently talking to
 let notChattedPeople = {}; // All the ids of people this user hasnt chatted with
+let myAvatarId;
 
 const connect = (event) => {
 
@@ -70,7 +71,12 @@ const saveUsersDetails = (payload) => {
   const message = JSON.parse(payload.body);
   allUsersDetails = JSON.parse(message.details);
   console.log("Got all details " + allUsersDetails + '-' + message);
-
+  for (const [k, v] of Object.entries(allUsersDetails)) {
+    if (k === userId) {
+      myAvatarId = v.avatar;
+      break
+    }
+  }
   // Sent to populate the allMessages object
   stompClient.send("/app/chat.getMessages", {},
       JSON.stringify({sender: userId}))
@@ -93,7 +99,7 @@ function newConversation(newId, openMessage) {
 
 // Creates a new side bar element for provided user
 function addSideBarEntry(newId) {
-  const sideBar = document.getElementById("chatSideBar")
+  const sideBar = document.getElementById("chatSideBar");
   const entry = document.createElement('div');
   entry.onclick = function () {
     clickOnSideBarMessage(newId)
@@ -123,26 +129,26 @@ function addSideBarEntry(newId) {
   imgTag.height = "40";
   div2.appendChild(imgTag);
 
-  const div3 = document.createElement('div')
-  div3.classList.add("flex-grow-1")
-  div3.classList.add("ml-3")
+  const div3 = document.createElement('div');
+  div3.classList.add("flex-grow-1");
+  div3.classList.add("ml-3");
   div3.innerText = allUsersDetails[newId].name;
 
-  const div4 = document.createElement('div')
-  div4.classList.add("small")
+  const div4 = document.createElement('div');
+  div4.classList.add("small");
 
-  const span = document.createElement('div')
-  span.classList.add("fas")
-  span.classList.add("fa-circle")
-  span.classList.add("chat-online")
-  div4.appendChild(span)
+  const span = document.createElement('div');
+  span.classList.add("fas");
+  span.classList.add("fa-circle");
+  span.classList.add("chat-online");
+  div4.appendChild(span);
   // div4.innerText = "Online"
 
-  div3.appendChild(div4)
-  div2.appendChild(div3)
+  div3.appendChild(div4);
+  div2.appendChild(div3);
 
-  aDiv.appendChild(div2)
-  entry.appendChild(aDiv)
+  aDiv.appendChild(div2);
+  entry.appendChild(aDiv);
   sideBar.appendChild(entry)
 }
 
@@ -157,7 +163,7 @@ function clickOnSideBarMessage(clickedId) {
   document.getElementById(
       "currentChatTopBarStatus").innerText = allUsersDetails[clickedId].status;
   document.getElementById("currentUserPic").src = '/img/avatars/'
-      + allUsersDetails[clickedId].avatar + '.png'
+      + allUsersDetails[clickedId].avatar + '.png';
 
   //Update the displayed messages
   let messageDiv;
@@ -169,7 +175,8 @@ function clickOnSideBarMessage(clickedId) {
       if (message.sender.id != clickedId) {
         messageDiv = addSendingMessageToChatPanel(message.message)
       } else {
-        messageDiv = addReceivingMessageToChatPanel(message.message)
+        messageDiv = addReceivingMessageToChatPanel(message.message,
+            allUsersDetails[clickedId].avatar)
       }
       chatPanel.prepend(messageDiv)
     });
@@ -195,7 +202,8 @@ function addSendingMessageToChatPanel(messageContent) {
   ansRightDiv.classList.add("answer");
   ansRightDiv.classList.add("right");
 
-  const {avatarDiv, textDiv} = addAvatarAndMessage(messageContent, true);
+  const {avatarDiv, textDiv} = addAvatarAndMessage(messageContent, true,
+      myAvatarId);
 
   ansRightDiv.appendChild(avatarDiv);
   ansRightDiv.appendChild(textDiv);
@@ -203,14 +211,14 @@ function addSendingMessageToChatPanel(messageContent) {
   return chatMsgDiv
 }
 
-function addAvatarAndMessage(messageContent, sender) {
+function addAvatarAndMessage(messageContent, sender, senderAvatarId) {
   const avatarDiv = document.createElement('div');
   avatarDiv.classList.add("avatar");
   const imgTag = document.createElement('img');
   if (sender) {
-    imgTag.src = "https://bootdey.com/img/Content/avatar/avatar1.png";
+    imgTag.src = '/img/avatars/' + myAvatarId + '.png';
   } else {
-    imgTag.src = "https://bootdey.com/img/Content/avatar/avatar2.png";
+    imgTag.src = '/img/avatars/' + senderAvatarId + '.png';
   }
   const onlineDiv = document.createElement('div');
   onlineDiv.classList.add("status");
@@ -224,7 +232,7 @@ function addAvatarAndMessage(messageContent, sender) {
   return {avatarDiv, textDiv};
 }
 
-function addReceivingMessageToChatPanel(messageContent) {
+function addReceivingMessageToChatPanel(messageContent, senderAvatarId) {
   const chatMsgDiv = document.createElement('div');
   chatMsgDiv.classList.add("chat-message-left");
   chatMsgDiv.classList.add("pb-4");
@@ -232,7 +240,8 @@ function addReceivingMessageToChatPanel(messageContent) {
   ansRightDiv.classList.add("answer");
   ansRightDiv.classList.add("left");
 
-  const {avatarDiv, textDiv} = addAvatarAndMessage(messageContent, false);
+  const {avatarDiv, textDiv} = addAvatarAndMessage(messageContent, false,
+      senderAvatarId);
 
   ansRightDiv.appendChild(avatarDiv);
   ansRightDiv.appendChild(textDiv);
@@ -287,7 +296,8 @@ const receiveMessage = (payload) => {
   allMessages[message.sender.id].push(message);
   if (message.sender.id == currentSelectedChat) {
     const chatPanel = document.getElementById("chatPanel");
-    chatPanel.append(addReceivingMessageToChatPanel(message.message));
+    chatPanel.append(addReceivingMessageToChatPanel(message.message,
+        allUsersDetails[message.sender.id].avatar));
     console.log("add message to panel")
   } else {
     if (message.sender.id in notChattedPeople) {
