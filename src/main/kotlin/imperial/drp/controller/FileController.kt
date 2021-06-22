@@ -5,6 +5,7 @@ import imperial.drp.dao.PersonRepository
 import imperial.drp.dao.TaskRepository
 import imperial.drp.dto.PostResponseDto
 import imperial.drp.entity.File
+import org.apache.logging.log4j.core.pattern.AbstractStyleNameConverter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.servlet.view.RedirectView
 import java.util.*
 
 
@@ -53,7 +55,7 @@ class FileController {
             @CookieValue(value = "user_id") userId: Long,
             @RequestParam(value = "task_id") taskId: Long,
             @RequestParam(value = "file") multipartFile: MultipartFile
-    ): String {
+    ): RedirectView {
         var userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
             var user = userOpt.get()
@@ -71,11 +73,11 @@ class FileController {
                     task.attachments!!.add(dbFile)
                     taskRepository.save(task)
                 }
-
             }
-
         }
-        return "redirect"
+        val redirectView = RedirectView()
+        redirectView.url = "/task/${taskId}"
+        return redirectView
     }
 
     @GetMapping("/taskfiles")
