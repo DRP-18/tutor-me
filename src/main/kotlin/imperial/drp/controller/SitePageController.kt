@@ -55,7 +55,11 @@ class SitePageController {
     }
 
     @RequestMapping("/user")
-    fun userProfilePage(): String {
+    fun userProfilePage(
+            @CookieValue(value = "user_id", required = false) userId: Long?,
+            model: Model
+    ): String {
+        model.addAttribute("person", personRepository!!.findById(userId!!).get())
         return "user"
     }
 
@@ -100,7 +104,6 @@ class SitePageController {
                 addEmptyConversations(person.tutors!!, recentChatsMap.keys, emptyChatList)
             }
             model.addAttribute("emptyChatList", emptyChatList)
-
         }
         return "chats"
     }
