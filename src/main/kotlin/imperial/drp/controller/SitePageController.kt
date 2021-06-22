@@ -5,7 +5,6 @@ import imperial.drp.entity.Message
 import imperial.drp.entity.Person
 import imperial.drp.entity.Tutee
 import imperial.drp.entity.Tutor
-import imperial.drp.model.UserDetail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -74,7 +73,16 @@ class SitePageController {
     }
 
     @RequestMapping("/task/{task_id}")
-    fun task(@PathVariable("task_id") taskId: Long): String {
+    fun task(@PathVariable("task_id") taskId: Long,
+             @CookieValue(value = "user_id", required = false) userId: Long?,
+             model: Model
+    ): String {
+        if (userId != null) {
+            val person = personRepository!!.findById(userId).get()
+            model.addAttribute("tutor", person is Tutor)
+        } else {
+            model.addAttribute("tutor", false)
+        }
         return "task"
     }
 
@@ -140,7 +148,7 @@ class SitePageController {
 
     @RequestMapping("/task")
     fun task(): String {
-        return "task"
+        return "task2"
     }
 
 

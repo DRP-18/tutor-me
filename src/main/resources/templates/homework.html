@@ -144,175 +144,210 @@
 
     <div class="content" id="main">
       <div class="container-fluid">
-        <!-- Services -->
-        <section class="services" v-cloak>
-          <h1 style="text-align: center" v-if="user.name != undefined">Welcome, {{user.name}}!</h1>
-        </section>
-
-        <section v-cloak>
-          <!-- Tutor homepage -->
-          <p></p>
-          <div class="text-center" v-if="user.userType == undefined">
-            <div class="spinner-border" role="status">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="content">
+                <section class="services" v-cloak>
+                  <h1 style="text-align: center" v-if="user.name != undefined">Welcome,
+                    {{user.name}}!</h1>
+                </section>
+              </div>
             </div>
           </div>
-          <div class="container-fluid" v-if="user.userType == 'tutor'">
-            <div class="row">
-              <div class="col-xs-12 col-md-12">
-                <div v-for="(item, key) in tasks.tuteeMap">
-                  <div class="d-flex justify-content-between">
-                    <div class='btn-toolbar pull-right'>
-                      <div class='btn-group'>
-                        <form action="/removemytutee" method="post"
-                              v-bind:id="'form-removemytutee-' + key"
-                              v-on:submit.prevent="removeMyTutee('form-removemytutee-' + key)">
-                          <input type="hidden" name="tutee_id"
-                                 v-bind:value="key"/>
-                          <button class="btn btn-danger btn-block" type="submit">Remove</button>
-                        </form>
-                      </div>
-                    </div>
-                    <h2 class="d-table-cell">{{item.personName}} </h2>
-
-                  </div>
-                  <div class="table-responsive table-full-width">
-                    <table class="table table-hover table-striped">
-                      <thead>
-                      <tr>
-                        <th></th>
-                        <th>START</th>
-                        <th>END</th>
-                        <th>CONTENT</th>
-                        <th>ACTIONS</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr v-for="task in item.tasks">
-                        <td>
-                          <div class="form-check">
-                            <span v-if="!task.done">&#9744;</span>
-                            <span v-if="task.done">&#9745;</span>
-                          </div>
-                        </td>
-                        <td>{{formatTime(task.startTime)}}</td>
-                        <td>{{formatTime(task.endTime)}}</td>
-                        <td>{{task.content}}</td>
-                        <td>
-                          <div class="d-flex">
-                            <a class="btn btn-info" v-bind:href="'/task/' + task.id"
-                               style="margin-right: 8px;float: left">FILES
-                            </a>
-                            <form action="/deletetask" method="post"
-                                  v-on:submit.prevent="deleteTask('form-deletetask-' + task.id)"
-                                  v-bind:id="'form-deletetask-' + task.id">
-                              <input type="hidden" name="task_id" v-bind:value="task.id"/>
-                              <button class="btn btn-danger" style="margin-right: 8px;float: left">
-                                Delete
-                              </button>
-                            </form>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td><input v-bind:form="'form-addtask-' + key"
-                                   type="datetime-local" class="form-control"
-                                   name="start_time"
-                                   v-bind:value="getTodayString()"
-                                   placeholder="e.g., 2018-06-12T19:30"></td>
-                        <td><input v-bind:form="'form-addtask-' + key"
-                                   type="datetime-local" class="form-control"
-                                   name="end_time"
-                                   v-bind:value="getTomorrowString()"
-                                   placeholder="e.g., 2018-06-12T19:30"></td>
-                        <td><input v-bind:form="'form-addtask-' + key"
-                                   type="text"
-                                   class="form-control"
-                                   name="content"
-                                   placeholder="Content"></td>
-                        <td>
-                          <input type="hidden" v-bind:form="'form-addtask-' + key" name="tutee_id"
-                                 v-bind:value="key"/>
-                          <button v-bind:form="'form-addtask-' + key" class="btn btn-primary">Add
-                          </button>
-                        </td>
-                      </tr>
-                      </tbody>
-                    </table>
-                    <form action="/addtask" method="post"
-                          v-on:submit.prevent="addTask('form-addtask-' + key)"
-                          v-bind:id="'form-addtask-' + key"></form>
-                  </div>
-
-                </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="header">
+              </div>
+              <div class="content" v-if="user.userType == 'tutor'">
                 <form action="/addtutee" method="post"
                       id="form-addtutee">
-                  <div class="input-group mb-3">
+                  <div class="form-group">
                     <input type="text" class="form-control" name="tutee_name"
-                           placeholder="Tutee Name">
-                    <button class="btn btn-primary" type="reset"
+                           placeholder="Tutee Name" style="margin-bottom: 10px">
+                    <button class="btn btn-default btn-block" type="reset"
                             v-on:click="addTutee('form-addtutee')">Add
                     </button>
                   </div>
                 </form>
+
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="header">
+                <h4 class="title" style="text-align: center">Homework Schedule</h4>
+              </div>
+              <div class="content">
+                <section v-cloak>
+                  <!-- Tutor homepage -->
+                  <p></p>
+                  <div class="text-center" v-if="user.userType == undefined">
+                    <div class="spinner-border" role="status">
+                    </div>
+                  </div>
+                  <div class="container-fluid" v-if="user.userType == 'tutor'">
+                    <div class="row">
+                      <div class="col-xs-12 col-md-12">
+                        <div v-for="(item, key) in tasks.tuteeMap">
+                          <div class="d-flex justify-content-between">
+                            <div class='btn-toolbar pull-right'>
+                              <div class='btn-group'>
+                                <!--                        <form action="/removemytutee" method="post"-->
+                                <!--                              v-bind:id="'form-removemytutee-' + key"-->
+                                <!--                              v-on:submit.prevent="removeMyTutee('form-removemytutee-' + key)">-->
+                                <!--                          <input type="hidden" name="tutee_id"-->
+                                <!--                                 v-bind:value="key"/>-->
+                                <!--                          <button class="btn btn-danger btn-block" type="submit">Remove</button>-->
+                                <!--                        </form>-->
+                              </div>
+                            </div>
+                            <h2 class="d-table-cell">{{item.personName}} </h2>
+
+                          </div>
+                          <div class="table-responsive table-full-width">
+                            <table class="table table-hover table-striped">
+                              <thead>
+                              <tr>
+                                <th></th>
+                                <th>START</th>
+                                <th>END</th>
+                                <th>CONTENT</th>
+                                <th>ACTIONS</th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              <tr v-for="task in item.tasks">
+                                <td>
+                                  <div class="form-check">
+                                    <span v-if="!task.done">&#9744;</span>
+                                    <span v-if="task.done">&#9745;</span>
+                                  </div>
+                                </td>
+                                <td>{{formatTime(task.startTime)}}</td>
+                                <td>{{formatTime(task.endTime)}}</td>
+                                <td>{{task.content}}</td>
+                                <td>
+                                  <div class="d-flex">
+                                    <a class="btn btn-info" v-bind:href="'/task/' + task.id"
+                                       style="margin-right: 8px;float: left">FILES
+                                    </a>
+                                    <form action="/deletetask" method="post"
+                                          v-on:submit.prevent="deleteTask('form-deletetask-' + task.id)"
+                                          v-bind:id="'form-deletetask-' + task.id">
+                                      <input type="hidden" name="task_id" v-bind:value="task.id"/>
+                                      <button class="btn btn-danger"
+                                              style="margin-right: 8px;float: left">
+                                        Delete
+                                      </button>
+                                    </form>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td></td>
+                                <td><input v-bind:form="'form-addtask-' + key"
+                                           type="datetime-local" class="form-control"
+                                           name="start_time"
+                                           v-bind:value="getTodayString()"
+                                           placeholder="e.g., 2018-06-12T19:30"></td>
+                                <td><input v-bind:form="'form-addtask-' + key"
+                                           type="datetime-local" class="form-control"
+                                           name="end_time"
+                                           v-bind:value="getTomorrowString()"
+                                           placeholder="e.g., 2018-06-12T19:30"></td>
+                                <td><input v-bind:form="'form-addtask-' + key"
+                                           type="text"
+                                           class="form-control"
+                                           name="content"
+                                           placeholder="Content"></td>
+                                <td>
+                                  <input type="hidden" v-bind:form="'form-addtask-' + key"
+                                         name="tutee_id"
+                                         v-bind:value="key"/>
+                                  <button v-bind:form="'form-addtask-' + key"
+                                          class="btn btn-primary">
+                                    Add
+                                  </button>
+                                </td>
+                              </tr>
+                              </tbody>
+                            </table>
+                            <form action="/addtask" method="post"
+                                  v-on:submit.prevent="addTask('form-addtask-' + key)"
+                                  v-bind:id="'form-addtask-' + key"></form>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
 
-          <!-- Tutee homepage -->
-          <div class="container-fluid" v-if="user.userType == 'tutee'">
-            <div class="row">
-              <div class="col-xs-12 col-md-12">
-                <div class="table-responsive table-full-width">
-                  <table class="table table-hover table-striped">
-                    <thead>
-                    <tr>
-                      <th></th>
-                      <th>START</th>
-                      <th>END</th>
-                      <th>TUTOR</th>
-                      <th>CONTENT</th>
-                      <th>ACTIONS</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="taskItem in tasks.list">
-                      <td>
-                        <div class="form-check">
-                          <span v-if="!taskItem.task.done">&#9744;</span>
-                          <span v-if="taskItem.task.done">&#9745;</span>
-                          <span v-if="taskItem.hasAttachment" title="This task has files attached">&#128196;</span>
+                  <!-- Tutee homepage -->
+                  <div class="container-fluid" v-if="user.userType == 'tutee'">
+                    <div class="row">
+                      <div class="col-xs-12 col-md-12">
+                        <div class="table-responsive table-full-width">
+                          <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                              <th></th>
+                              <th>START</th>
+                              <th>END</th>
+                              <th>TUTOR</th>
+                              <th>CONTENT</th>
+                              <th>ACTIONS</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="taskItem in tasks.list">
+                              <td>
+                                <div class="form-check">
+                                  <span v-if="!taskItem.task.done">&#9744;</span>
+                                  <span v-if="taskItem.task.done">&#9745;</span>
+                                  <span v-if="taskItem.hasAttachment"
+                                        title="This task has files attached">&#128196;</span>
+                                </div>
+                              </td>
+                              <td>{{formatTime(taskItem.task.startTime)}}</td>
+                              <td>{{formatTime(taskItem.task.endTime)}}</td>
+                              <td>{{taskItem.task.tutor.name}}</td>
+                              <td>{{taskItem.task.content}}</td>
+                              <td>
+                                <div class="d-flex">
+                                  <a class="btn btn-info" v-bind:href="'/task/' + taskItem.task.id"
+                                     style="margin-right: 8px;float: left">FILES
+                                  </a>
+                                  <form action="/donetask" method="post" v-if="!taskItem.task.done"
+                                        v-on:submit.prevent="doneTask('form-donetask-' + taskItem.task.id)"
+                                        v-bind:id="'form-donetask-' + taskItem.task.id">
+                                    <input type="hidden" name="task_id"
+                                           v-bind:value="taskItem.task.id"/>
+                                    <button class="btn btn-success"
+                                            style="margin-right: 8px;float: left">
+                                      Done
+                                    </button>
+                                  </form>
+                                </div>
+                              </td>
+                            </tr>
+                            </tbody>
+                          </table>
                         </div>
-                      </td>
-                      <td>{{formatTime(taskItem.task.startTime)}}</td>
-                      <td>{{formatTime(taskItem.task.endTime)}}</td>
-                      <td>{{taskItem.task.tutor.name}}</td>
-                      <td>{{taskItem.task.content}}</td>
-                      <td>
-                        <div class="d-flex">
-                          <a class="btn btn-info" v-bind:href="'/task/' + taskItem.task.id"
-                             style="margin-right: 8px;float: left">FILES
-                          </a>
-                          <form action="/donetask" method="post" v-if="!taskItem.task.done"
-                                v-on:submit.prevent="doneTask('form-donetask-' + taskItem.task.id)"
-                                v-bind:id="'form-donetask-' + taskItem.task.id">
-                            <input type="hidden" name="task_id"
-                                   v-bind:value="taskItem.task.id"/>
-                            <button class="btn btn-success" style="margin-right: 8px;float: left">
-                              Done
-                            </button>
-                          </form>
-                        </div>
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </div>
     </div>
   </div>
