@@ -85,7 +85,6 @@ var vm = new Vue({
       })
       .then(response => response.json())
       .then(rsp => {
-        console.log(rsp);
         refreshTasks();
       })
       .catch(function () {

@@ -1,6 +1,9 @@
 package imperial.drp.controller
 
 import imperial.drp.dao.PersonRepository
+import imperial.drp.entity.Tutee
+import imperial.drp.entity.Tutor
+import imperial.drp.model.TuteeInfoMessage
 import imperial.drp.model.UserProfileMessage
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -29,4 +32,22 @@ class UserProfileController {
         }
     }
 
+    @Transactional
+    @MessageMapping("/user.removeTutee")
+    fun removeTutee(tuteeInfoMessage: TuteeInfoMessage) {
+        val userOpt = personRepository!!.findById(tuteeInfoMessage.tutorId.toLong())
+        if (userOpt.isPresent) {
+            val user = userOpt.get()
+            if (user is Tutor) {
+                val tuteeOpt = personRepository.findById(tuteeInfoMessage.tuteeId.toLong())
+                if (tuteeOpt.isPresent) {
+                    val tutee = tuteeOpt.get() as Tutee
+                    user.tutees!!.remove(tutee)
+                    tutee.tutors!!.remove(user)
+                    personRepository.save(user)
+                    personRepository.save(tutee)
+                }
+            }
+        }
+    }
 }

@@ -80,10 +80,10 @@ class TaskController {
 
     @PostMapping("/signup")
     fun signupPost(
-        @RequestParam(value = "username") username: String,
-        @RequestParam(value = "userType", required = false) userType: String?,
-        response: HttpServletResponse,
-        model: Model
+            @RequestParam(value = "username") username: String,
+            @RequestParam(value = "userType", required = false) userType: String?,
+            response: HttpServletResponse,
+            model: Model
     ): String {
         if (userType != null) {
             val matchingUsers = personRepository!!.findByName(username)
@@ -124,9 +124,9 @@ class TaskController {
 
     @PostMapping("/addtutee")
     fun addtutee(
-        @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "tutee_name") tuteeName: String,
-        response: HttpServletResponse
+            @CookieValue(value = "user_id") userId: Long,
+            @RequestParam(value = "tutee_name") tuteeName: String,
+            response: HttpServletResponse
     ): ResponseEntity<PostResponseDto> {
         var userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
@@ -139,28 +139,30 @@ class TaskController {
                         if (!user.tutees!!.contains(person)) {
                             user.tutees!!.add(person)
                             personRepository.save(user)
-                            person.tutors!!.add(user)
-                            personRepository.save(person)
+                            if (!person.tutors!!.contains(user)) {
+                                person.tutors!!.add(user)
+                                personRepository.save(person)
+                            }
                             return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                         }
                         return ResponseEntity(
-                            PostResponseDto(error = "the person is already your tutee"),
-                            HttpStatus.FORBIDDEN
+                                PostResponseDto(error = "the person is already your tutee"),
+                                HttpStatus.FORBIDDEN
                         )
                     }
                     return ResponseEntity(
-                        PostResponseDto(error = "the person you try to add isn't a tutee"),
-                        HttpStatus.FORBIDDEN
+                            PostResponseDto(error = "the person you try to add isn't a tutee"),
+                            HttpStatus.FORBIDDEN
                     )
                 }
                 return ResponseEntity(
-                    PostResponseDto(error = "tutee doesn't exist"),
-                    HttpStatus.FORBIDDEN
+                        PostResponseDto(error = "tutee doesn't exist"),
+                        HttpStatus.FORBIDDEN
                 )
             }
             return ResponseEntity(
-                PostResponseDto(error = "you're not a tutor"),
-                HttpStatus.FORBIDDEN
+                    PostResponseDto(error = "you're not a tutor"),
+                    HttpStatus.FORBIDDEN
             )
         }
         return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
@@ -168,12 +170,12 @@ class TaskController {
 
     @PostMapping("/addtask")
     fun addtask(
-        @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "start_time") startTime: String,
-        @RequestParam(value = "end_time") endTime: String,
-        @RequestParam(value = "content") content: String,
-        @RequestParam(value = "tutee_id") tuteeId: Long,
-        response: HttpServletResponse,
+            @CookieValue(value = "user_id") userId: Long,
+            @RequestParam(value = "start_time") startTime: String,
+            @RequestParam(value = "end_time") endTime: String,
+            @RequestParam(value = "content") content: String,
+            @RequestParam(value = "tutee_id") tuteeId: Long,
+            response: HttpServletResponse,
     ): ResponseEntity<PostResponseDto> {
         var userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
@@ -191,35 +193,35 @@ class TaskController {
 
                         if (startCalendar <= endCalendar) {
                             taskRepository!!.save(
-                                Task(
-                                    startCalendar,
-                                    endCalendar,
-                                    user,
-                                    tutee,
-                                    content
-                                )
+                                    Task(
+                                            startCalendar,
+                                            endCalendar,
+                                            user,
+                                            tutee,
+                                            content
+                                    )
                             )
                             return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                         }
                         return ResponseEntity(
-                            PostResponseDto(error = "the end time cannot be earlier than the start time"),
-                            HttpStatus.FORBIDDEN
+                                PostResponseDto(error = "the end time cannot be earlier than the start time"),
+                                HttpStatus.FORBIDDEN
                         )
                     } catch (e: ParseException) {
                         return ResponseEntity(
-                            PostResponseDto(error = "failed to parse the start time or the end time"),
-                            HttpStatus.FORBIDDEN
+                                PostResponseDto(error = "failed to parse the start time or the end time"),
+                                HttpStatus.FORBIDDEN
                         )
                     }
                 }
                 return ResponseEntity(
-                    PostResponseDto(error = "the person to assign task to is not a tutee"),
-                    HttpStatus.FORBIDDEN
+                        PostResponseDto(error = "the person to assign task to is not a tutee"),
+                        HttpStatus.FORBIDDEN
                 )
             }
             return ResponseEntity(
-                PostResponseDto(error = "you're not a tutor"),
-                HttpStatus.FORBIDDEN
+                    PostResponseDto(error = "you're not a tutor"),
+                    HttpStatus.FORBIDDEN
             )
         }
         return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
@@ -227,9 +229,9 @@ class TaskController {
 
     @PostMapping("/deletetask")
     fun deletetask(
-        @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "task_id") taskId: Long,
-        response: HttpServletResponse
+            @CookieValue(value = "user_id") userId: Long,
+            @RequestParam(value = "task_id") taskId: Long,
+            response: HttpServletResponse
     ): ResponseEntity<PostResponseDto> {
         var userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
@@ -243,18 +245,18 @@ class TaskController {
                         return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                     }
                     return ResponseEntity(
-                        PostResponseDto(error = "you don't own this task"),
-                        HttpStatus.FORBIDDEN
+                            PostResponseDto(error = "you don't own this task"),
+                            HttpStatus.FORBIDDEN
                     )
                 }
                 return ResponseEntity(
-                    PostResponseDto(error = "task doesn't exist"),
-                    HttpStatus.FORBIDDEN
+                        PostResponseDto(error = "task doesn't exist"),
+                        HttpStatus.FORBIDDEN
                 )
             }
             return ResponseEntity(
-                PostResponseDto(error = "you're not a tutor"),
-                HttpStatus.FORBIDDEN
+                    PostResponseDto(error = "you're not a tutor"),
+                    HttpStatus.FORBIDDEN
             )
         }
         return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
@@ -268,8 +270,8 @@ class TaskController {
     @GetMapping("viewtutees")
     @ResponseBody
     fun viewtutees(
-        @CookieValue(value = "user_id") userId: Long,
-        response: HttpServletResponse,
+            @CookieValue(value = "user_id") userId: Long,
+            response: HttpServletResponse,
     ): String {
         var resp = ""
         personRepository!!.findById(userId).ifPresent() { tutor ->
@@ -283,10 +285,10 @@ class TaskController {
 
     @RequestMapping("/donetask")
     fun donetask(
-        @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "task_id") taskId: Long,
-        response: HttpServletResponse,
-        model: Model
+            @CookieValue(value = "user_id") userId: Long,
+            @RequestParam(value = "task_id") taskId: Long,
+            response: HttpServletResponse,
+            model: Model
     ): ResponseEntity<PostResponseDto> {
         var userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
@@ -300,13 +302,13 @@ class TaskController {
                     return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                 }
                 return ResponseEntity(
-                    PostResponseDto(error = "you have not access to the task"),
-                    HttpStatus.FORBIDDEN
+                        PostResponseDto(error = "you have not access to the task"),
+                        HttpStatus.FORBIDDEN
                 )
             }
             return ResponseEntity(
-                PostResponseDto(error = "task doesn't exist"),
-                HttpStatus.FORBIDDEN
+                    PostResponseDto(error = "task doesn't exist"),
+                    HttpStatus.FORBIDDEN
             )
         }
         return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
@@ -319,7 +321,7 @@ class TaskController {
             val user = userOpt.get()
             if (user is Tutor) {
                 val tasks =
-                    taskRepository!!.findByTutorOrderByStartTimeAsc(user)
+                        taskRepository!!.findByTutorOrderByStartTimeAsc(user)
                 val tuteeTasksMap = TreeMap<Long, TaskMapItemDto>()
                 user.tutees!!.forEach {
                     tuteeTasksMap[it.id!!] = TaskMapItemDto(it.name!!, ArrayList())
@@ -340,15 +342,15 @@ class TaskController {
             val user = userOpt.get()
             if (user is Tutee) {
                 val tasks =
-                    taskRepository!!.findByTuteeOrderByStartTimeAsc(
-                        personRepository.findByName(
-                            user.name!!
-                        )[0]
-                    )
+                        taskRepository!!.findByTuteeOrderByStartTimeAsc(
+                                personRepository.findByName(
+                                        user.name!!
+                                )[0]
+                        )
                 var result = tasks.map {
                     TaskListItemDto(
-                        it,
-                        if (it.attachments != null) it.attachments!!.isNotEmpty() else false
+                            it,
+                            if (it.attachments != null) it.attachments!!.isNotEmpty() else false
                     )
                 }
                 return ResponseEntity(result, HttpStatus.OK)
@@ -359,8 +361,8 @@ class TaskController {
 
     @GetMapping("/userinfo")
     fun userinfo(
-        @CookieValue(value = "user_id", required = false) myId: Long?,
-        @RequestParam(value = "user_id", required = false) otherId: Long?
+            @CookieValue(value = "user_id", required = false) myId: Long?,
+            @RequestParam(value = "user_id", required = false) otherId: Long?
     ): ResponseEntity<Person> {
         var userId = -1L
         if (otherId != null) {
@@ -379,8 +381,8 @@ class TaskController {
 
     @PostMapping("removemytutee")
     fun removemytutee(
-        @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "tutee_id") tuteeId: Long
+            @CookieValue(value = "user_id") userId: Long,
+            @RequestParam(value = "tutee_id") tuteeId: Long
     ): ResponseEntity<PostResponseDto> {
         val userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {
@@ -390,19 +392,19 @@ class TaskController {
                 if (tuteeOpt.isPresent) {
                     var tutee = tuteeOpt.get() as Tutee
                     user.tutees!!.remove(tutee)
-                    personRepository.save(user)
                     tutee.tutors!!.remove(user)
+                    personRepository.save(user)
                     personRepository.save(tutee)
                     return ResponseEntity(PostResponseDto(), HttpStatus.OK)
                 }
                 return ResponseEntity(
-                    PostResponseDto(error = "the person is not your tutee"),
-                    HttpStatus.FORBIDDEN
+                        PostResponseDto(error = "the person is not your tutee"),
+                        HttpStatus.FORBIDDEN
                 )
             }
             return ResponseEntity(
-                PostResponseDto(error = "you're not a tutor"),
-                HttpStatus.FORBIDDEN
+                    PostResponseDto(error = "you're not a tutor"),
+                    HttpStatus.FORBIDDEN
             )
         }
         return ResponseEntity(PostResponseDto(error = "you're not a user"), HttpStatus.FORBIDDEN)
@@ -410,9 +412,9 @@ class TaskController {
 
     @GetMapping("/taskinfo")
     fun taskinfo(
-        @CookieValue(value = "user_id") userId: Long,
-        @RequestParam(value = "task_id") taskId: Long,
-        response: HttpServletResponse
+            @CookieValue(value = "user_id") userId: Long,
+            @RequestParam(value = "task_id") taskId: Long,
+            response: HttpServletResponse
     ): ResponseEntity<Task> {
         var userOpt = personRepository!!.findById(userId)
         if (userOpt.isPresent) {

@@ -362,24 +362,31 @@
           <div class="col-md-4">
             <div class="card">
               <div class="header">
-                <h4 class="title" style="text-align: center">Student Information</h4>
+                <h4 th:if="!${tutee}" class="title" style="text-align: center">Student
+                  Information</h4>
+                <h4 th:if="${tutee}" class="title" style="text-align: center">Tutor
+                  Information</h4>
               </div>
               <div class="content">
                 <div class="table-responsive table-full-width">
                   <table class="table table-hover table-striped">
                     <thead>
-                    <th>Name</th>
-                    <th>Subject</th>
-                    <th style="text-align: center">Options</th>
+                    <th style="text-align: center">Name</th>
+                    <th th:if="!${tutee}" style="text-align: center">Options</th>
                     </thead>
                     <tbody>
-                    <tr>
-                      <td>Mika</td>
-                      <td>Physics</td>
-                      <td>
-                        <button type="button" class="btn btn-danger btn-block">Remove</button>
-                      </td>
-                    </tr>
+                    <div th:each="person : ${personList}">
+                      <tr>
+                        <td style="text-align: center;" th:text="${person.name}"></td>
+                        <td th:if="!${tutee}">
+                          <button type="button" th:id="'r-'+${person.id}"
+                                  th:attr="onclick=|removeTutee('${person.id}')|"
+                                  class="btn btn-danger btn-block">Remove
+                          </button>
+                        </td>
+                      </tr>
+
+                    </div>
                     </tbody>
                   </table>
 
@@ -392,7 +399,7 @@
 
     </div>
   </div>
-
+</div>
 
 </body>
 

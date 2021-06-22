@@ -11,4 +11,14 @@ class Tutor(
         name: String? = null,
         @JsonIgnore @field:ManyToMany(fetch = FetchType.EAGER) var tutees: MutableList<Tutee>? = mutableListOf()
 ) : Person(name) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Tutor) return false
+        if (id != other.id) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return tutees?.hashCode() ?: 0
+    }
 }

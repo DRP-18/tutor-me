@@ -46,6 +46,16 @@ function enableUpdate() {
           !== initalName))
 }
 
+function removeTutee(id) {
+  console.log("Removing " + id)
+  stompClient.send("/app/user.removeTutee", {},
+      JSON.stringify({
+        tutorId: userId, tuteeId: id
+      }));
+  const row = document.getElementById("r-" + id).parentNode.parentNode
+  row.parentNode.removeChild(row)
+}
+
 document.getElementById("updateProfile").addEventListener("click", saveDetails);
 if (userId != null) {
   const socket = new SockJS('/textChat-chat');

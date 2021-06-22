@@ -60,7 +60,15 @@ class SitePageController {
             model: Model
     ): String {
         if (userId != null) {
-            model.addAttribute("person", personRepository!!.findById(userId!!).get())
+            val person = personRepository!!.findById(userId!!).get()
+            model.addAttribute("person", person)
+            if (person is Tutor) {
+                model.addAttribute("personList", person.tutees?.toSet())
+                model.addAttribute("tutee", false)
+            } else if (person is Tutee) {
+                model.addAttribute("personList", person.tutors?.toSet())
+                model.addAttribute("tutee", true)
+            }
         }
         return "user"
     }

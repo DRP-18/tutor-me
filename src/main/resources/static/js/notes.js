@@ -144,6 +144,7 @@ const getNewNoteId = (payload) => {
   if (notes.length == 0) {
     notesElm.innerHTML = `Nothing to show!
       Use "Add a Note" section above to add notes.`;
+    notesElm.style.textAlign = 'center'
     nothingTag = true;
   }
 

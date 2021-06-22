@@ -12,3 +12,5 @@ data class NoteMessage(val content: String = "", val sender: String = "")
 
 data class UserProfileMessage(val userId: String, val name: String,
                               val status: String, val avatar: String)
+
+data class TuteeInfoMessage(val tutorId: String, val tuteeId: String)
