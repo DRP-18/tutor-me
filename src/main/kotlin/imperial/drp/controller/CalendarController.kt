@@ -115,7 +115,7 @@ class CalendarController {
                 return ""
             }
             val tutee = tuteeOpt.get() as Tutee
-            for (tutor in tutee.tutors!!) {
+            for (tutor in tutee.tutors!!.toSet()) {
                 val tutorSessions = sessionRepository!!.findByTutor(tutor)
                 for (session in tutorSessions) {
                     if (session.tutees.contains(tutee)) {
