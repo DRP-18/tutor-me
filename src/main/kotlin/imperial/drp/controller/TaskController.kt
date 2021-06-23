@@ -73,6 +73,7 @@ class TaskController {
             val userType = getUserType(matchingUsers[0])
             response.addCookie(Cookie("user_type", userType))
             model.addAttribute("name", matchingUsers[0].name)
+            model.addAttribute("person", personRepository!!.findById(userId!!).get())
             return "dashboard"
         }
         return "login"
@@ -105,8 +106,9 @@ class TaskController {
                 val typeCookie = Cookie("user_type", userType)
                 response.addCookie(cookie)
                 response.addCookie(typeCookie)
+                model.addAttribute("person", personRepository!!.findById(userId!!).get())
+                return "dashboard"
             }
-            return "dashboard"
         }
         return "login"
     }
