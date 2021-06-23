@@ -30,11 +30,6 @@ class CalendarController {
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
     val jsonObject = ObjectMapper()
 
-    @RequestMapping("/calendar")
-    fun calendar(): String {
-        return "calendar"
-    }
-
     @PostMapping("/addSession")
     fun addSession(@RequestBody message: SessionMessage,
                    response: HttpServletResponse): ResponseEntity<PostResponseDto> {

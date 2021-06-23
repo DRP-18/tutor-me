@@ -38,18 +38,24 @@ class SitePageController {
             @CookieValue(value = "user_id", required = false) userId: Long?,
             model: Model): String {
         if (userId != null) {
-            model.addAttribute("name", personRepository!!.findById(userId).get().name)
+            model.addAttribute("person", personRepository!!.findById(userId).get())
         }
         return "dashboard"
     }
 
     @RequestMapping("/homework")
-    fun homeworkPage(): String {
+    fun homeworkPage(
+            @CookieValue(value = "user_id", required = false) userId: Long?,
+            model: Model): String {
+        addPersonToModel(userId, model)
         return "homework"
     }
 
     @RequestMapping("/notes")
-    fun notesPage(): String {
+    fun notesPage(
+            @CookieValue(value = "user_id", required = false) userId: Long?,
+            model: Model): String {
+        addPersonToModel(userId, model)
         return "notes"
     }
 
@@ -83,11 +89,12 @@ class SitePageController {
         } else {
             model.addAttribute("tutor", false)
         }
+        addPersonToModel(userId, model)
         return "task"
     }
 
     @RequestMapping("/chats")
-    fun textChatPage(
+    fun chatPage(
             @CookieValue(value = "user_id", required = false) userId: Long?,
             model: Model
     ): String {
@@ -137,19 +144,26 @@ class SitePageController {
     }
 
     @RequestMapping("/calls")
-    fun videoCallPage(): String {
+    fun videoCallPage(
+            @CookieValue(value = "user_id", required = false) userId: Long?,
+            model: Model): String {
+        addPersonToModel(userId, model)
         return "calls"
     }
 
-    @RequestMapping("/calls_page")
-    fun videoCallPage2(): String {
-        return "videoCallsPage/index"
+    @RequestMapping("/calendar")
+    fun calendar(
+            @CookieValue(value = "user_id", required = false) userId: Long?,
+            model: Model): String {
+        addPersonToModel(userId, model)
+        return "calendar"
     }
 
-    @RequestMapping("/task")
-    fun task(): String {
-        return "task2"
+    private fun addPersonToModel(userId: Long?, model: Model) {
+        if (userId != null) {
+            model.addAttribute("person", personRepository!!.findById(userId).get())
+        } else {
+            model.addAttribute("person", Person("", "Hey there", 1))
+        }
     }
-
-
 }

@@ -110,7 +110,7 @@
       <div class="logo" style="padding-left: 10px">
         <div class="login100-pic js-tilt" data-tilt=""
              style="will-change: transform; transform: perspective(300px) rotateX(0deg) rotateY(0deg);"
-             onclick="window.location.href='/'>
+             onclick="window.location.href='/'">
           <img style=" width: 240px;" src="/img/logo.png" alt="logo">
         </div>
       </div>
@@ -181,6 +181,21 @@
 
           <ul class="nav navbar-nav navbar-right">
             <li>
+              <a href="/user" style="padding-top: 12px;padding-right: 0px;">
+                <p th:text="${person.name}"></p>
+              </a>
+            </li>
+            <li>
+              <div class="login100-pic js-tilt" data-tilt=""
+                   style="will-change: transform; transform: perspective(300px) rotateX(0deg) rotateY(0deg);"
+                   onclick="window.location.href='/user'">
+                <img id="navBarProfilePic" class="avatar border-gray"
+                     style="margin-top: 6px; height: 50px; width: 50px;"
+                     th:src="'/img/avatars/' + ${person.avatar} + '.png'"
+                     th:alt="${person.avatar}"/>
+              </div>
+            </li>
+            <li>
               <a href="/logout">
                 <p>Log out</p>
               </a>
@@ -194,8 +209,9 @@
 
     <div class="content">
       <div class="container-fluid">
-        <h1 style="text-align: center;margin-top: 0px;margin-bottom: 30px;" th:if="${name}!=null"
-            th:text="'Welcome ' + ${name} + '!'"></h1>
+        <h1 style="text-align: center;margin-top: 0px;margin-bottom: 30px;"
+            th:if="${person.name}!=null"
+            th:text="'Welcome ' + ${person.name} + '!'"></h1>
 
 
         <div class="row">

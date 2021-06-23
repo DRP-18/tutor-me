@@ -5,7 +5,7 @@
   <link rel="icon" type="image/png" href="/img/favicon.ico">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 
-  <title>Light Bootstrap Dashboard by Creative Tim</title>
+  <title>Tutor Me</title>
 
   <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
         name='viewport'/>
@@ -46,7 +46,8 @@
     <div class="sidebar-wrapper">
       <div class="logo" style="padding-left: 10px">
         <div class="login100-pic js-tilt" data-tilt=""
-             style="will-change: transform; transform: perspective(300px) rotateX(0deg) rotateY(0deg);">
+             style="will-change: transform; transform: perspective(300px) rotateX(0deg) rotateY(0deg);"
+             onclick="window.location.href='/'">
           <img style="width: 240px; height: auto;" src="/img/logo.png" alt="logo">
         </div>
       </div>
@@ -118,7 +119,21 @@
 
           <ul class="nav navbar-nav navbar-right">
             <li>
-              <a href="/logout">
+              <a href="" style="padding-top: 12px;padding-right: 0px;">
+                <p th:text="${person.name}"></p>
+              </a>
+            </li>
+            <li>
+              <div class="login100-pic js-tilt" data-tilt=""
+                   style="will-change: transform; transform: perspective(300px) rotateX(0deg) rotateY(0deg);">
+                <img id="navBarProfilePic" class="avatar border-gray"
+                     style="margin-top: 6px; height: 50px; width: 50px;"
+                     th:src="'/img/avatars/' + ${person.avatar} + '.png'"
+                     th:alt="${person.avatar}"/>
+              </div>
+            </li>
+            <li>
+              <a href="/logout" style="padding-top: 12px">
                 <p>Log out</p>
               </a>
             </li>
