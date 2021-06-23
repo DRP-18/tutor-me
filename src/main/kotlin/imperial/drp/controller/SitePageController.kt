@@ -37,9 +37,7 @@ class SitePageController {
     fun homepage(
             @CookieValue(value = "user_id", required = false) userId: Long?,
             model: Model): String {
-        if (userId != null) {
-            model.addAttribute("person", personRepository!!.findById(userId).get())
-        }
+        addPersonToModel(userId, model)
         return "dashboard"
     }
 
@@ -65,7 +63,7 @@ class SitePageController {
             model: Model
     ): String {
         if (userId != null) {
-            val person = personRepository!!.findById(userId!!).get()
+            val person = personRepository!!.findById(userId).get()
             model.addAttribute("person", person)
             if (person is Tutor) {
                 model.addAttribute("personList", person.tutees?.toSet())
