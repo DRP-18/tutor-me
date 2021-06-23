@@ -30,6 +30,14 @@ const onConnected = () => {
   stompClient.subscribe('/topic/chat-' + userId + '-receiveMessage',
       receiveMessage);
 
+  const inputBox = document.getElementById("messageBox");
+  inputBox.addEventListener("keyup", function (event) {
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      sendMessage()
+    }
+  });
+
   // Sent to populate allUsersDetails object
   stompClient.send("/app/chat.getUsersDetails", {},
       JSON.stringify({sender: userId}))
@@ -114,7 +122,6 @@ function addSideBarEntry(newId) {
   div.classList.add("bg-success");
   div.classList.add("float-right");
   div.id = "unread-" + newId;
-  div.innerText = "5";
   aDiv.appendChild(div);
 
   const div2 = document.createElement('div');
@@ -125,27 +132,28 @@ function addSideBarEntry(newId) {
   imgTag.src = '/img/avatars/' + allUsersDetails[newId].avatar + '.png';
   imgTag.classList.add("rounded-circle");
   imgTag.classList.add("mr-1");
-  imgTag.width = "40";
-  imgTag.height = "40";
+  imgTag.width = "60";
+  imgTag.height = "60";
   div2.appendChild(imgTag);
 
-  const div3 = document.createElement('div');
-  div3.classList.add("flex-grow-1");
-  div3.classList.add("ml-3");
-  div3.innerText = allUsersDetails[newId].name;
+  const nameHeader = document.createElement('h3');
+  nameHeader.classList.add("flex-grow-1");
+  nameHeader.classList.add("ml-3");
+  nameHeader.style.marginTop = "15px"
+  nameHeader.innerText = allUsersDetails[newId].name;
 
   const div4 = document.createElement('div');
   div4.classList.add("small");
 
-  const span = document.createElement('div');
-  span.classList.add("fas");
-  span.classList.add("fa-circle");
-  span.classList.add("chat-online");
-  div4.appendChild(span);
+  // const span = document.createElement('div');
+  // span.classList.add("fas");
+  // span.classList.add("fa-circle");
+  // span.classList.add("chat-online");
+  // div4.appendChild(span);
   // div4.innerText = "Online"
 
-  div3.appendChild(div4);
-  div2.appendChild(div3);
+  nameHeader.appendChild(div4);
+  div2.appendChild(nameHeader);
 
   aDiv.appendChild(div2);
   entry.appendChild(aDiv);
@@ -293,7 +301,11 @@ const sendMessage = () => {
 const receiveMessage = (payload) => {
   const message = JSON.parse(payload.body);
   console.log("received message " + message);
-  allMessages[message.sender.id].push(message);
+  if (message.sender.id in allMessages) {
+    allMessages[message.sender.id].push(message);
+  } else {
+    allMessages[message.sender.id] = [message]
+  }
   if (message.sender.id == currentSelectedChat) {
     const chatPanel = document.getElementById("chatPanel");
     chatPanel.append(addReceivingMessageToChatPanel(message.message,
@@ -309,16 +321,11 @@ const receiveMessage = (payload) => {
 };
 
 const sendNotification = (message) => {
-  const startingMessage = "Unread: ";
-  const messagePreLength = startingMessage.length; // Length of message before number
   const unreadSidebar = document.getElementById("unread-" + message.sender.id);
   if (unreadSidebar.innerText === "") {
-    unreadSidebar.innerText = startingMessage + "1"
+    unreadSidebar.innerText = "1"
   } else {
-    const alreadyUnseenMessages = unreadSidebar.innerText.slice(
-        messagePreLength);
-    unreadSidebar.innerText = startingMessage + (parseInt(alreadyUnseenMessages)
-        + 1).toString()
+    unreadSidebar.innerText = (parseInt(unreadSidebar.innerText) + 1).toString()
   }
 };
 
