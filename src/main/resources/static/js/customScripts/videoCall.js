@@ -205,14 +205,13 @@ function resetCall() {
   callAccepted = false;
   callEnded = false;
   call = {};
-  theirSrcObject = {}
-      .srcObject = {};
+  theirSrcObject.srcObject = {};
   const video = document.getElementById("theirVideo");
-  video.srcObject.getVideoTracks().forEach(track => {
-    track.stop();
-    video.srcObject.removeTrack(track);
-    video.style.display = "none"
-  });
+  // video.srcObject.getVideoTracks().forEach(track => {
+  //   track.stop();
+  //   video.srcObject.removeTrack(track);
+  //   video.style.display = "none"
+  // });
   video.style.display = "none";
 }
 
@@ -224,7 +223,7 @@ const leaveCall = () => {
         JSON.stringify({message: call.from}));
   }
   callEnded = true;
-  // connectionRef.current.destroy(); /*Stop receiving input from user camera and microphone */
+  connectionRef.destroy(); /*Stop receiving input from user camera and microphone */
   // window.location.reload();
   resetCall()
 };
