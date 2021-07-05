@@ -106,7 +106,7 @@ class WebrtcController {
     @MessageMapping("/video.iceCandidates")
     fun getIceCandidates(@Payload message: SimpleMessage) {
         print("Sending back to ${message.message}" + iceServers)
-        currentCalls.remove(message.message)
+        currentCalls.remove(message.message.toLong())
         sender.convertAndSend("/topic/video/${message.message}/iceCandidates", iceServers)
     }
 }
