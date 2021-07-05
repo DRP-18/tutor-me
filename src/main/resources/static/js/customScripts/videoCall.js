@@ -228,6 +228,29 @@ const leaveCall = () => {
   resetCall()
 };
 
+function shareScreen() {
+  navigator.mediaDevices.getDisplayMedia({cursor: true}).then(
+      incomingStream => {
+        const screenTrack = incomingStream.getTracks()[0]
+        // setOurStream(screenTrack)
+        connectionRef.replaceTrack(stream.getVideoTracks()[0], screenTrack,
+            stream)
+        // usConnectionRef.addTrack(screenTrack,stream)
+        // usConnectionRef.stream = screenTrack;
+        // const sender = connectionRef.getSenders().find(s => s.track.kind === videoTrack.kind);
+        // connectionRef.replaceTrack(screenTrack)
+
+        screenTrack.onended = function () {
+          connectionRef.replaceTrack(screenTrack, stream.getTracks()[1], stream)
+        }
+        // const sender = connectionRef.getSenders().find(s => s.track.kind === videoTrack.kind);
+        // setOurStream(stream)
+        // usConnectionRef.stream = stream
+        // sender.replaceTrack(stream.getTracks()[1]);
+        // }
+      });
+}
+
 window.onload = function () {
   connect({})
 };
