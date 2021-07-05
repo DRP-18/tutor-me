@@ -107,7 +107,7 @@ const saveIceCandidates = (payload) => {
 const incomingCall = (payload) => {
   const message = JSON.parse(payload.body);
   console.log("Person calling me " + message.callerName);
-  document.getElementById('accept').style.display = "block"
+  document.getElementById('accept').style.display = "block";
 
   call = {
     isReceivedCall: true,
@@ -123,8 +123,9 @@ const incomingCall = (payload) => {
 // acceptCall
 const answerCall = () => {
   document.getElementById('callNotification').innerText = "";
-  document.getElementById('end').style.display = "block"
-  document.getElementById('accept').style.display = "none"
+  document.getElementById('end').style.display = "block";
+  document.getElementById('shareScreen').style.display = "block";
+  document.getElementById('accept').style.display = "none";
 
   callAccepted = true;
   /*simple peer library usage */
@@ -145,10 +146,7 @@ const answerCall = () => {
 
   peer.on("stream", (currentStream) => {
     /* This is the other persons stream*/
-    theirSrcObject = currentStream;
-    const theirVid = document.getElementById("theirVideo");
-    theirVid.srcObject = currentStream
-    theirVid.style.display = "block"
+    setTheirStream(currentStream)
   });
 
   peer.signal(call.signal);
@@ -156,6 +154,15 @@ const answerCall = () => {
   connectionRef = peer;
 
 };
+
+function setTheirStream(currentStream) {
+  theirSrcObject = currentStream;
+  const theirVid = document.getElementById("theirVideo");
+  theirVid.srcObject = currentStream;
+  theirVid.style.display = "block"
+  theirVid.controls = "controls"
+}
+
 // CallPeer
 const callUser = (id) => {
   /*we are the person calling */
@@ -180,16 +187,13 @@ const callUser = (id) => {
   });
 
   peer.on("stream", (currentStream) => {
-
-    theirSrcObject = currentStream;
-    const theirVid = document.getElementById("theirVideo");
-    theirVid.srcObject = currentStream
-    theirVid.style.display = "block"
-
+    setTheirStream(currentStream)
   });
 
   const onCallAccepted = (signal) => {
-    document.getElementById('end').style.display = "block"
+    document.getElementById('callNotification').innerText = "";
+    document.getElementById('end').style.display = "block";
+    document.getElementById('shareScreen').style.display = "block";
     callAccepted = true;
     const message = JSON.parse(signal.body);
     call = {name: findUsersName(id), from: id};
@@ -207,16 +211,18 @@ function resetCall() {
   call = {};
   theirSrcObject.srcObject = {};
   const video = document.getElementById("theirVideo");
+  video.style.display = "none";
+  video.controls = ""
   // video.srcObject.getVideoTracks().forEach(track => {
   //   track.stop();
   //   video.srcObject.removeTrack(track);
   //   video.style.display = "none"
   // });
-  video.style.display = "none";
 }
 
 const leaveCall = () => {
-  document.getElementById('end').style.display = "none"
+  document.getElementById('end').style.display = "none";
+  document.getElementById('shareScreen').style.display = "none";
   console.log("LEAVING THE CALL " + call.from);
   if (callEnded === false) {
     stompClient.send("/app/video.endCall", {},
@@ -231,23 +237,15 @@ const leaveCall = () => {
 function shareScreen() {
   navigator.mediaDevices.getDisplayMedia({cursor: true}).then(
       incomingStream => {
-        const screenTrack = incomingStream.getTracks()[0]
-        // setOurStream(screenTrack)
+        const screenTrack = incomingStream.getTracks()[0];
         connectionRef.replaceTrack(stream.getVideoTracks()[0], screenTrack,
-            stream)
-        // usConnectionRef.addTrack(screenTrack,stream)
-        // usConnectionRef.stream = screenTrack;
-        // const sender = connectionRef.getSenders().find(s => s.track.kind === videoTrack.kind);
-        // connectionRef.replaceTrack(screenTrack)
-
+            stream);
+        document.getElementById(
+            'callNotification').innerText = "You are Screen Sharing";
         screenTrack.onended = function () {
+          document.getElementById('callNotification').innerText = "";
           connectionRef.replaceTrack(screenTrack, stream.getTracks()[1], stream)
         }
-        // const sender = connectionRef.getSenders().find(s => s.track.kind === videoTrack.kind);
-        // setOurStream(stream)
-        // usConnectionRef.stream = stream
-        // sender.replaceTrack(stream.getTracks()[1]);
-        // }
       });
 }
 
