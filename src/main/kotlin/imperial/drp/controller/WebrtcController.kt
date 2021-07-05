@@ -8,6 +8,7 @@ import imperial.drp.dao.PersonRepository
 import imperial.drp.entity.Person
 import imperial.drp.entity.Tutee
 import imperial.drp.entity.Tutor
+import imperial.drp.model.CallerCalleeMessage
 import imperial.drp.model.CallingMessage
 import imperial.drp.model.CallingMessageWithName
 import imperial.drp.model.SimpleMessage
@@ -29,6 +30,8 @@ class WebrtcController {
 
     lateinit var iceServers: List<IceServer>
 
+    val currentCalls = mutableMapOf<Long, Boolean>()
+
     init {
         val ACCOUNT_SID = getenv("TWILIO_ACCOUNT_SID")
         val AUTH_TOKEN = getenv("TWILIO_AUTH_TOKEN")
@@ -47,9 +50,11 @@ class WebrtcController {
     private val personRepository: PersonRepository? = null
 
     @MessageMapping("/video.endCall")
-    fun endCall(@Payload message: SimpleMessage) {
-        println("The disconnecting message is ${message.message}")
-        sender.convertAndSend("/topic/video/${message.message}/endCall", object {})
+    fun endCall(@Payload message: CallerCalleeMessage) {
+        println("The disconnecting message is ${message.caller}")
+        currentCalls.remove(message.callee.toLong())
+        currentCalls.remove(message.caller.toLong())
+        sender.convertAndSend("/topic/video/${message.caller}/endCall", object {})
     }
 
     @MessageMapping("/video.getAllUsers")
@@ -78,9 +83,14 @@ class WebrtcController {
     fun callUser(@Payload message: CallingMessage) {
         println("User message: ${message.callee}, ${message.caller}")
         val calleeID = message.callee
-        val callerName = personRepository?.findById(message.caller.toLong())!!.get().name!!
-        sender.convertAndSend("/topic/video/$calleeID/incomingCall",
-                CallingMessageWithName(message.callee, message.caller, callerName, message.signal))
+        if (!currentCalls.contains(message.callee.toLong())) {
+            val callerName = personRepository?.findById(message.caller.toLong())!!.get().name!!
+            sender.convertAndSend("/topic/video/$calleeID/incomingCall",
+                    CallingMessageWithName(message.callee, message.caller, callerName, message.signal))
+        } else {
+            sender.convertAndSend("/topic/video/${message.caller}/alreadyInCall", object {})
+        }
+
     }
 
 
@@ -88,12 +98,15 @@ class WebrtcController {
     fun acceptCall(@Payload message: CallingMessage) {
         println("accept Call message: ${message.callee}, ${message.caller}")
         val callerID = message.caller
+        currentCalls[message.callee.toLong()] = true
+        currentCalls[message.caller.toLong()] = true
         sender.convertAndSend("/topic/video/$callerID/callAccepted", message)
     }
 
     @MessageMapping("/video.iceCandidates")
     fun getIceCandidates(@Payload message: SimpleMessage) {
         print("Sending back to ${message.message}" + iceServers)
+        currentCalls.remove(message.message)
         sender.convertAndSend("/topic/video/${message.message}/iceCandidates", iceServers)
     }
 }

@@ -10,13 +10,15 @@ let me = "";
 let users = {};
 let call = {};
 let callAccepted = false;
-let callEnded = false;
+let callEnded = true;
 let theirName = "";
 let iceCandidates = {};
 const userID = getCookie("user_id");
 let mySrcObject = {};
 let theirSrcObject = {};
-var connectionRef = {};
+let connectionRef = {};
+let personCalling = "";
+let TIME_TO_SHOW_ERROR = 5000; // in milliseconds
 
 const connect = (event) => {
   const socket = new SockJS('/videoCall-video');
@@ -49,6 +51,8 @@ const onConnected = () => {
   stompClient.subscribe('/topic/video/' + userID + '/endCall', leaveCall);
   stompClient.subscribe('/topic/video/' + userID + '/iceCandidates',
       saveIceCandidates);
+  stompClient.subscribe('/topic/video/' + userID + '/alreadyInCall',
+      alreadyInCall);
 
   stompClient.send("/app/video.getAllUsers", {},
       JSON.stringify({message: userID}));
@@ -128,6 +132,7 @@ const answerCall = () => {
   document.getElementById('accept').style.display = "none";
 
   callAccepted = true;
+  callEnded = false;
   /*simple peer library usage */
   /* Initiator is who starts call
       stream from earlier getUserMedia
@@ -177,8 +182,9 @@ const callUser = (id) => {
   });
   console.log("The user has been called by " + id);
   console.log("Message being sent: ");
+  personCalling = users[id]
   document.getElementById('callNotification').innerText = "Calling "
-      + users[id];
+      + personCalling;
 
   peer.on("signal", (data) => {
     console.log(JSON.stringify({callee: id, caller: userID, signal: data}));
@@ -195,6 +201,7 @@ const callUser = (id) => {
     document.getElementById('end').style.display = "block";
     document.getElementById('shareScreen').style.display = "block";
     callAccepted = true;
+    callEnded = false;
     const message = JSON.parse(signal.body);
     call = {name: findUsersName(id), from: id};
     peer.signal(message.signal)
@@ -205,19 +212,25 @@ const callUser = (id) => {
   connectionRef = peer;
 };
 
+function clearMessage() {
+  document.getElementById('callNotification').innerText = "";
+}
+
+function alreadyInCall() {
+  document.getElementById('callNotification').innerText = personCalling
+      + " is already in a call";
+  setTimeout(clearMessage, 2500)
+  resetCall()
+}
+
 function resetCall() {
   callAccepted = false;
-  callEnded = false;
+  callEnded = true;
   call = {};
   theirSrcObject.srcObject = {};
   const video = document.getElementById("theirVideo");
   video.style.display = "none";
   video.controls = ""
-  // video.srcObject.getVideoTracks().forEach(track => {
-  //   track.stop();
-  //   video.srcObject.removeTrack(track);
-  //   video.style.display = "none"
-  // });
 }
 
 const leaveCall = () => {
@@ -226,9 +239,8 @@ const leaveCall = () => {
   console.log("LEAVING THE CALL " + call.from);
   if (callEnded === false) {
     stompClient.send("/app/video.endCall", {},
-        JSON.stringify({message: call.from}));
+        JSON.stringify({callee: userID, caller: call.from}));
   }
-  callEnded = true;
   connectionRef.destroy(); /*Stop receiving input from user camera and microphone */
   // window.location.reload();
   resetCall()
