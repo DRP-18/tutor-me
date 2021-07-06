@@ -30,6 +30,7 @@ const connect = (event) => {
     stream = currentStream;
     mySrcObject = currentStream;
     document.getElementById("myVideo").srcObject = currentStream
+    document.getElementById("dashBoardVideo").srcObject = currentStream
   });
   stompClient.connect({}, onConnected, onError)
 };
@@ -87,19 +88,35 @@ const onUsernameReceived = (payload) => {
   me = userID;
   theirName = name;
   console.log(Object.keys(users));
-
+  let counter = 1;
   for (const [k, v] of Object.entries(users)) {
-    const newConvDropDown = document.getElementById('newConvDropDown');
-    const li = document.createElement('li');
-    const aTag = document.createElement('a');
-    aTag.onclick = function () {
-      callUser(k)
-    };
-    aTag.innerText = v;
-    li.appendChild(aTag);
-    newConvDropDown.appendChild(li)
+    addDropDownOption(k, v)
+    if (counter <= 3) {
+      addDashBoardQuickCallOption(k, v, counter)
+    }
+    counter++;
   }
 };
+
+function addDropDownOption(id, name) {
+  const newConvDropDown = document.getElementById('newConvDropDown');
+  const li = document.createElement('li');
+  const aTag = document.createElement('a');
+  aTag.onclick = function () {
+    callUser(id)
+  };
+  aTag.innerText = name;
+  li.appendChild(aTag);
+  newConvDropDown.appendChild(li)
+}
+
+function addDashBoardQuickCallOption(id, name, userNumber) {
+  const nameTag = document.getElementById(
+      'nameUnderProfilePicUser' + userNumber)
+  nameTag.innerText = name
+  const userTag = document.getElementById('user' + userNumber)
+  userTag.style.display = 'block'
+}
 
 const saveIceCandidates = (payload) => {
   console.log("This is the " + payload);
@@ -267,6 +284,24 @@ function shareScreen() {
       });
 }
 
+function setVideoDimensions(vid) {
+  let width;
+  width = vid.parentNode.offsetWidth;
+  vid.height = 450;
+  vid.width = width;
+}
+
+function individualCalls() {
+  document.getElementById("callDashboard").style.display = "none"
+  document.getElementById("individualCall").style.display = "block"
+  const myVid = document.getElementById("myVideo");
+  const theirVid = document.getElementById("theirVideo");
+  setVideoDimensions(myVid);
+  setVideoDimensions(theirVid);
+}
+
 window.onload = function () {
   connect({})
+  const dashBoardVid = document.getElementById("dashBoardVideo");
+  setVideoDimensions(dashBoardVid);
 };
