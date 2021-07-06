@@ -29,6 +29,8 @@ class WebrtcController {
     lateinit var iceServers: List<IceServer>
 
     val currentCalls = mutableMapOf<Long, Boolean>()
+    val currentGroupCalls = mutableMapOf<Int, List<Person>>()
+    var groupNumber: Sequence<Int> = generateSequence(1) { it + 1 }
 
     init {
         val ACCOUNT_SID = getenv("TWILIO_ACCOUNT_SID")
@@ -46,6 +48,16 @@ class WebrtcController {
 
     @Autowired
     private val personRepository: PersonRepository? = null
+
+    fun getGroupNumber(): Int {
+        val number = groupNumber.take(1).toList()
+        groupNumber = groupNumber.drop(1)
+        return number[0]
+    }
+
+    fun replaceGroupNumber(number: Int) {
+        groupNumber = sequenceOf(number) + groupNumber
+    }
 
     @MessageMapping("/video.endCall")
     fun endCall(@Payload message: CallerCalleeMessage) {
@@ -92,7 +104,6 @@ class WebrtcController {
         } else {
             sender.convertAndSend("/topic/video/${message.caller}/alreadyInCall", object {})
         }
-
     }
 
 
@@ -110,5 +121,12 @@ class WebrtcController {
         print("Sending back to ${message.message}" + iceServers)
         currentCalls.remove(message.message.toLong())
         sender.convertAndSend("/topic/video/${message.message}/iceCandidates", iceServers)
+    }
+
+    //    Group calls
+    @MessageMapping("/video.getGroupId")
+    fun getGroupId(@Payload message: SimpleMessage) {
+        val number = getGroupNumber()
+        sender.convertAndSend("/topic/video/${message.message}/groupId", number)
     }
 }

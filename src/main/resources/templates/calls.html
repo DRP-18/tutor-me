@@ -181,7 +181,8 @@
                     <h5>Talk with multiple people on the same call!</h5>
                   </div>
                   <div class="content">
-                    <button class="btn btn-default btn-block">Group calls</button>
+                    <button class="btn btn-default btn-block" onclick="groupCalls()">Group calls
+                    </button>
                   </div>
                 </div>
               </div>
@@ -373,17 +374,131 @@
         <div class="row">
           <div class="col-md-6 justify-content-center">
             <div class="card">
-              <div class="header" style="text-align: center">
-                <h4>Krishan</h4>
-              </div>
-              <div class="content">
-                <video playsInline muted id="myVideo" autoPlay controls/>
-              </div>
+              <video playsInline muted id="myVideo" autoPlay controls/>
             </div>
           </div>
           <div class="col-md-6 justify-content-center">
             <div class="card">
               <video playsInline id="theirVideo" autoPlay/>
+            </div>
+          </div>
+        </div>
+        <!--        <div class="row">-->
+        <!--          <div class="col-md-6">-->
+
+        <!--            <div class="dropdown">-->
+        <!--              <button class="dropdown-toggle btn btn-info btn-fill" data-toggle="dropdown" type="button">-->
+        <!--                <p><i class="fas fa-phone-alt"></i>    New Call    <b class="caret"></b></p>-->
+        <!--              </button>-->
+        <!--&lt;!&ndash;              <button class="btn btn-info btn-fill" id="callJayme" type="button" onclick="callUser(1)">Call Jayme</button>&ndash;&gt;-->
+        <!--&lt;!&ndash;              <button class="btn btn-info btn-fill" id="callKrishan" type="button" onclick="callUser(30)">Call Krishan</button>&ndash;&gt;-->
+        <!--              <button class="btn btn-success btn-fill" id="accept" type="button" onclick="answerCall()">Accept Call</button>-->
+        <!--              <button class="btn btn-danger btn-fill" id="end" type="button" onclick="leaveCall()">End Call</button>-->
+        <!--              <ul class="dropdown-menu" id="newConvDropDown">-->
+        <!--              </ul>-->
+        <!--            </div>-->
+        <!--          </div>-->
+
+        <!--          <div class="col-md-8">-->
+
+        <!--          </div>-->
+        <!--        </div>-->
+      </div>
+
+      <div id="groupCall" class="container-fluid" style="display: none">
+        <div class="places-buttons">
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3 text-center">
+              <h3 id="groupCallNotification"></h3>
+              <h5 id="groupDropDownText">Select a person to call</h5>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 col-md-offset-3">
+              <button class="btn btn-success btn-block" id="groupAccept" type="button"
+                      style="display: none"
+                      onclick="answerCall()">Accept Call
+              </button>
+            </div>
+            <div class="col-md-2">
+              <button id="startGroupCall" class="btn btn-block btn-default" onclick="getGroupId()">
+                Start a Group Call
+              </button>
+
+              <div class="dropdown" id="groupNewCallDropDown" style="display: none;">
+                <button class="dropdown-toggle btn btn-default btn-block" data-toggle="dropdown"
+                        type="button">
+                  <p style="margin-bottom: 0px"><i class="fas fa-phone-alt"></i> New Call <b
+                      class="caret"></b></p>
+                </button>
+                <ul class="dropdown-menu" id="groupNewConvDropDown">
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-danger btn-block" id="groupEnd" type="button"
+                      onclick="leaveCall()"
+                      style="display: none">
+                End Call
+              </button>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-default btn-block" id="groupShareScreen" style="display: none"
+                      onclick="shareScreen()">Share Screen
+              </button>
+            </div>
+          </div>
+          <!--          <div class="row">-->
+          <!--            <div class="col-md-2 col-md-offset-3">-->
+
+          <!--            </div>-->
+          <!--            <div class="col-md-2">-->
+          <!--              <button class="btn btn-default btn-block"-->
+          <!--                      onclick="demo.showNotification('top','center')">Top Center-->
+          <!--              </button>-->
+          <!--            </div>-->
+          <!--            <div class="col-md-2">-->
+          <!--              <button class="btn btn-default btn-block"-->
+          <!--                      onclick="demo.showNotification('top','right')">Top Right-->
+          <!--              </button>-->
+          <!--            </div>-->
+          <!--          </div>-->
+        </div>
+
+
+        <div class="row">
+          <div class="col-md-4 justify-content-center">
+            <div class="card">
+              <video playsInline muted id="myGroupVideo" autoPlay controls/>
+            </div>
+          </div>
+          <div class="col-md-4 justify-content-center">
+            <div class="card" style="display: none;">
+              <video playsInline id="peerVideo1" autoPlay/>
+            </div>
+          </div>
+          <div class="col-md-4 justify-content-center">
+            <div class="card" style="display: none;">
+              <video playsInline id="peerVideo2" autoPlay/>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 justify-content-center">
+            <div class="card" style="display: none;">
+              <video playsInline id="peerVideo3" autoPlay/>
+
+            </div>
+          </div>
+          <div class="col-md-4 justify-content-center">
+            <div class="card" style="display: none;">
+              <video playsInline id="peerVideo4" autoPlay/>
+            </div>
+          </div>
+          <div class="col-md-4 justify-content-center">
+            <div class="card" style="display: none;">
+              <video playsInline id="peerVideo5" autoPlay/>
             </div>
           </div>
         </div>
@@ -417,7 +532,7 @@
 
 <style>
   body {
-    overflow: hidden; /* Hide scrollbars */
+    overflow-x: hidden; /* Hide scrollbars */
   }
 
   video {

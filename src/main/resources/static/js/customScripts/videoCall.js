@@ -18,7 +18,9 @@ let mySrcObject = {};
 let theirSrcObject = {};
 let connectionRef = {};
 let personCalling = "";
-let TIME_TO_SHOW_ERROR = 5000; // in milliseconds
+
+let groupCallId;
+let peers = [];
 
 const connect = (event) => {
   const socket = new SockJS('/videoCall-video');
@@ -31,6 +33,7 @@ const connect = (event) => {
     mySrcObject = currentStream;
     document.getElementById("myVideo").srcObject = currentStream;
     document.getElementById("dashBoardVideo").srcObject = currentStream
+    document.getElementById("myGroupVideo").srcObject = currentStream
   });
   stompClient.connect({}, onConnected, onError)
 };
@@ -45,15 +48,10 @@ function getCookie(name) {
 
 const onConnected = () => {
   console.log("This is my user ID: " + userID);
-  stompClient.subscribe('/topic/video/' + userID + '/incomingCall',
-      incomingCall);
   stompClient.subscribe('/topic/video/' + userID + '/userDetails',
       saveUserDetails);
-  stompClient.subscribe('/topic/video/' + userID + '/endCall', leaveCall);
   stompClient.subscribe('/topic/video/' + userID + '/iceCandidates',
       saveIceCandidates);
-  stompClient.subscribe('/topic/video/' + userID + '/alreadyInCall',
-      alreadyInCall);
 
   stompClient.send("/app/video.getAllUsers", {},
       JSON.stringify({message: userID}));
@@ -64,6 +62,14 @@ const onConnected = () => {
 const onError = () => {
   console.log("Error with socket connection!")
 };
+
+function indivCallSetUp() {
+  stompClient.subscribe('/topic/video/' + userID + '/incomingCall',
+      incomingCall);
+  stompClient.subscribe('/topic/video/' + userID + '/endCall', leaveCall);
+  stompClient.subscribe('/topic/video/' + userID + '/alreadyInCall',
+      alreadyInCall);
+}
 
 function findUsersName(id) {
   for (const [k, v] of Object.entries(allUsersDetails)) {
@@ -99,6 +105,7 @@ const saveUserDetails = (payload) => {
 
 function addDropDownOption(id, name) {
   const newConvDropDown = document.getElementById('newConvDropDown');
+  const groupNewConvDropDown = document.getElementById('groupNewConvDropDown');
   const li = document.createElement('li');
   const aTag = document.createElement('a');
   aTag.onclick = function () {
@@ -107,6 +114,7 @@ function addDropDownOption(id, name) {
   aTag.innerText = name;
   li.appendChild(aTag);
   newConvDropDown.appendChild(li)
+  groupNewConvDropDown.appendChild(li)
 }
 
 function addDashBoardQuickCallOption(id, user, userNumber) {
@@ -303,6 +311,43 @@ function individualCalls() {
   const theirVid = document.getElementById("theirVideo");
   setVideoDimensions(myVid);
   setVideoDimensions(theirVid);
+  indivCallSetUp()
+}
+
+function groupCalls() {
+  document.getElementById("callDashboard").style.display = "none";
+  document.getElementById("groupCall").style.display = "block";
+  const myGroupVideo = document.getElementById("myGroupVideo");
+  setVideoDimensions(myGroupVideo);
+  groupCallSetUp()
+}
+
+function groupCallSetUp() {
+  stompClient.subscribe('/topic/video/' + userID + '/groupId',
+      newGroupCallID);
+}
+
+function getGroupId() {
+  document.getElementById("startGroupCall").style.display = "none";
+  document.getElementById("groupNewCallDropDown").style.display = "block";
+  stompClient.send("/app/video.getGroupId", {},
+      JSON.stringify({message: userID}));
+}
+
+const newGroupCallID = (payload) => {
+  groupCallId = JSON.parse(payload.body);
+  console.log("group id is: " + groupCallId)
+}
+
+function resizeAllVideos() {
+  const myVid = document.getElementById("myVideo");
+  const theirVid = document.getElementById("theirVideo");
+  const myGroupVideo = document.getElementById("myGroupVideo");
+  const dashBoardVid = document.getElementById("dashBoardVideo");
+  setVideoDimensions(myVid);
+  setVideoDimensions(theirVid);
+  setVideoDimensions(myGroupVideo);
+  setVideoDimensions(dashBoardVid);
 }
 
 window.onload = function () {
@@ -310,3 +355,5 @@ window.onload = function () {
   const dashBoardVid = document.getElementById("dashBoardVideo");
   setVideoDimensions(dashBoardVid);
 };
+
+window.onresize = resizeAllVideos
