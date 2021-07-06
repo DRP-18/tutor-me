@@ -29,7 +29,8 @@ class WebrtcController {
     lateinit var iceServers: List<IceServer>
 
     val currentCalls = mutableMapOf<Long, Boolean>()
-    val currentGroupCalls = mutableMapOf<Int, List<Person>>()
+    val currentGroupCalls = mutableMapOf<Int, MutableList<Person>>() //Map of group number to group members
+    val groupNumberAllocations = mutableMapOf<Long, Int>() //Map of Person Id to group number
     var groupNumber: Sequence<Int> = generateSequence(1) { it + 1 }
 
     init {
@@ -39,7 +40,7 @@ class WebrtcController {
             Twilio.init(ACCOUNT_SID, AUTH_TOKEN)
             iceServers = Token.creator().create().iceServers
         } else {
-            log.warn("TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN doesn't present!")
+            log.warn("TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN isn't present!")
         }
     }
 
@@ -127,6 +128,32 @@ class WebrtcController {
     @MessageMapping("/video.getGroupId")
     fun getGroupId(@Payload message: SimpleMessage) {
         val number = getGroupNumber()
+        val person = personRepository?.findById(message.message.toLong())!!.get()!!
+        if (currentGroupCalls.containsKey(number)) {
+            currentGroupCalls[number]?.add(person)
+        } else {
+            currentGroupCalls[number] = mutableListOf(person)
+        }
+        groupNumberAllocations[person.id!!] = number
         sender.convertAndSend("/topic/video/${message.message}/groupId", number)
+    }
+
+    @MessageMapping("/video.groupCallUser")
+    fun groupCallUser(@Payload message: CallingMessage) {
+        val calleeID = message.callee
+        val callerName = personRepository?.findById(message.caller.toLong())!!.get().name!!
+        sender.convertAndSend("/topic/video/$calleeID/groupIncomingCall",
+                CallingMessageWithName(message.callee, message.caller, callerName, message.signal))
+    }
+
+    @MessageMapping("/video.groupAcceptCall")
+    fun groupAcceptCall(@Payload message: CallingMessage) {
+        println("accept Call message: ${message.callee}, ${message.caller}")
+        val callerID = message.caller
+        val calleePerson = personRepository?.findById(message.callee.toLong())!!.get()!!
+        val groupNum: Int = groupNumberAllocations.get(message.caller.toLong())!!
+        groupNumberAllocations[message.callee.toLong()] = groupNum
+        currentGroupCalls[groupNum]?.add(calleePerson)
+        sender.convertAndSend("/topic/video/$callerID/callAccepted", message)
     }
 }

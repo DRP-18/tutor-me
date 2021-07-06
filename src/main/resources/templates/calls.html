@@ -316,14 +316,14 @@
           <div class="row">
             <div class="col-md-6 col-md-offset-3 text-center">
               <h3 id="callNotification"></h3>
-              <h5 id="dropDownText">Select a person to call</h5>
+              <h5 class="dropDownText">Select a person to call</h5>
             </div>
           </div>
           <div class="row">
             <div class="col-md-2 col-md-offset-3">
-              <button class="btn btn-success btn-block" id="accept" type="button"
+              <button class="btn btn-success btn-block accept" type="button"
                       style="display: none"
-                      onclick="answerCall()">Accept Call
+                      onclick="answerCall(false)">Accept Call
               </button>
               <!--              <button class="btn btn-default btn-block" onclick="demo.showNotification('bottom','center')">Bottom Center</button>-->
             </div>
@@ -345,7 +345,7 @@
               <!--              <button class="btn btn-default btn-block" onclick="demo.showNotification('bottom','left')">Bottom Left</button>-->
             </div>
             <div class="col-md-2">
-              <button class="btn btn-danger btn-block" id="end" type="button"
+              <button class="btn btn-danger btn-block end" type="button"
                       onclick="leaveCall()"
                       style="display: none">
                 End Call
@@ -410,14 +410,14 @@
           <div class="row">
             <div class="col-md-6 col-md-offset-3 text-center">
               <h3 id="groupCallNotification"></h3>
-              <h5 id="groupDropDownText">Select a person to call</h5>
+              <h5 class="dropDownText">Select a person to call</h5>
             </div>
           </div>
           <div class="row">
             <div class="col-md-2 col-md-offset-3">
-              <button class="btn btn-success btn-block" id="groupAccept" type="button"
+              <button class="btn btn-success btn-block accept" type="button"
                       style="display: none"
-                      onclick="answerCall()">Accept Call
+                      onclick="answerCall(true)">Accept Call
               </button>
             </div>
             <div class="col-md-2">
@@ -436,7 +436,7 @@
               </div>
             </div>
             <div class="col-md-2">
-              <button class="btn btn-danger btn-block" id="groupEnd" type="button"
+              <button class="btn btn-danger btn-block end" id="groupEnd" type="button"
                       onclick="leaveCall()"
                       style="display: none">
                 End Call
