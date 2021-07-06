@@ -7,7 +7,7 @@ let stompClient;
 /*These are state fields */
 let stream;
 let me = "";
-let users = {};
+let allUsersDetails = {};
 let call = {};
 let callAccepted = false;
 let callEnded = true;
@@ -29,7 +29,7 @@ const connect = (event) => {
   .then((currentStream) => {
     stream = currentStream;
     mySrcObject = currentStream;
-    document.getElementById("myVideo").srcObject = currentStream
+    document.getElementById("myVideo").srcObject = currentStream;
     document.getElementById("dashBoardVideo").srcObject = currentStream
   });
   stompClient.connect({}, onConnected, onError)
@@ -47,8 +47,8 @@ const onConnected = () => {
   console.log("This is my user ID: " + userID);
   stompClient.subscribe('/topic/video/' + userID + '/incomingCall',
       incomingCall);
-  stompClient.subscribe('/topic/video/' + userID + '/username',
-      onUsernameReceived);
+  stompClient.subscribe('/topic/video/' + userID + '/userDetails',
+      saveUserDetails);
   stompClient.subscribe('/topic/video/' + userID + '/endCall', leaveCall);
   stompClient.subscribe('/topic/video/' + userID + '/iceCandidates',
       saveIceCandidates);
@@ -66,31 +66,30 @@ const onError = () => {
 };
 
 function findUsersName(id) {
-  for (const [k, v] of Object.entries(users)) {
+  for (const [k, v] of Object.entries(allUsersDetails)) {
     if (k == id) {
       return v
     }
   }
 }
 
-const onUsernameReceived = (payload) => {
+const saveUserDetails = (payload) => {
   console.log("This is the " + payload);
   const message = JSON.parse(payload.body);
-  users = message.data;
+  allUsersDetails = JSON.parse(message.details);
   let name;
-  for (const [k, v] of Object.entries(message.data)) {
+  for (const [k, v] of Object.entries(allUsersDetails)) {
     if (k == userID) {
-      name = v;
-      delete users[k];
+      name = v.name;
+      delete allUsersDetails[k];
       break
     }
   }
   me = userID;
   theirName = name;
-  console.log(Object.keys(users));
   let counter = 1;
-  for (const [k, v] of Object.entries(users)) {
-    addDropDownOption(k, v)
+  for (const [k, v] of Object.entries(allUsersDetails)) {
+    addDropDownOption(k, v.name);
     if (counter <= 3) {
       addDashBoardQuickCallOption(k, v, counter)
     }
@@ -110,11 +109,17 @@ function addDropDownOption(id, name) {
   newConvDropDown.appendChild(li)
 }
 
-function addDashBoardQuickCallOption(id, name, userNumber) {
+function addDashBoardQuickCallOption(id, user, userNumber) {
   const nameTag = document.getElementById(
-      'nameUnderProfilePicUser' + userNumber)
-  nameTag.innerText = name
-  const userTag = document.getElementById('user' + userNumber)
+      'nameUnderProfilePicUser' + userNumber);
+  nameTag.innerText = user.name;
+  const statusTag = document.getElementById(
+      'statusUnderProfilePicUser' + userNumber);
+  statusTag.innerText = user.status
+  const imgTag = document.getElementById('profilePicUser' + userNumber);
+  imgTag.src = '/img/avatars/' + user.avatar + '.png';
+  imgTag.alt = user.avatar
+  const userTag = document.getElementById('user' + userNumber);
   userTag.style.display = 'block'
 }
 
@@ -183,7 +188,7 @@ function setTheirStream(currentStream) {
   theirSrcObject = currentStream;
   const theirVid = document.getElementById("theirVideo");
   theirVid.srcObject = currentStream;
-  theirVid.style.display = "block"
+  theirVid.style.display = "block";
   theirVid.controls = "controls"
 }
 
@@ -201,7 +206,7 @@ const callUser = (id) => {
   });
   console.log("The user has been called by " + id);
   console.log("Message being sent: ");
-  personCalling = users[id]
+  personCalling = allUsersDetails[id].name;
   document.getElementById('callNotification').innerText = "Calling "
       + personCalling;
 
@@ -240,7 +245,7 @@ function clearMessage() {
 function alreadyInCall() {
   document.getElementById('callNotification').innerText = personCalling
       + " is already in a call";
-  setTimeout(clearMessage, 2500)
+  setTimeout(clearMessage, 2500);
   resetCall()
 }
 
@@ -292,8 +297,8 @@ function setVideoDimensions(vid) {
 }
 
 function individualCalls() {
-  document.getElementById("callDashboard").style.display = "none"
-  document.getElementById("individualCall").style.display = "block"
+  document.getElementById("callDashboard").style.display = "none";
+  document.getElementById("individualCall").style.display = "block";
   const myVid = document.getElementById("myVideo");
   const theirVid = document.getElementById("theirVideo");
   setVideoDimensions(myVid);
@@ -301,7 +306,7 @@ function individualCalls() {
 }
 
 window.onload = function () {
-  connect({})
+  connect({});
   const dashBoardVid = document.getElementById("dashBoardVideo");
   setVideoDimensions(dashBoardVid);
 };

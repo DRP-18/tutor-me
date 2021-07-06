@@ -1,5 +1,6 @@
 package imperial.drp.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.twilio.Twilio
 import com.twilio.rest.api.v2010.account.Token
 import com.twilio.type.IceServer
@@ -8,10 +9,7 @@ import imperial.drp.dao.PersonRepository
 import imperial.drp.entity.Person
 import imperial.drp.entity.Tutee
 import imperial.drp.entity.Tutor
-import imperial.drp.model.CallerCalleeMessage
-import imperial.drp.model.CallingMessage
-import imperial.drp.model.CallingMessageWithName
-import imperial.drp.model.SimpleMessage
+import imperial.drp.model.*
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -60,22 +58,26 @@ class WebrtcController {
     @MessageMapping("/video.getAllUsers")
     fun getAllUsers(
             @Payload message: SimpleMessage) {
-        val people = mutableMapOf<Long, String>()
+        val peopleDetails = mutableMapOf<Long, UserDetail>()
         val personOpt = personRepository!!.findById(message.message.toLong())
         if (personOpt.isPresent) {
             val person = personOpt.get()
             if (person is Tutor) {
                 for (tutee in person.tutees!!) {
-                    people.put(tutee.id!!, tutee.name!!)
+                    val detail = UserDetail(tutee.name!!, tutee.status, tutee.avatar.toString())
+                    peopleDetails[tutee.id!!] = detail
                 }
             } else if (person is Tutee) {
                 for (tutor in person.tutors!!) {
-                    people.put(tutor.id!!, tutor.name!!)
+                    val detail = UserDetail(tutor.name!!, tutor.status, tutor.avatar.toString())
+                    peopleDetails[tutor.id!!] = detail
                 }
             }
         }
-        sender.convertAndSend("/topic/video/${message.message}/username", object {
-            val data = people
+        val jsonObject = ObjectMapper()
+        val json = jsonObject.writeValueAsString(peopleDetails)
+        sender.convertAndSend("/topic/video/${message.message}/userDetails", object {
+            val details = json
         })
     }
 
