@@ -256,11 +256,26 @@
   }
 
   video {
-    /*padding: 0 90px;*/
-    width: 650px;
-    height: 450px;
+    padding: 2px 2px 2px 2px;
+    /*  width: 650px;*/
+    /*  height: 450px;*/
   }
 </style>
+
+<script>
+  function setVideoDimensions(vid) {
+    let height, width;
+    width = vid.parentNode.offsetWidth;
+    vid.height = 450;
+    vid.width = width;
+  }
+
+  const myVid = document.getElementById("myVideo");
+  const theirVid = document.getElementById("theirVideo");
+  setVideoDimensions(myVid);
+  setVideoDimensions(theirVid);
+
+</script>
 
 <!--   Core JS Files   -->
 <script src="/js/jquery.3.2.1.min.js" type="text/javascript"></script>
