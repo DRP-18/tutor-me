@@ -129,6 +129,8 @@ const answerCall = () => {
   document.getElementById('callNotification').innerText = "";
   document.getElementById('end').style.display = "block";
   document.getElementById('shareScreen').style.display = "block";
+  document.getElementById('dropDownText').style.display = "none";
+  document.getElementById('newCallDropDown').style.display = "none";
   document.getElementById('accept').style.display = "none";
 
   callAccepted = true;
@@ -200,6 +202,8 @@ const callUser = (id) => {
     document.getElementById('callNotification').innerText = "";
     document.getElementById('end').style.display = "block";
     document.getElementById('shareScreen').style.display = "block";
+    document.getElementById('dropDownText').style.display = "none";
+    document.getElementById('newCallDropDown').style.display = "none";
     callAccepted = true;
     callEnded = false;
     const message = JSON.parse(signal.body);
@@ -236,6 +240,8 @@ function resetCall() {
 const leaveCall = () => {
   document.getElementById('end').style.display = "none";
   document.getElementById('shareScreen').style.display = "none";
+  document.getElementById('dropDownText').style.display = "block";
+  document.getElementById('newCallDropDown').style.display = "block";
   console.log("LEAVING THE CALL " + call.from);
   if (callEnded === false) {
     stompClient.send("/app/video.endCall", {},
