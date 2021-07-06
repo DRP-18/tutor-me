@@ -20,6 +20,7 @@ let connectionRef = {};
 let personCalling = "";
 
 let groupCallId;
+let peers = [];
 let calls = [];
 let peerSrcObjects = [];
 let peersConnected;
@@ -205,7 +206,9 @@ const answerCall = (group) => {
     if (group) {
       calls.push(call);
       stompClient.send("/app/video.groupAcceptCall", {},
-          JSON.stringify({signal: data, callee: userID, caller: call.from}))
+          JSON.stringify({signal: data, callee: userID, caller: call.from}));
+      document.getElementById("startGroupCall").style.display = "none";
+      document.getElementById("groupNewCallDropDown").style.display = "block";
     } else {
       stompClient.send("/app/video.acceptCall", {},
           JSON.stringify({signal: data, callee: userID, caller: call.from})) //Since we are returning the message to the caller
@@ -224,6 +227,7 @@ const answerCall = (group) => {
 
   peer.signal(call.signal);
 
+  peers.push(peer);
   connectionRef = peer;
 
 };
@@ -241,8 +245,8 @@ function setGroupStream(currentStream) {
   const theirVid = document.getElementById("peerVideo" + peersConnected);
   theirVid.srcObject = currentStream;
   theirVid.style.display = "block";
-  theirVid.controls = "controls"
-  theirVid.parentElement.style.display = "block"
+  theirVid.controls = "controls";
+  theirVid.parentElement.style.display = "block";
   setVideoDimensions(theirVid)
 }
 
@@ -310,6 +314,7 @@ const callUser = (id, group) => {
   stompClient.subscribe('/topic/video/' + userID + '/callAccepted',
       onCallAccepted);
 
+  peers.push(peer);
   connectionRef = peer;
 };
 
@@ -396,6 +401,12 @@ function groupCallSetUp() {
       newGroupCallID);
   stompClient.subscribe('/topic/video/' + userID + '/groupIncomingCall',
       groupIncomingCall);
+  stompClient.subscribe('/topic/video/' + userID + '/newPeer',
+      addJoiningPeer);
+  stompClient.subscribe('/topic/video/' + userID + '/peersInRoom',
+      createPeersInRoom);
+  stompClient.subscribe('/topic/video/' + userID + '/returningSignal',
+      sendReturningSignal);
   peersConnected = 0;
 }
 
@@ -420,6 +431,55 @@ function resizeAllVideos() {
     const vidTag = document.getElementById(videoTagName);
     setVideoDimensions(vidTag);
   }
+}
+
+const addJoiningPeer = (payload) => {
+  const message = JSON.parse(payload.body);
+  const peer = new SimplePeer({
+    initiator: false, trickle: false,
+    reconnectTimer: 100,
+    iceTransportPolicy: 'relay',
+    config: {
+      iceServers: iceCandidates
+    }, stream: stream,
+  });
+
+  peer.on("signal", (signal) => {
+    stompClient.send("/app/video.returnToNewPeer", {},
+        JSON.stringify(
+            {caller: message.peerId, callee: userID, signal: signal}));
+  });
+
+  peer.signal(message.signal);
+  peers.push({id: message.peerId, peer: peer})
+};
+
+const createPeersInRoom = (payload) => {
+  const message = JSON.parse(payload.body)
+  for (const id in message.ids) {
+    const peer = new SimplePeer({
+      initiator: true, trickle: false,
+      reconnectTimer: 100,
+      iceTransportPolicy: 'relay',
+      config: {
+        iceServers: iceCandidates
+      }, stream: stream,
+    });
+
+    peer.on("signal", (signal) => {
+      stompClient.send("/app/video.returnToNewPeer", {},
+          JSON.stringify(
+              {caller: message.peerId, callee: userID, signal: signal}));
+    })
+
+    peers.push({id: message.peerId, peer: peer})
+  }
+};
+
+const sendReturningSignal = (payload) => {
+  const message = JSON.parse(payload.body)
+  const item = peers.find(p => p.id === message.callee);
+  item.peer.signal(message.signal)
 }
 
 window.onload = function () {

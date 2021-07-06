@@ -152,8 +152,28 @@ class WebrtcController {
         val callerID = message.caller
         val calleePerson = personRepository?.findById(message.callee.toLong())!!.get()!!
         val groupNum: Int = groupNumberAllocations.get(message.caller.toLong())!!
+        sender.convertAndSend("/topic/video/$callerID/callAccepted", message)
+
+        val idsOfPeopleInGroup = mutableListOf<Long>()
+        for (person in currentGroupCalls[groupNum]!!) {
+            if (person.id != callerID.toLong()) {
+                sender.convertAndSend("/topic/video/${person.id}/newPeer", object {
+                    val signal = message.signal
+                    val peerId = message.callee
+                })
+                idsOfPeopleInGroup.add(person.id!!)
+            }
+        }
+
         groupNumberAllocations[message.callee.toLong()] = groupNum
         currentGroupCalls[groupNum]?.add(calleePerson)
-        sender.convertAndSend("/topic/video/$callerID/callAccepted", message)
+        sender.convertAndSend("/topic/video/${message.callee}/peersInRoom", object {
+            val ids = idsOfPeopleInGroup
+        })
+    }
+
+    @MessageMapping("/video.returnToNewPeer")
+    fun newPeerMessage(@Payload message: CallingMessage) {
+        sender.convertAndSend("/topic/video/${message.caller}/returningSignal", message)
     }
 }
