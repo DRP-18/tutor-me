@@ -86,7 +86,10 @@ class WebrtcController {
                     peopleDetails[tutor.id!!] = detail
                 }
             }
+            val detail = UserDetail(person.name!!, person.status, person.avatar.toString())
+            peopleDetails[person.id!!] = detail
         }
+
         val jsonObject = ObjectMapper()
         val json = jsonObject.writeValueAsString(peopleDetails)
         sender.convertAndSend("/topic/video/${message.message}/userDetails", object {
@@ -148,26 +151,28 @@ class WebrtcController {
 
     @MessageMapping("/video.groupAcceptCall")
     fun groupAcceptCall(@Payload message: CallerCalleeMessage) {
-        val callerID = message.caller
         val calleePerson = personRepository?.findById(message.callee.toLong())!!.get()!!
-        val groupNum: Int = groupNumberAllocations.get(message.caller.toLong())!!
-
-//        for (person in currentGroupCalls[groupNum]!!) {
-//                sender.convertAndSend("/topic/video/${person.id}/newPeer", object {
-//                    val peerId = message.callee
-//                })
-//        }
+        val groupNum: Int = groupNumberAllocations[message.caller.toLong()]!!
 
         sender.convertAndSend("/topic/video/${message.callee}/peersInRoom", object {
             val peers = currentGroupCalls[groupNum]!!
         })
+        if (groupNumberAllocations.containsKey(message.callee.toLong())) {
+            val num = groupNumberAllocations[message.callee.toLong()]!!
+            currentGroupCalls[num]?.remove(calleePerson)
+            if (currentGroupCalls[num]?.isEmpty()!!) {
+                replaceGroupNumber(num)
+            }
+        }
         groupNumberAllocations[message.callee.toLong()] = groupNum
         currentGroupCalls[groupNum]?.add(calleePerson)
     }
 
     @MessageMapping("/video.sendSignalToPeer")
     fun signalToNewPeer(@Payload message: CallingMessage) {
-        sender.convertAndSend("/topic/video/${message.callee}/newPeer", message)
+        val name = personRepository?.findById(message.caller.toLong())?.get()!!.name!!
+        sender.convertAndSend("/topic/video/${message.callee}/newPeer",
+                CallingMessageWithName(message.callee, message.caller, name, message.signal))
     }
 
     @MessageMapping("/video.returnToNewPeer")

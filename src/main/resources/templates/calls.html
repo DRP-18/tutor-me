@@ -469,16 +469,19 @@
         <div class="row">
           <div class="col-md-4 justify-content-center">
             <div class="card">
+              <h4 class="videoName" id="myGroupVideoName"></h4>
               <video playsInline muted id="myGroupVideo" autoPlay controls/>
             </div>
           </div>
           <div class="col-md-4 justify-content-center">
-            <div class="card">
+            <div class="card" style="display: none;">
+              <h4 class="videoName" id="peerVideo1Name"></h4>
               <video playsInline id="peerVideo1" autoPlay/>
             </div>
           </div>
           <div class="col-md-4 justify-content-center">
-            <div class="card">
+            <div class="card" style="display: none;">
+              <h4 class="videoName" id="peerVideo2Name"></h4>
               <video playsInline id="peerVideo2" autoPlay/>
             </div>
           </div>
@@ -487,17 +490,20 @@
         <div class="row">
           <div class="col-md-4 justify-content-center">
             <div class="card" style="display: none;">
+              <h4 class="videoName" id="peerVideo3Name"></h4>
               <video playsInline id="peerVideo3" autoPlay/>
 
             </div>
           </div>
           <div class="col-md-4 justify-content-center">
             <div class="card" style="display: none;">
+              <h4 class="videoName" id="peerVideo4Name"></h4>
               <video playsInline id="peerVideo4" autoPlay/>
             </div>
           </div>
           <div class="col-md-4 justify-content-center">
             <div class="card" style="display: none;">
+              <h4 class="videoName" id="peerVideo5Name"></h4>
               <video playsInline id="peerVideo5" autoPlay/>
             </div>
           </div>
@@ -536,7 +542,7 @@
   }
 
   video {
-    padding: 2px 2px 2px 2px;
+    padding: 2px 4px 2px 4px;
     /*  width: 650px;*/
     /*  height: 450px;*/
   }
@@ -546,6 +552,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .videoName {
+    text-align: center;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding-top: 2px;
   }
 </style>
 
