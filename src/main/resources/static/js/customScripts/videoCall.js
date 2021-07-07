@@ -26,7 +26,7 @@ let peerSrcObjects = [];
 let peersConnected;
 const allVideoElements = ["myVideo", "theirVideo", "myGroupVideo",
   "dashBoardVideo", "peerVideo1", "peerVideo2", "peerVideo3", "peerVideo4",
-  "peerVideo5", "peerVideo6"];
+  "peerVideo5"];
 
 const connect = (event) => {
   const socket = new SockJS('/videoCall-video');
@@ -156,8 +156,6 @@ const saveIceCandidates = (payload) => {
 const incomingCall = (payload, group = false) => {
   const message = JSON.parse(payload.body);
   console.log("Person calling me " + message.callerName);
-  Array.from(document.getElementsByClassName('accept')).forEach(
-      it => it.style.display = "block");
 
   call = {
     isReceivedCall: true,
@@ -167,10 +165,12 @@ const incomingCall = (payload, group = false) => {
   };
   console.log("incoming call " + message);
   if (group) {
+    document.getElementById('groupAccept').style.display = "block";
     const callNotification = document.getElementById('groupCallNotification');
     callNotification.innerText = "Incoming group call from "
         + message.callerName
   } else {
+    document.getElementById('accept').style.display = "block";
     const callNotification = document.getElementById('callNotification');
     callNotification.innerText = "Incoming call from " + message.callerName
   }
@@ -180,56 +180,58 @@ const incomingCall = (payload, group = false) => {
 const answerCall = (group) => {
   document.getElementById('callNotification').innerText = "";
   document.getElementById('groupCallNotification').innerText = "";
-  Array.from(document.getElementsByClassName('end')).forEach(
-      it => it.style.display = "block");
+  document.getElementById('end').style.display = "block";
   document.getElementById('shareScreen').style.display = "block";
   Array.from(document.getElementsByClassName('dropDownText')).forEach(
       it => it.style.display = "none");
   document.getElementById('newCallDropDown').style.display = "none";
-  Array.from(document.getElementsByClassName('accept')).forEach(
-      it => it.style.display = "none");
+  document.getElementById('accept').style.display = "none";
+  document.getElementById('groupAccept').style.display = "none";
 
-  callAccepted = true;
-  callEnded = false;
-  /*simple peer library usage */
-  /* Initiator is who starts call
-      stream from earlier getUserMedia
-  */
-  const peer = new SimplePeer({
-    initiator: false, trickle: false, stream: stream,
-    config: {
-      iceServers: iceCandidates
-    }
-  });
+  if (group) {
+    stompClient.send("/app/video.groupAcceptCall", {},
+        JSON.stringify({callee: userID, caller: call.from}))
+  } else {
 
-  peer.on("signal", (data) => {
-    if (group) {
-      calls.push(call);
-      stompClient.send("/app/video.groupAcceptCall", {},
-          JSON.stringify({signal: data, callee: userID, caller: call.from}));
-      document.getElementById("startGroupCall").style.display = "none";
-      document.getElementById("groupNewCallDropDown").style.display = "block";
-    } else {
+    callAccepted = true;
+    callEnded = false;
+    /*simple peer library usage */
+    /* Initiator is who starts call
+        stream from earlier getUserMedia
+    */
+    const peer = new SimplePeer({
+      initiator: false, trickle: false, stream: stream,
+      config: {
+        iceServers: iceCandidates
+      }
+    });
+
+    peer.on("signal", (data) => {
+      // if (group) {
+      //   calls.push(call);
+      //   stompClient.send("/app/video.groupAcceptCall", {},
+      //       JSON.stringify({signal: data, callee: userID, caller: call.from}));
+      //   document.getElementById("startGroupCall").style.display = "none";
+      //   document.getElementById("groupNewCallDropDown").style.display = "block";
+      // } else {
       stompClient.send("/app/video.acceptCall", {},
           JSON.stringify({signal: data, callee: userID, caller: call.from})) //Since we are returning the message to the caller
-    }
-  });
+      // }
+    });
 
-  peer.on("stream", (currentStream) => {
-    /* This is the other persons stream*/
-    if (group) {
-      peersConnected++;
-      setGroupStream(currentStream)
-    } else {
+    peer.on("stream", (currentStream) => {
+      /* This is the other persons stream*/
+      // if (group) {
+      //   peersConnected++;
+      //   setGroupStream(currentStream)
+      // } else {
       setTheirStream(currentStream)
-    }
-  });
+      // }
+    });
 
-  peer.signal(call.signal);
-
-  peers.push(peer);
-  connectionRef = peer;
-
+    peer.signal(call.signal);
+    connectionRef = peer;
+  }
 };
 
 function setTheirStream(currentStream) {
@@ -253,69 +255,65 @@ function setGroupStream(currentStream) {
 // CallPeer
 const callUser = (id, group) => {
   /*we are the person calling */
-
-  const peer = new SimplePeer({
-    initiator: true, trickle: false,
-    reconnectTimer: 100,
-    iceTransportPolicy: 'relay',
-    config: {
-      iceServers: iceCandidates
-    }, stream: stream,
-  });
-  console.log("The user has been called by " + id);
-  console.log("Message being sent: ");
   personCalling = allUsersDetails[id].name;
   if (group) {
     document.getElementById('groupCallNotification').innerText = "Calling "
         + personCalling;
+    stompClient.send("/app/video.groupCallUser", {},
+        JSON.stringify({callee: id, caller: userID}))
   } else {
+    const peer = new SimplePeer({
+      initiator: true, trickle: false,
+      reconnectTimer: 100,
+      iceTransportPolicy: 'relay',
+      config: {
+        iceServers: iceCandidates
+      }, stream: stream,
+    });
+    console.log("The user has been called by " + id);
+    console.log("Message being sent: ");
+    // if (group) {
+    //   document.getElementById('groupCallNotification').innerText = "Calling "
+    //       + personCalling;
+    // } else {
     document.getElementById('callNotification').innerText = "Calling "
         + personCalling;
-  }
+    // }
 
-  peer.on("signal", (data) => {
-    console.log(JSON.stringify({callee: id, caller: userID, signal: data}));
-    if (group) {
-      stompClient.send("/app/video.groupCallUser", {},
-          JSON.stringify({callee: id, caller: userID, signal: data}))
-    } else {
+    peer.on("signal", (data) => {
+      console.log(JSON.stringify({callee: id, caller: userID, signal: data}));
       stompClient.send("/app/video.callUser", {},
           JSON.stringify({callee: id, caller: userID, signal: data}))
-    }
-  });
+    });
 
-  peer.on("stream", (currentStream) => {
-    if (group) {
-      peersConnected++;
-      setGroupStream(currentStream)
-    } else {
+    peer.on("stream", (currentStream) => {
+      // if (group) {
+      //   peersConnected++;
+      //   setGroupStream(currentStream)
+      // } else {
       setTheirStream(currentStream)
-    }
-  });
+      // }
+    });
 
-  const onCallAccepted = (signal) => {
-    document.getElementById('callNotification').innerText = "";
-    document.getElementById('groupCallNotification').innerText = "";
-    Array.from(document.getElementsByClassName('end')).forEach(
-        it => it.style.display = "block");
-    document.getElementById('shareScreen').style.display = "block";
-    Array.from(document.getElementsByClassName('dropDownText')).forEach(
-        it => it.style.display = "none");
-    document.getElementById('newCallDropDown').style.display = "none";
-    callAccepted = true;
-    callEnded = false;
-    const message = JSON.parse(signal.body);
-    call = {name: findUsersName(id), from: id};
-    if (group) {
-      calls.push(call)
-    }
-    peer.signal(message.signal)
-  };
-  stompClient.subscribe('/topic/video/' + userID + '/callAccepted',
-      onCallAccepted);
+    const onCallAccepted = (signal) => {
+      document.getElementById('callNotification').innerText = "";
+      document.getElementById('groupCallNotification').innerText = "";
+      document.getElementById('end').style.display = "block";
+      document.getElementById('shareScreen').style.display = "block";
+      Array.from(document.getElementsByClassName('dropDownText')).forEach(
+          it => it.style.display = "none");
+      document.getElementById('newCallDropDown').style.display = "none";
+      callAccepted = true;
+      callEnded = false;
+      const message = JSON.parse(signal.body);
+      call = {name: findUsersName(id), from: id};
+      peer.signal(message.signal)
+    };
+    stompClient.subscribe('/topic/video/' + userID + '/callAccepted',
+        onCallAccepted);
 
-  peers.push(peer);
-  connectionRef = peer;
+    connectionRef = peer;
+  }
 };
 
 function clearMessage() {
@@ -340,8 +338,7 @@ function resetCall() {
 }
 
 const leaveCall = () => {
-  Array.from(document.getElementsByClassName('end')).forEach(
-      it => it.style.display = "none");
+  document.getElementById('end').style.display = "none";
   document.getElementById('shareScreen').style.display = "none";
   Array.from(document.getElementsByClassName('dropDownText')).forEach(
       it => it.style.display = "block");
@@ -407,6 +404,7 @@ function groupCallSetUp() {
       createPeersInRoom);
   stompClient.subscribe('/topic/video/' + userID + '/returningSignal',
       sendReturningSignal);
+
   peersConnected = 0;
 }
 
@@ -447,16 +445,23 @@ const addJoiningPeer = (payload) => {
   peer.on("signal", (signal) => {
     stompClient.send("/app/video.returnToNewPeer", {},
         JSON.stringify(
-            {caller: message.peerId, callee: userID, signal: signal}));
+            {caller: message.caller, callee: userID, signal: signal}));
+  });
+
+  peer.on("stream", (currentStream) => {
+    /* This is the other persons stream*/
+    peersConnected++;
+    setGroupStream(currentStream)
   });
 
   peer.signal(message.signal);
-  peers.push({id: message.peerId, peer: peer})
+  peers.push({id: message.peerId, peer: peer});
 };
 
 const createPeersInRoom = (payload) => {
   const message = JSON.parse(payload.body)
-  for (const id in message.ids) {
+  for (let i = 0; i < message.peers.length; i++) {
+    const id = message.peers[i];
     const peer = new SimplePeer({
       initiator: true, trickle: false,
       reconnectTimer: 100,
@@ -467,18 +472,24 @@ const createPeersInRoom = (payload) => {
     });
 
     peer.on("signal", (signal) => {
-      stompClient.send("/app/video.returnToNewPeer", {},
+      stompClient.send("/app/video.sendSignalToPeer", {},
           JSON.stringify(
-              {caller: message.peerId, callee: userID, signal: signal}));
-    })
+              {caller: userID, callee: id.id, signal: signal}));
+    });
 
-    peers.push({id: message.peerId, peer: peer})
+    peer.on("stream", (currentStream) => {
+      /* This is the other persons stream*/
+      peersConnected++;
+      setGroupStream(currentStream)
+    });
+
+    peers.push({id: id.id, peer: peer})
   }
 };
 
 const sendReturningSignal = (payload) => {
   const message = JSON.parse(payload.body)
-  const item = peers.find(p => p.id === message.callee);
+  const item = peers.find(p => p.id == message.callee);
   item.peer.signal(message.signal)
 }
 
@@ -487,5 +498,12 @@ window.onload = function () {
   const dashBoardVid = document.getElementById("dashBoardVideo");
   setVideoDimensions(dashBoardVid);
 };
+
+function resizeAllVideos() {
+  for (let i = 0; i < allVideoElements.length; i++) {
+    const vidTag = document.getElementById(allVideoElements[i]);
+    setVideoDimensions(vidTag);
+  }
+}
 
 window.onresize = resizeAllVideos;

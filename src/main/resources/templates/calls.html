@@ -321,7 +321,7 @@
           </div>
           <div class="row">
             <div class="col-md-2 col-md-offset-3">
-              <button class="btn btn-success btn-block accept" type="button"
+              <button class="btn btn-success btn-block" id="accept" type="button"
                       style="display: none"
                       onclick="answerCall(false)">Accept Call
               </button>
@@ -345,7 +345,7 @@
               <!--              <button class="btn btn-default btn-block" onclick="demo.showNotification('bottom','left')">Bottom Left</button>-->
             </div>
             <div class="col-md-2">
-              <button class="btn btn-danger btn-block end" type="button"
+              <button class="btn btn-danger btn-block" id="end" type="button"
                       onclick="leaveCall()"
                       style="display: none">
                 End Call
@@ -415,7 +415,7 @@
           </div>
           <div class="row">
             <div class="col-md-2 col-md-offset-3">
-              <button class="btn btn-success btn-block accept" type="button"
+              <button class="btn btn-success btn-block" id="groupAccept" type="button"
                       style="display: none"
                       onclick="answerCall(true)">Accept Call
               </button>
@@ -436,7 +436,7 @@
               </div>
             </div>
             <div class="col-md-2">
-              <button class="btn btn-danger btn-block end" id="groupEnd" type="button"
+              <button class="btn btn-danger btn-block" id="groupEnd" type="button"
                       onclick="leaveCall()"
                       style="display: none">
                 End Call
@@ -473,12 +473,12 @@
             </div>
           </div>
           <div class="col-md-4 justify-content-center">
-            <div class="card" style="display: none;">
+            <div class="card">
               <video playsInline id="peerVideo1" autoPlay/>
             </div>
           </div>
           <div class="col-md-4 justify-content-center">
-            <div class="card" style="display: none;">
+            <div class="card">
               <video playsInline id="peerVideo2" autoPlay/>
             </div>
           </div>

@@ -139,41 +139,39 @@ class WebrtcController {
     }
 
     @MessageMapping("/video.groupCallUser")
-    fun groupCallUser(@Payload message: CallingMessage) {
+    fun groupCallUser(@Payload message: CallerCalleeMessage) {
         val calleeID = message.callee
         val callerName = personRepository?.findById(message.caller.toLong())!!.get().name!!
         sender.convertAndSend("/topic/video/$calleeID/groupIncomingCall",
-                CallingMessageWithName(message.callee, message.caller, callerName, message.signal))
+                CallingMessageWithName(message.callee, message.caller, callerName, SignalObject("", "")))
     }
 
     @MessageMapping("/video.groupAcceptCall")
-    fun groupAcceptCall(@Payload message: CallingMessage) {
-        println("accept Call message: ${message.callee}, ${message.caller}")
+    fun groupAcceptCall(@Payload message: CallerCalleeMessage) {
         val callerID = message.caller
         val calleePerson = personRepository?.findById(message.callee.toLong())!!.get()!!
         val groupNum: Int = groupNumberAllocations.get(message.caller.toLong())!!
-        sender.convertAndSend("/topic/video/$callerID/callAccepted", message)
 
-        val idsOfPeopleInGroup = mutableListOf<Long>()
-        for (person in currentGroupCalls[groupNum]!!) {
-            if (person.id != callerID.toLong()) {
-                sender.convertAndSend("/topic/video/${person.id}/newPeer", object {
-                    val signal = message.signal
-                    val peerId = message.callee
-                })
-                idsOfPeopleInGroup.add(person.id!!)
-            }
-        }
+//        for (person in currentGroupCalls[groupNum]!!) {
+//                sender.convertAndSend("/topic/video/${person.id}/newPeer", object {
+//                    val peerId = message.callee
+//                })
+//        }
 
+        sender.convertAndSend("/topic/video/${message.callee}/peersInRoom", object {
+            val peers = currentGroupCalls[groupNum]!!
+        })
         groupNumberAllocations[message.callee.toLong()] = groupNum
         currentGroupCalls[groupNum]?.add(calleePerson)
-        sender.convertAndSend("/topic/video/${message.callee}/peersInRoom", object {
-            val ids = idsOfPeopleInGroup
-        })
+    }
+
+    @MessageMapping("/video.sendSignalToPeer")
+    fun signalToNewPeer(@Payload message: CallingMessage) {
+        sender.convertAndSend("/topic/video/${message.callee}/newPeer", message)
     }
 
     @MessageMapping("/video.returnToNewPeer")
-    fun newPeerMessage(@Payload message: CallingMessage) {
+    fun returningSignalToNewPeer(@Payload message: CallingMessage) {
         sender.convertAndSend("/topic/video/${message.caller}/returningSignal", message)
     }
 }
