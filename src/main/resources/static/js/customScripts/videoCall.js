@@ -265,13 +265,8 @@ const callUser = (id, group) => {
     });
     console.log("The user has been called by " + id);
     console.log("Message being sent: ");
-    // if (group) {
-    //   document.getElementById('groupCallNotification').innerText = "Calling "
-    //       + personCalling;
-    // } else {
     document.getElementById('callNotification').innerText = "Calling "
         + personCalling;
-    // }
 
     peer.on("signal", (data) => {
       console.log(JSON.stringify({callee: id, caller: userID, signal: data}));
@@ -280,17 +275,13 @@ const callUser = (id, group) => {
     });
 
     peer.on("stream", (currentStream) => {
-      // if (group) {
-      //   peersConnected++;
-      //   setGroupStream(currentStream)
-      // } else {
       setTheirStream(currentStream)
-      // }
     });
 
     const onCallAccepted = (signal) => {
       document.getElementById('callNotification').innerText = "";
-      document.getElementById('groupCallNotification').innerText = "";
+      document.getElementById('groupCallNotification').innerText = personCalling
+          + " is connecting...";
       document.getElementById('end').style.display = "block";
       document.getElementById('shareScreen').style.display = "block";
       Array.from(document.getElementsByClassName('dropDownText')).forEach(
@@ -431,7 +422,7 @@ const addJoiningPeer = (payload) => {
       'groupCallNotification').innerText = message.callerName
       + " is joining the call";
   document.getElementById('groupCallNotification').style.display = 'block';
-  setTimeout(clearMessage, 2000);
+  setTimeout(clearMessage, 5000);
 
   const peer = new SimplePeer({
     initiator: false, trickle: false,
@@ -460,7 +451,12 @@ const addJoiningPeer = (payload) => {
 
 const createPeersInRoom = (payload) => {
   const message = JSON.parse(payload.body);
-  document.getElementById("groupCallNotification").innerText = "";
+  document.getElementById(
+      "groupCallNotification").innerText = "Joining Call...";
+  setTimeout(clearMessage, 4500);
+  document.getElementById("startGroupCall").style.display = "none";
+  document.getElementById("groupNewCallDropDown").style.display = "block";
+
   for (let i = 0; i < message.peers.length; i++) {
     const person = message.peers[i];
     const peer = new SimplePeer({
