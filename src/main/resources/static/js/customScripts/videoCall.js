@@ -75,6 +75,7 @@ function indivCallSetUp() {
   stompClient.subscribe('/topic/video/' + userID + '/endCall', leaveCall);
   stompClient.subscribe('/topic/video/' + userID + '/alreadyInCall',
       alreadyInCall);
+  document.getElementById("videoDashboard").style.display = 'block'
 }
 
 function findUsersName(id) {
@@ -363,6 +364,7 @@ function setVideoDimensions(vid) {
 function individualCalls() {
   document.getElementById("callDashboard").style.display = "none";
   document.getElementById("individualCall").style.display = "block";
+  document.getElementById("videoDashboard").style.display = "block";
   const myVid = document.getElementById("myVideo");
   const theirVid = document.getElementById("theirVideo");
   setVideoDimensions(myVid);
@@ -389,7 +391,7 @@ function groupCallSetUp() {
       createPeersInRoom);
   stompClient.subscribe('/topic/video/' + userID + '/returningSignal',
       sendReturningSignal);
-
+  document.getElementById("videoDashboard").style.display = 'block'
   peersConnected = 0;
 }
 
@@ -404,6 +406,13 @@ const newGroupCallID = (payload) => {
   groupCallId = JSON.parse(payload.body);
   console.log("group id is: " + groupCallId)
 };
+
+function goToDashboard() {
+  document.getElementById("callDashboard").style.display = "block";
+  document.getElementById("groupCall").style.display = "none";
+  document.getElementById("individualCall").style.display = "none";
+  document.getElementById("videoDashboard").style.display = "none";
+}
 
 const groupIncomingCall = (payload) => {
   incomingCall(payload, true)
