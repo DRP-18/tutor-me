@@ -179,4 +179,15 @@ class WebrtcController {
     fun returningSignalToNewPeer(@Payload message: CallingMessage) {
         sender.convertAndSend("/topic/video/${message.caller}/returningSignal", message)
     }
+
+    @MessageMapping("/video.leaveGroupCall")
+    fun leaveGroupCall(@Payload message: SimpleMessage) {
+        val groupNum = groupNumberAllocations[message.message.toLong()]!!
+        val peopleInCall = currentGroupCalls[groupNum]!!
+        for (person in peopleInCall) {
+            if (person.id != message.message.toLong()) {
+                sender.convertAndSend("/topic/video/${person.id}/removePeer", message)
+            }
+        }
+    }
 }
