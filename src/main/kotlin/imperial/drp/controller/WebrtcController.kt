@@ -182,12 +182,13 @@ class WebrtcController {
 
     @MessageMapping("/video.leaveGroupCall")
     fun leaveGroupCall(@Payload message: SimpleMessage) {
-        val groupNum = groupNumberAllocations[message.message.toLong()]!!
-        val peopleInCall = currentGroupCalls[groupNum]!!
-        for (person in peopleInCall) {
-            if (person.id != message.message.toLong()) {
-                sender.convertAndSend("/topic/video/${person.id}/removePeer", message)
-            }
+        val personId = message.message.toLong()
+        val groupNum = groupNumberAllocations[personId]!!
+        groupNumberAllocations.remove(personId)
+        val personToRemove = personRepository?.findById(personId)?.get()
+        currentGroupCalls[groupNum]!!.remove(personToRemove)
+        for (person in currentGroupCalls[groupNum]!!) {
+            sender.convertAndSend("/topic/video/${person.id}/removePeer", message)
         }
     }
 }

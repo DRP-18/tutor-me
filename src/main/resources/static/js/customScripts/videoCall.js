@@ -403,6 +403,7 @@ function groupCallSetUp() {
 function getGroupId() {
   document.getElementById("startGroupCall").style.display = "none";
   document.getElementById("groupNewCallDropDown").style.display = "block";
+  document.getElementById("dropDownText").style.display = "block";
   stompClient.send("/app/video.getGroupId", {},
       JSON.stringify({message: userID}));
 }
@@ -448,7 +449,7 @@ const addJoiningPeer = (payload) => {
     }, stream: stream,
   });
 
-  peers.push({id: message.peerId, peer: peer, streamNumber: 0});
+  peers.push({id: message.caller, peer: peer, streamNumber: 0});
 
   peer.on("signal", (signal) => {
     stompClient.send("/app/video.returnToNewPeer", {},
@@ -459,7 +460,7 @@ const addJoiningPeer = (payload) => {
   peer.on("stream", (currentStream) => {
     /* This is the other persons stream*/
     peersConnected++;
-    const p = peers.find(p => p.id == message.peerId)
+    const p = peers.find(p => p.id == message.caller)
     p.streamNumber = peersConnected
     setGroupStream(currentStream, message.callerName)
   });
@@ -483,6 +484,7 @@ const createPeersInRoom = (payload) => {
   document.getElementById('groupEnd').style.display = 'block';
   document.getElementById("startGroupCall").style.display = "none";
   document.getElementById("groupNewCallDropDown").style.display = "block";
+  document.getElementById("dropDownText").style.display = "block";
   numOfPeers = message.peers.length;
   for (let i = 0; i < message.peers.length; i++) {
     const person = message.peers[i];
@@ -526,7 +528,11 @@ function groupLeaveCall() {
       JSON.stringify({message: userID}));
   peers.forEach(p => removeVideoStream(p));
   peers.forEach(p => p.peer.destroy());
-  peers = []
+  peers = [];
+  document.getElementById("startGroupCall").style.display = "block";
+  document.getElementById("groupNewCallDropDown").style.display = "none";
+  document.getElementById("dropDownText").style.display = "none";
+  document.getElementById("groupEnd").style.display = "none";
 }
 
 const removePeer = (payload) => {
@@ -535,6 +541,12 @@ const removePeer = (payload) => {
   personToRemove.peer.destroy()
   removeVideoStream(personToRemove)
   peers = peers.filter(p => p.id != message.message)
+  if (peers.length === 0) {
+    document.getElementById("startGroupCall").style.display = "block";
+    document.getElementById("groupNewCallDropDown").style.display = "none";
+    document.getElementById("dropDownText").style.display = "none";
+    document.getElementById("groupEnd").style.display = "none";
+  }
 };
 
 function removeVideoStream(person) {
