@@ -529,6 +529,8 @@ function groupLeaveCall() {
   peers.forEach(p => removeVideoStream(p));
   peers.forEach(p => p.peer.destroy());
   peers = [];
+  peerSrcObjects = [];
+  peersConnected = 0;
   document.getElementById("startGroupCall").style.display = "block";
   document.getElementById("groupNewCallDropDown").style.display = "none";
   document.getElementById("dropDownText").style.display = "none";
@@ -538,9 +540,12 @@ function groupLeaveCall() {
 const removePeer = (payload) => {
   const message = JSON.parse(payload.body);
   const personToRemove = peers.find(p => p.id == message.message);
-  personToRemove.peer.destroy()
-  removeVideoStream(personToRemove)
-  peers = peers.filter(p => p.id != message.message)
+  personToRemove.peer.destroy();
+  removeVideoStream(personToRemove);
+  shuffleVideoStreams(personToRemove.streamNumber);
+  peers = peers.filter(p => p.id != message.message);
+  peerSrcObjects.splice(peersConnected - 1, 1);
+  peersConnected--;
   if (peers.length === 0) {
     document.getElementById("startGroupCall").style.display = "block";
     document.getElementById("groupNewCallDropDown").style.display = "none";
@@ -557,7 +562,26 @@ function removeVideoStream(person) {
   const theirVidName = document.getElementById(
       "peerVideo" + person.streamNumber + "Name");
   theirVidName.innerText = "";
+}
 
+function shuffleVideoStreams(streamNum) {
+  let i = streamNum;
+  for (; i < peersConnected; i++) {
+    const theirVid = document.getElementById("peerVideo" + i);
+    theirVid.srcObject = peerSrcObjects[i];
+    theirVid.style.display = "block";
+    theirVid.controls = "controls";
+    theirVid.parentElement.style.display = "block";
+    const theirVidName = document.getElementById(
+        "peerVideo" + i + "Name");
+    theirVidName.innerText = document.getElementById(
+        "peerVideo" + (i + 1) + "Name").innerText;
+  }
+  const theirVid = document.getElementById("peerVideo" + i);
+  theirVid.style.display = "none";
+  theirVid.controls = "";
+  theirVid.parentElement.style.display = "none";
+  document.getElementById("peerVideo" + i + "Name").innerText = "";
 }
 
 window.onload = function () {
