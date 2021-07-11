@@ -118,7 +118,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Calls</a>
+          <button id="videoDashboard" onclick="goToDashboard()"
+                  class="btn btn-block btn-defualt" style="display: none">
+            <i class="far fa-arrow-alt-circle-left fa-lg"></i> Dashboard
+          </button>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-left"></ul>
@@ -152,24 +155,183 @@
 
 
     <div class="content">
-      <div class="container-fluid">
+      <div id="callDashboard" class="container-fluid">
+        <div class="row">
+          <div class="col-md-6">
+            <!-- One-to-One calls-->
+            <div class="row">
+              <div col="col-md-12">
+                <div class="card" style="margin-top: 35px">
+                  <div class="header" style="text-align: center">
+                    <h4 style="margin-top: 15px">One-to-One calls</h4>
+                    <h5>Have conversations with other individuals!</h5>
+                  </div>
+                  <div class="content">
+                    <button class="btn btn-default btn-block" onclick="individualCalls()">
+                      Individual Calls
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Group calls-->
+            <div class="row">
+              <div col="col-md-12">
+                <div class="card">
+                  <div class="header" style="text-align: center">
+                    <h4 style="margin-top: 15px">Group calls</h4>
+                    <h5>Talk with multiple people on the same call!</h5>
+                  </div>
+                  <div class="content">
+                    <button class="btn btn-default btn-block" onclick="groupCalls()">Group calls
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 justify-content-center">
+            <div class="card">
+              <video playsInline muted id="dashBoardVideo" autoPlay controls/>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Quick select-->
+          <div class="col-md-4">
+            <div class="row">
+              <div col="col-md-12">
+                <div id="user1" class="card card-user" style="display: none">
+                  <div class="content">
+                    <div class="author">
+                      <a href="#">
+                        <div class="logo" style="padding-left: 10px">
+                          <div class="login100-pic js-tilt" data-tilt=""
+                               style="margin-top: 75px; will-change: transform; transform: perspective(300px) rotateX(0deg) rotateY(0deg);">
+                            <img id="profilePicUser1" class="avatar border-gray"
+                                 src="/img/avatars/1.png"
+                                 alt="1"/>
+                          </div>
+                        </div>
+
+                        <h4 id="nameUnderProfilePicUser1" class="title">Test Name<br/>
+                        </h4>
+                      </a>
+                    </div>
+                    <p id="statusUnderProfilePicUser1" class="description text-center">Test
+                      status</p>
+                    <div class="buttonWrapper">
+                      <button class="btn btn-default btn-block"
+                              style="width: 30%; margin-right: 20px;">Start a Private Call
+                      </button>
+                      <button class="btn btn-default btn-block"
+                              style="width: 30%; margin-top: 0px;">Start a Group Call
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="row">
+              <div col="col-md-12">
+                <div id="user2" class="card card-user"
+                     style="margin-left: 10px; margin-right: 10px; display: none">
+                  <div class="content">
+                    <div class="author">
+                      <a href="#">
+                        <div class="logo" style="padding-left: 10px">
+                          <div class="login100-pic js-tilt" data-tilt=""
+                               style="margin-top: 75px; will-change: transform; transform: perspective(300px) rotateX(0deg) rotateY(0deg);">
+                            <img id="profilePicUser2" class="avatar border-gray"
+                                 src="/img/avatars/2.png"
+                                 alt="2"/>
+                          </div>
+                        </div>
+
+                        <h4 id="nameUnderProfilePicUser2" class="title">Test Name<br/>
+                        </h4>
+                      </a>
+                    </div>
+                    <p id="statusUnderProfilePicUser2" class="description text-center">Test
+                      status</p>
+                    <div class="buttonWrapper">
+                      <button class="btn btn-default btn-block"
+                              style="width: 30%; margin-right: 20px;">Start a Private Call
+                      </button>
+                      <button class="btn btn-default btn-block"
+                              style="width: 30%; margin-top: 0px;">
+                        Start a Group Call
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="row">
+              <div col="col-md-12">
+                <div id="user3" class="card card-user" style="display: none">
+                  <div class="content">
+                    <div class="author">
+                      <a href="#">
+                        <div class="logo" style="padding-left: 10px">
+                          <div class="login100-pic js-tilt" data-tilt=""
+                               style="margin-top: 75px; will-change: transform; transform: perspective(300px) rotateX(0deg) rotateY(0deg);">
+                            <img id="profilePicUser3" class="avatar border-gray"
+                                 src="/img/avatars/3.png"
+                                 alt="3"/>
+                          </div>
+                        </div>
+
+                        <h4 id="nameUnderProfilePicUser3" class="title">Test Name<br/>
+                        </h4>
+                      </a>
+                    </div>
+                    <p id="statusUnderProfilePicUser3" class="description text-center">Test
+                      status</p>
+                    <div class="buttonWrapper">
+                      <button class="btn btn-default btn-block"
+                              style="width: 30%; margin-right: 20px;">Start a Private Call
+                      </button>
+                      <button class="btn btn-default btn-block"
+                              style="width: 30%; margin-top: 0px;">Start a Group Call
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="individualCall" class="container-fluid" style="display: none">
         <div class="places-buttons">
           <div class="row">
             <div class="col-md-6 col-md-offset-3 text-center">
               <h3 id="callNotification"></h3>
-              <h5>Select a person to call</h5>
+              <h5 class="dropDownText">Select a person to call</h5>
             </div>
           </div>
           <div class="row">
             <div class="col-md-2 col-md-offset-3">
               <button class="btn btn-success btn-block" id="accept" type="button"
                       style="display: none"
-                      onclick="answerCall()">Accept Call
+                      onclick="answerCall(false)">Accept Call
               </button>
               <!--              <button class="btn btn-default btn-block" onclick="demo.showNotification('bottom','center')">Bottom Center</button>-->
             </div>
             <div class="col-md-2">
-              <div class="dropdown">
+              <div class="dropdown" id="newCallDropDown">
                 <button class="dropdown-toggle btn btn-default btn-block" data-toggle="dropdown"
                         type="button">
                   <p style="margin-bottom: 0px"><i class="fas fa-phone-alt"></i> New Call <b
@@ -180,10 +342,14 @@
                 <ul class="dropdown-menu" id="newConvDropDown">
                 </ul>
               </div>
+              <button class="btn btn-default btn-block" id="shareScreen" style="display: none"
+                      onclick="shareScreen()">Share Screen
+              </button>
               <!--              <button class="btn btn-default btn-block" onclick="demo.showNotification('bottom','left')">Bottom Left</button>-->
             </div>
             <div class="col-md-2">
-              <button class="btn btn-danger btn-block" id="end" type="button" onclick="leaveCall()"
+              <button class="btn btn-danger btn-block" id="end" type="button"
+                      onclick="leaveCall()"
                       style="display: none">
                 End Call
               </button>
@@ -192,9 +358,7 @@
           </div>
           <!--          <div class="row">-->
           <!--            <div class="col-md-2 col-md-offset-3">-->
-          <!--              <button class="btn btn-default btn-block"-->
-          <!--                      onclick="demo.showNotification('top','left')">Top Left-->
-          <!--              </button>-->
+
           <!--            </div>-->
           <!--            <div class="col-md-2">-->
           <!--              <button class="btn btn-default btn-block"-->
@@ -211,7 +375,7 @@
 
 
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-6 justify-content-center">
             <div class="card">
               <video playsInline muted id="myVideo" autoPlay controls/>
             </div>
@@ -219,6 +383,132 @@
           <div class="col-md-6 justify-content-center">
             <div class="card">
               <video playsInline id="theirVideo" autoPlay/>
+            </div>
+          </div>
+        </div>
+        <!--        <div class="row">-->
+        <!--          <div class="col-md-6">-->
+
+        <!--            <div class="dropdown">-->
+        <!--              <button class="dropdown-toggle btn btn-info btn-fill" data-toggle="dropdown" type="button">-->
+        <!--                <p><i class="fas fa-phone-alt"></i>    New Call    <b class="caret"></b></p>-->
+        <!--              </button>-->
+        <!--&lt;!&ndash;              <button class="btn btn-info btn-fill" id="callJayme" type="button" onclick="callUser(1)">Call Jayme</button>&ndash;&gt;-->
+        <!--&lt;!&ndash;              <button class="btn btn-info btn-fill" id="callKrishan" type="button" onclick="callUser(30)">Call Krishan</button>&ndash;&gt;-->
+        <!--              <button class="btn btn-success btn-fill" id="accept" type="button" onclick="answerCall()">Accept Call</button>-->
+        <!--              <button class="btn btn-danger btn-fill" id="end" type="button" onclick="leaveCall()">End Call</button>-->
+        <!--              <ul class="dropdown-menu" id="newConvDropDown">-->
+        <!--              </ul>-->
+        <!--            </div>-->
+        <!--          </div>-->
+
+        <!--          <div class="col-md-8">-->
+
+        <!--          </div>-->
+        <!--        </div>-->
+      </div>
+
+      <div id="groupCall" class="container-fluid" style="display: none">
+        <div class="places-buttons">
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3 text-center">
+              <h3 id="groupCallNotification"></h3>
+              <h5 class="dropDownText" id="dropDownText" style="display: none">Select a person to
+                call</h5>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 col-md-offset-3">
+              <button class="btn btn-success btn-block" id="groupAccept" type="button"
+                      style="display: none"
+                      onclick="answerCall(true)">Accept Call
+              </button>
+            </div>
+            <div class="col-md-2">
+              <button id="startGroupCall" class="btn btn-block btn-default" onclick="getGroupId()">
+                Start a Group Call
+              </button>
+
+              <div class="dropdown" id="groupNewCallDropDown" style="display: none;">
+                <button class="dropdown-toggle btn btn-default btn-block" data-toggle="dropdown"
+                        type="button">
+                  <p style="margin-bottom: 0px"><i class="fas fa-phone-alt"></i> New Call <b
+                      class="caret"></b></p>
+                </button>
+                <ul class="dropdown-menu" id="groupNewConvDropDown">
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-danger btn-block" id="groupEnd" type="button"
+                      onclick="groupLeaveCall()"
+                      style="display: none">
+                End Call
+              </button>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-default btn-block" id="groupShareScreen" style="display: none"
+                      onclick="shareScreen()">Share Screen
+              </button>
+            </div>
+          </div>
+          <!--          <div class="row">-->
+          <!--            <div class="col-md-2 col-md-offset-3">-->
+
+          <!--            </div>-->
+          <!--            <div class="col-md-2">-->
+          <!--              <button class="btn btn-default btn-block"-->
+          <!--                      onclick="demo.showNotification('top','center')">Top Center-->
+          <!--              </button>-->
+          <!--            </div>-->
+          <!--            <div class="col-md-2">-->
+          <!--              <button class="btn btn-default btn-block"-->
+          <!--                      onclick="demo.showNotification('top','right')">Top Right-->
+          <!--              </button>-->
+          <!--            </div>-->
+          <!--          </div>-->
+        </div>
+
+
+        <div class="row">
+          <div class="col-md-4 justify-content-center">
+            <div class="card">
+              <h4 class="videoName" id="myGroupVideoName"></h4>
+              <video playsInline muted id="myGroupVideo" autoPlay controls/>
+            </div>
+          </div>
+          <div class="col-md-4 justify-content-center">
+            <div class="card" style="display: none;">
+              <h4 class="videoName" id="peerVideo1Name"></h4>
+              <video playsInline id="peerVideo1" autoPlay/>
+            </div>
+          </div>
+          <div class="col-md-4 justify-content-center">
+            <div class="card" style="display: none;">
+              <h4 class="videoName" id="peerVideo2Name"></h4>
+              <video playsInline id="peerVideo2" autoPlay/>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 justify-content-center">
+            <div class="card" style="display: none;">
+              <h4 class="videoName" id="peerVideo3Name"></h4>
+              <video playsInline id="peerVideo3" autoPlay/>
+
+            </div>
+          </div>
+          <div class="col-md-4 justify-content-center">
+            <div class="card" style="display: none;">
+              <h4 class="videoName" id="peerVideo4Name"></h4>
+              <video playsInline id="peerVideo4" autoPlay/>
+            </div>
+          </div>
+          <div class="col-md-4 justify-content-center">
+            <div class="card" style="display: none;">
+              <h4 class="videoName" id="peerVideo5Name"></h4>
+              <video playsInline id="peerVideo5" autoPlay/>
             </div>
           </div>
         </div>
@@ -252,15 +542,34 @@
 
 <style>
   body {
-    overflow: hidden; /* Hide scrollbars */
+    overflow-x: hidden; /* Hide scrollbars */
   }
 
   video {
-    padding: 0 90px;
-    width: auto;
-    height: 450px;
+    padding: 2px 4px 2px 4px;
+    /*  width: 650px;*/
+    /*  height: 450px;*/
+  }
+
+  .buttonWrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .videoName {
+    text-align: center;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding-top: 2px;
   }
 </style>
+
+<script>
+
+
+</script>
 
 <!--   Core JS Files   -->
 <script src="/js/jquery.3.2.1.min.js" type="text/javascript"></script>
@@ -280,7 +589,7 @@
 <script
     src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="/js/simplepeer.min.js"></script>
-<script src="/js/videoCall.js"></script>
+<script src="/js/customScripts/videoCall.js"></script>
 
 <script type="text/javascript"></script>
 <script src="/loginAssets/vendor/tilt/tilt.jquery.min.js"></script>
