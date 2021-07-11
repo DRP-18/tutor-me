@@ -154,18 +154,42 @@ class WebrtcController {
         val calleePerson = personRepository?.findById(message.callee.toLong())!!.get()!!
         val groupNum: Int = groupNumberAllocations[message.caller.toLong()]!!
 
-        sender.convertAndSend("/topic/video/${message.callee}/peersInRoom", object {
-            val peers = currentGroupCalls[groupNum]!!
-        })
-        if (groupNumberAllocations.containsKey(message.callee.toLong())) {
-            val num = groupNumberAllocations[message.callee.toLong()]!!
-            currentGroupCalls[num]?.remove(calleePerson)
-            if (currentGroupCalls[num]?.isEmpty()!!) {
-                replaceGroupNumber(num)
+        var sent = false
+        if (groupNumberAllocations.containsKey(calleePerson.id)) {
+            val groupNum = groupNumberAllocations[calleePerson.id]!!
+            val members = currentGroupCalls[groupNum]
+            if (members?.size!! > 1) {
+
+                //Remove caller's group number
+                val callerPerson = personRepository.findById(message.caller.toLong()).get()
+                val callerGroupNum = groupNumberAllocations[message.caller.toLong()]!!
+                currentGroupCalls[callerGroupNum]?.remove(callerPerson)
+                if (currentGroupCalls[callerGroupNum]?.isEmpty()!!) {
+                    currentGroupCalls.remove(callerGroupNum)
+                    replaceGroupNumber(callerGroupNum)
+                }
+
+                sender.convertAndSend("/topic/video/${message.caller}/peersInRoom", object {
+                    val peers = members
+                })
+                groupNumberAllocations[message.caller.toLong()] = groupNum
+                currentGroupCalls[groupNum]?.add(callerPerson)
+                sent = true
+            } else {
+                //Remove callee's group number in preparation for changing their group
+                members.remove(calleePerson)
+                if (members.isEmpty()) {
+                    replaceGroupNumber(groupNum)
+                }
             }
         }
-        groupNumberAllocations[message.callee.toLong()] = groupNum
-        currentGroupCalls[groupNum]?.add(calleePerson)
+        if (!sent) {
+            sender.convertAndSend("/topic/video/${message.callee}/peersInRoom", object {
+                val peers = currentGroupCalls[groupNum]!!
+            })
+            groupNumberAllocations[message.callee.toLong()] = groupNum
+            currentGroupCalls[groupNum]?.add(calleePerson)
+        }
     }
 
     @MessageMapping("/video.sendSignalToPeer")
